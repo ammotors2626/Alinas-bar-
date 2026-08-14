@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Alina's Bar - TPV</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #1a1a1a;
+            color: #f0f0f0;
+        }
+
+        /* ============================================
+           LOGIN
+           ============================================ */
+
+        .login-screen {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+        }
+
+        .login-box {
+            background: #2a2a2a;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            border: 2px solid #f97316;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-box h1 {
+            font-size: 2rem;
+            color: #f97316;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-box p {
+            color: #9ca3af;
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #444;
+            border-radius: 0.5rem;
+            background: #1a1a1a;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #f97316;
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #f97316;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .demo-info {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            line-height: 1.5;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============================================
+           PANTALLA 1: SELECCIÓN DE MESAS
+           ============================================ */
+
+        .screen-mesas {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding: 1rem;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border-bottom: 2px solid #f97316;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: #f97316;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #9ca3af;
+            font-size: 0.9rem;
+        }
+
+        .header-actions {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .header-actions .badge {
+            background: #3b82f6;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .header-actions .logout-btn {
+            background: #6b7280;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .mesas-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 1rem;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .mesa-btn {
+            aspect-ratio: 1;
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 0.75rem;
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .mesa-btn:hover {
+            border-color: #f97316;
+            transform: scale(1.05);
+        }
+
+        .mesa-btn:active {
+            transform: scale(0.95);
+        }
+
+        .mesa-btn.ocupada {
+            background: #3a2a1a;
+            border-color: #f59e0b;
+        }
+
+        .mesa-btn.lista {
+            background: #1a3a2a;
+            border-color: #10b981;
+        }
+
+        .mesa-btn.enviada {
+            background: #1a2a3a;
+            border-color: #3b82f6;
+        }
+
+        .mesa-total {
+            position: absolute;
+            bottom: 0.5rem;
+            right: 0.5rem;
+            background: #f97316;
+            color: #000;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.3rem;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+
+        /* ============================================
+           PANTALLA 2: COMANDA
+           ============================================ */
+
+        .screen-comanda {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #1a1a1a;
+            overflow: hidden;
+        }
+
+        .comanda-header {
+            background: #0d0d0d;
+            padding: 1.5rem;
+            border-bottom: 2px solid #f97316;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .comanda-header h2 {
+            font-size: 1.5rem;
+            color: #f97316;
+        }
+
+        .comanda-header-info {
+            display: flex;
+            gap: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .comanda-header-info span {
+            color: #9ca3af;
+        }
+
+        .comanda-header-info strong {
+            color: #f97316;
+            display: block;
+            font-size: 1.2rem;
+        }
+
+        .back-btn {
+            background: #6b7280;
+            color: #fff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* CATEGORÍAS TABS */
+
+        .categories-tabs {
+            background: #0d0d0d;
+            padding: 0.75rem;
+            border-bottom: 1px solid #333;
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .category-tab {
+            background: #2a2a2a;
+            border: 2px solid transparent;
+            color: #9ca3af;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .category-tab.active {
+            background: #f97316;
+            color: #000;
+            border-color: #f97316;
+        }
+
+        .category-tab:active {
+            transform: scale(0.95);
+        }
+
+        /* PRODUCTOS */
+
+        .products-container {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .product-card {
+            background: #2a2a2a;
+            border: 2px solid #444;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            min-height: 180px;
+        }
+
+        .product-card:hover {
+            border-color: #f97316;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(249, 115, 22, 0.2);
+        }
+
+        .product-card:active {
+            transform: translateY(-2px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100px;
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+        }
+
+        .product-info {
+            padding: 0.75rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #fff;
+            line-height: 1.3;
+        }
+
+        .product-price {
+            font-size: 1.2rem;
+            color: #f97316;
+            font-weight: 700;
+        }
+
+        /* COMANDA */
+
+        .comanda-bottom {
+            background: #0d0d0d;
+            border-top: 2px solid #f97316;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 40%;
+            overflow: hidden;
+        }
+
+        .comanda-items {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .comanda-item {
+            background: #2a2a2a;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border-left: 3px solid #f97316;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .comanda-item-name {
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .comanda-item-qty {
+            background: #444;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.3rem;
+            margin: 0 0.5rem;
+            font-weight: 600;
+            min-width: 2.2rem;
+            text-align: center;
+        }
+
+        .comanda-item-price {
+            color: #f97316;
+            font-weight: 700;
+            min-width: 2.5rem;
+            text-align: right;
+        }
+
+        .comanda-item-remove {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.3rem;
+            cursor: pointer;
+            font-size: 0.75rem;
+            margin-left: 0.4rem;
+        }
+
+        .comanda-totals {
+            background: #1a1a1a;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            border: 2px solid #f97316;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+
+        .total-row.final {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #f97316;
+            border-top: 1px solid #333;
+            padding-top: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .comanda-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-send {
+            background: #10b981;
+            color: #fff;
+            grid-column: 1 / -1;
+        }
+
+        .btn-send:active {
+            background: #059669;
+        }
+
+        .btn-account {
+            background: #f97316;
+            color: #000;
+        }
+
+        .btn-account:active {
+            background: #ea580c;
+        }
+
+        .btn-print {
+            background: #3b82f6;
+            color: #fff;
+        }
+
+        .btn-print:active {
+            background: #2563eb;
+        }
+
+        .btn-clear {
+            background: #6b7280;
+            color: #fff;
+        }
+
+        .btn-clear:active {
+            background: #4b5563;
+        }
+
+        /* TOAST */
+
+        .toast {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: #10b981;
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 0.75rem;
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out;
+            font-weight: 600;
+        }
+
+        .toast.error {
+            background: #ef4444;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(200px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+
+        @media (max-width: 768px) {
+            .mesas-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.75rem;
+                padding: 0.75rem;
+            }
+
+            .products-container {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+                padding: 0.75rem;
+            }
+
+            .comanda-header {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+
+            .comanda-header-info {
+                width: 100%;
+                gap: 1rem;
+            }
+
+            .categories-tabs {
+                padding: 0.5rem;
+                gap: 0.3rem;
+            }
+
+            .category-tab {
+                padding: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .product-card {
+                min-height: 160px;
+            }
+
+            .product-image {
+                height: 80px;
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h1>🍷 Alina's Bar</h1>
+            <p>Sistema de Comandas</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="email" value="camarero@alinas.bar" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Contraseña</label>
+                    <input type="password" id="password" value="demo123" required>
+                </div>
+
+                <button type="submit" class="login-btn">ACCEDER</button>
+            </form>
+
+            <div class="demo-info">
+                <strong>👤 Usuarios de prueba:</strong><br>
+                📦 camarero@alinas.bar / demo123<br>
+                👨‍🍳 cocina@alinas.bar / demo123<br>
+                ⚙️ admin@alinas.bar / demo123
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 1: MESAS -->
+    <div id="screenMesas" class="screen-mesas hidden">
+        <div class="header-actions">
+            <span class="badge" id="userBadge">CAMARERO</span>
+            <button class="logout-btn" onclick="logout()">SALIR</button>
+        </div>
+
+        <div class="header">
+            <h1>🍷 ALINA'S BAR</h1>
+            <p>Selecciona una mesa para empezar</p>
+        </div>
+
+        <div class="mesas-grid" id="mesasGrid"></div>
+    </div>
+
+    <!-- PANTALLA 2: COMANDA -->
+    <div id="screenComanda" class="screen-comanda hidden">
+        <div class="comanda-header">
+            <button class="back-btn" onclick="volverMesas()">← ATRÁS</button>
+            <h2 id="mesaTitle">Terraza 5</h2>
+            <div class="comanda-header-info">
+                <div>
+                    <span>Total</span>
+                    <strong id="headerTotal">0,00 €</strong>
+                </div>
+                <div>
+                    <span>Productos</span>
+                    <strong id="headerItems">0</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="categories-tabs" id="categoriasBar"></div>
+
+        <div class="products-container" id="productosContainer"></div>
+
+        <div class="comanda-bottom">
+            <div class="comanda-items" id="comandaItems"></div>
+
+            <div class="comanda-totals">
+                <div class="total-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">0,00 €</span>
+                </div>
+                <div class="total-row">
+                    <span>IVA (21%)</span>
+                    <span id="totalVat">0,00 €</span>
+                </div>
+                <div class="total-row final">
+                    <span>TOTAL</span>
+                    <span id="totalPrice">0,00 €</span>
+                </div>
+            </div>
+
+            <div class="comanda-actions">
+                <button class="action-btn btn-account" onclick="openAccount()">💰 CUENTA</button>
+                <button class="action-btn btn-print" onclick="printOrder()">🖨️ IMPRIMIR</button>
+                <button class="action-btn btn-send" onclick="sendOrder()">📤 ENVIAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // ESTADO
+        // ============================================
+
+        const STATE = {
+            user: null,
+            currentTable: null,
+            currentOrder: [],
+            currentCategory: null,
+            categories: [],
+            products: [],
+            tables: [],
+        };
+
+        // ============================================
+        // BD LOCAL
+        // ============================================
+
+        class DB {
+            static init() {
+                if (!localStorage.getItem('alinas_v4_init')) {
+                    const categories = [
+                        { id: '1', name: 'Cervezas', icon: '🍺' },
+                        { id: '2', name: 'Bebidas', icon: '🥤' },
+                        { id: '3', name: 'Desayunos', icon: '🥐' },
+                        { id: '4', name: 'Cafés', icon: '☕' },
+                        { id: '5', name: 'Refrescos', icon: '🧃' },
+                        { id: '6', name: 'Tapas', icon: '🍤' },
+                    ];
+                    localStorage.setItem('alinas_v4_categories', JSON.stringify(categories));
+
+                    const products = [
+                        { id: '1', name: 'Caña', price: 2.50, category_id: '1', icon: '🍺' },
+                        { id: '2', name: 'Botellín', price: 3.00, category_id: '1', icon: '🍾' },
+                        { id: '3', name: 'Tercio', price: 4.00, category_id: '1', icon: '🍻' },
+                        { id: '4', name: 'Agua', price: 1.50, category_id: '2', icon: '💧' },
+                        { id: '5', name: 'Coca-Cola', price: 2.00, category_id: '2', icon: '🥤' },
+                        { id: '6', name: 'Fanta Naranja', price: 2.00, category_id: '2', icon: '🧡' },
+                        { id: '7', name: 'Tostada', price: 2.50, category_id: '3', icon: '🍞' },
+                        { id: '8', name: 'Croissant', price: 2.00, category_id: '3', icon: '🥐' },
+                        { id: '9', name: 'Café Solo', price: 1.50, category_id: '4', icon: '☕' },
+                        { id: '10', name: 'Café con Leche', price: 2.00, category_id: '4', icon: '🥛' },
+                        { id: '11', name: 'Cortado', price: 1.75, category_id: '4', icon: '☕' },
+                        { id: '12', name: 'Zumo Natural', price: 2.50, category_id: '5', icon: '🍊' },
+                        { id: '13', name: 'Refresco', price: 1.50, category_id: '5', icon: '🧃' },
+                        { id: '14', name: 'Aceitunas', price: 1.50, category_id: '6', icon: '🫒' },
+                        { id: '15', name: 'Jamón', price: 3.50, category_id: '6', icon: '🍖' },
+                    ];
+                    localStorage.setItem('alinas_v4_products', JSON.stringify(products));
+
+                    const tables = [];
+                    for (let i = 1; i <= 13; i++) tables.push({ id: 't' + i, name: 'Terraza ' + i, status: 'libre', total: 0 });
+                    for (let i = 1; i <= 6; i++) tables.push({ id: 'b' + i, name: 'Barra ' + i, status: 'libre', total: 0 });
+                    for (let i = 1; i <= 4; i++) tables.push({ id: 's' + i, name: 'Salón ' + i, status: 'libre', total: 0 });
+                    localStorage.setItem('alinas_v4_tables', JSON.stringify(tables));
+
+                    localStorage.setItem('alinas_v4_users', JSON.stringify([
+                        { id: '1', email: 'camarero@alinas.bar', password: 'demo123', name: 'Camarero', role: 'camarero' },
+                        { id: '2', email: 'cocina@alinas.bar', password: 'demo123', name: 'Cocina', role: 'cocina' },
+                        { id: '3', email: 'admin@alinas.bar', password: 'demo123', name: 'Admin', role: 'admin' },
+                    ]));
+
+                    localStorage.setItem('alinas_v4_init', 'true');
+                }
+            }
+
+            static get(key) {
+                return JSON.parse(localStorage.getItem(key) || '[]');
+            }
+
+            static set(key, value) {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
+        }
+
+        // ============================================
+        // LOGIN
+        // ============================================
+
+        function login(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const users = DB.get('alinas_v4_users');
+            const user = users.find(u => u.email === email && u.password === password);
+
+            if (user) {
+                STATE.user = user;
+                showMesasScreen();
+            } else {
+                showToast('❌ Credenciales incorrectas', 'error');
+            }
+        }
+
+        function logout() {
+            STATE.user = null;
+            STATE.currentTable = null;
+            STATE.currentOrder = [];
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('screenMesas').classList.add('hidden');
+        }
+
+        // ============================================
+        // PANTALLA 1: MESAS
+        // ============================================
+
+        function showMesasScreen() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('screenMesas').classList.remove('hidden');
+            document.getElementById('screenComanda').classList.add('hidden');
+
+            STATE.categories = DB.get('alinas_v4_categories');
+            STATE.products = DB.get('alinas_v4_products');
+            STATE.tables = DB.get('alinas_v4_tables');
+
+            document.getElementById('userBadge').textContent = STATE.user.role.toUpperCase();
+
+            renderMesas();
+        }
+
+        function renderMesas() {
+            const html = STATE.tables.map(table => `
+                <button class="mesa-btn ${table.status}" onclick="selectMesa('${table.id}')">
+                    ${STATE.tables.indexOf(table) + 1}
+                    ${table.total > 0 ? `<span class="mesa-total">${table.total.toFixed(2)}€</span>` : ''}
+                </button>
+            `).join('');
+            document.getElementById('mesasGrid').innerHTML = html;
+        }
+
+        function selectMesa(tableId) {
+            const table = STATE.tables.find(t => t.id === tableId);
+            if (table) {
+                STATE.currentTable = table;
+                STATE.currentOrder = [];
+                STATE.currentCategory = null;
+                showComandaScreen();
+            }
+        }
+
+        // ============================================
+        // PANTALLA 2: COMANDA
+        // ============================================
+
+        function showComandaScreen() {
+            document.getElementById('screenMesas').classList.add('hidden');
+            document.getElementById('screenComanda').classList.remove('hidden');
+
+            document.getElementById('mesaTitle').textContent = STATE.currentTable.name;
+
+            renderCategories();
+            selectFirstCategory();
+            updateComandaDisplay();
+        }
+
+        function renderCategories() {
+            const html = STATE.categories.map(cat => `
+                <button class="category-tab ${cat.id === STATE.currentCategory ? 'active' : ''}" 
+                    onclick="selectCategory('${cat.id}')">
+                    ${cat.icon} ${cat.name}
+                </button>
+            `).join('');
+            document.getElementById('categoriasBar').innerHTML = html;
+        }
+
+        function selectFirstCategory() {
+            if (!STATE.currentCategory && STATE.categories.length > 0) {
+                STATE.currentCategory = STATE.categories[0].id;
+                selectCategory(STATE.currentCategory);
+            }
+        }
+
+        function selectCategory(catId) {
+            STATE.currentCategory = catId;
+            renderCategories();
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const products = STATE.products.filter(p => p.category_id === STATE.currentCategory);
+            const html = products.map(product => `
+                <div class="product-card" onclick="addProduct('${product.id}')">
+                    <div class="product-image">${product.icon}</div>
+                    <div class="product-info">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${product.price.toFixed(2)}€</div>
+                    </div>
+                </div>
+            `).join('');
+            document.getElementById('productosContainer').innerHTML = html;
+        }
+
+        function addProduct(productId) {
+            const product = STATE.products.find(p => p.id === productId);
+            const existing = STATE.currentOrder.find(item => item.product_id === productId);
+
+            if (existing) {
+                existing.quantity += 1;
+            } else {
+                STATE.currentOrder.push({
+                    product_id: productId,
+                    name: product.name,
+                    price: product.price,
+                    quantity: 1,
+                    icon: product.icon,
+                });
+            }
+
+            updateComandaDisplay();
+            showToast(`✓ ${product.name}`);
+        }
+
+        function updateComandaDisplay() {
+            const itemsHtml = STATE.currentOrder.map((item, idx) => `
+                <div class="comanda-item">
+                    <span class="comanda-item-name">${item.icon} ${item.name}</span>
+                    <span class="comanda-item-qty">${item.quantity}</span>
+                    <span class="comanda-item-price">${(item.price * item.quantity).toFixed(2)}€</span>
+                    <button class="comanda-item-remove" onclick="removeItem(${idx})">✕</button>
+                </div>
+            `).join('');
+
+            document.getElementById('comandaItems').innerHTML = itemsHtml || '<div style="text-align: center; color: #9ca3af; padding: 1rem;">Sin productos</div>';
+
+            const subtotal = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const vat = subtotal * 0.21;
+            const total = subtotal + vat;
+
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('totalVat').textContent = vat.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('totalPrice').textContent = total.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('headerTotal').textContent = total.toFixed(2).replace('.', ',') + ' €';
+            document.getElementById('headerItems').textContent = STATE.currentOrder.length;
+        }
+
+        function removeItem(idx) {
+            STATE.currentOrder.splice(idx, 1);
+            updateComandaDisplay();
+        }
+
+        function sendOrder() {
+            if (STATE.currentOrder.length === 0) {
+                showToast('❌ Añade productos', 'error');
+                return;
+            }
+
+            const table = STATE.tables.find(t => t.id === STATE.currentTable.id);
+            const total = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            table.total += total;
+            table.status = 'enviada';
+            DB.set('alinas_v4_tables', STATE.tables);
+
+            showToast('✓ Comanda enviada');
+            playSound();
+
+            STATE.currentOrder = [];
+            updateComandaDisplay();
+            setTimeout(() => volverMesas(), 1500);
+        }
+
+        function printOrder() {
+            if (STATE.currentOrder.length === 0) {
+                showToast('❌ Sin productos', 'error');
+                return;
+            }
+
+            const subtotal = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const vat = subtotal * 0.21;
+            const total = subtotal + vat;
+
+            let printHTML = `
+                <html>
+                <head>
+                    <style>
+                        body { font-family: monospace; width: 80mm; margin: 0; padding: 1rem; }
+                        h1 { text-align: center; font-size: 1.2em; }
+                        .line { border-top: 1px dashed #000; margin: 0.5rem 0; }
+                        table { width: 100%; }
+                        td { padding: 0.25rem 0; }
+                        .qty { width: 2rem; text-align: center; }
+                        .price { text-align: right; width: 3rem; }
+                        .total { font-weight: bold; font-size: 1.1em; text-align: right; }
+                    </style>
+                </head>
+                <body>
+                    <h1>ALINA'S BAR</h1>
+                    <div class="line"></div>
+                    <p><strong>Mesa:</strong> ${STATE.currentTable.name}</p>
+                    <p style="font-size: 0.9em; color: #666;">${new Date().toLocaleString('es-ES')}</p>
+                    <div class="line"></div>
+                    <table>
+            `;
+
+            STATE.currentOrder.forEach(item => {
+                printHTML += `
+                    <tr>
+                        <td>${item.icon} ${item.name}</td>
+                        <td class="qty">${item.quantity}</td>
+                        <td class="price">${(item.price * item.quantity).toFixed(2)}€</td>
+                    </tr>
+                `;
+            });
+
+            printHTML += `
+                    </table>
+                    <div class="line"></div>
+                    <table>
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td class="price">${subtotal.toFixed(2)}€</td>
+                        </tr>
+                        <tr>
+                            <td>IVA (21%):</td>
+                            <td class="price">${vat.toFixed(2)}€</td>
+                        </tr>
+                        <tr>
+                            <td class="total">TOTAL:</td>
+                            <td class="price total">${total.toFixed(2)}€</td>
+                        </tr>
+                    </table>
+                    <div class="line"></div>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9em;">¡Gracias!</p>
+                </body>
+                </html>
+            `;
+
+            const win = window.open();
+            win.document.write(printHTML);
+            win.print();
+        }
+
+        function openAccount() {
+            showToast('💰 Función en desarrollo');
+        }
+
+        function volverMesas() {
+            showMesasScreen();
+        }
+
+        function playSound() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = 800;
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.5);
+            } catch (e) {}
+        }
+
+        function showToast(msg, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        // ============================================
+        // INICIO
+        // ============================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            DB.init();
+            document.getElementById('loginForm').addEventListener('submit', login);
+        });
+    </script>
+</body>
+</html>
