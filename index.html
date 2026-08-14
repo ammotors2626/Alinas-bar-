@@ -318,92 +318,76 @@
             color: #f97316;
         }
 
-        /* CATEGORÍAS COLAPSABLES */
+        /* CATEGORÍAS FIJAS (siempre visibles, no se cierran) */
 
-        .categories-section {
+        .categories-fixed {
             background: #0d0d0d;
             padding: 0.5rem;
             border-bottom: 1px solid #333;
-            max-height: 35%;
-            overflow-y: auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.4rem;
+            flex-shrink: 0;
         }
 
-        .category-item {
-            margin-bottom: 0.3rem;
-        }
-
-        .category-header {
+        .cat-btn {
             background: #2a2a2a;
             border: 1px solid #444;
-            padding: 0.6rem;
             border-radius: 0.4rem;
+            padding: 0.5rem 0.3rem;
             cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: center;
+            font-size: 0.75rem;
             font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+            color: #fff;
         }
 
-        .category-header:hover {
-            border-color: #f97316;
-        }
-
-        .category-header.active {
+        .cat-btn.active {
             background: #f97316;
             color: #000;
             border-color: #f97316;
         }
 
-        .category-icon {
-            font-size: 1.2rem;
-            margin-right: 0.5rem;
+        .cat-icon {
+            font-size: 1.1rem;
+            display: block;
         }
 
-        .category-arrow {
-            font-size: 0.8rem;
-            transition: transform 0.2s;
-        }
+        /* PRODUCTOS: área fija debajo de categorías, cambia el contenido al clicar */
 
-        .category-header.active .category-arrow {
-            transform: rotate(180deg);
-        }
-
-        .category-products {
-            display: none;
+        .products-fixed {
             background: #1a1a1a;
             padding: 0.5rem;
-            gap: 0.5rem;
-            grid-template-columns: repeat(3, 1fr);
-            border-bottom: 1px solid #333;
-        }
-
-        .category-products.active {
+            border-bottom: 2px solid #333;
             display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.4rem;
+            max-height: 30%;
+            overflow-y: auto;
+            flex-shrink: 0;
         }
 
         .product-btn {
             background: #2a2a2a;
             border: 1px solid #444;
             border-radius: 0.4rem;
-            padding: 0.5rem;
+            padding: 0.4rem;
             cursor: pointer;
             text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #fff;
-            transition: all 0.2s;
             display: flex;
             flex-direction: column;
-            gap: 0.25rem;
+            gap: 0.15rem;
         }
 
-        .product-btn:hover {
+        .product-btn:active {
             border-color: #f97316;
+            background: #3a2a1a;
         }
 
         .product-btn-icon {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
         }
 
         .product-btn-name {
@@ -414,168 +398,127 @@
         .product-btn-price {
             color: #f97316;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
-        /* COMANDA Y TOTALES */
+        /* LISTA DE PEDIDO: una sola lista combinada (pedido + histórico) */
 
-        .comanda-bottom {
+        .order-list-wrap {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             background: #0d0d0d;
-            padding: 0.75rem;
-            border-top: 1px solid #333;
         }
 
-        .comanda-title {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #f97316;
-            margin-bottom: 0.5rem;
-        }
-
-        .consumed-section {
-            background: #0d0d0d;
-            padding: 0.6rem;
-            border-bottom: 1px solid #333;
-            max-height: 22%;
-            overflow-y: auto;
-        }
-
-        .consumed-title {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #9ca3af;
-            margin-bottom: 0.4rem;
-            text-transform: uppercase;
-        }
-
-        .consumed-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            padding: 0.25rem 0;
-            color: #ccc;
-        }
-
-        .consumed-empty {
-            font-size: 0.75rem;
-            color: #666;
-            text-align: center;
-            padding: 0.4rem;
-        }
-
-        .btn-close-account {
-            background: #dc2626;
-            color: #fff;
-            grid-column: 1 / -1;
-        }
-
-        .comanda-items {
+        .order-list {
             flex: 1;
             overflow-y: auto;
+            padding: 0.4rem;
             display: flex;
             flex-direction: column;
-            gap: 0.4rem;
-            margin-bottom: 0.5rem;
+            gap: 0.3rem;
         }
 
-        .comanda-item {
-            background: #2a2a2a;
-            padding: 0.5rem;
-            border-radius: 0.3rem;
-            border-left: 2px solid #f97316;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .order-empty {
+            text-align: center;
+            color: #666;
             font-size: 0.8rem;
-            gap: 0.4rem;
+            padding: 1.5rem;
         }
 
-        .comanda-item-name {
+        .order-row {
+            background: #2a2a2a;
+            border-left: 3px solid #10b981;
+            padding: 0.4rem 0.5rem;
+            border-radius: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .order-row.pending {
+            border-left-color: #f59e0b;
+            background: #3a2a1a;
+        }
+
+        .order-row-name {
             flex: 1;
             font-weight: 600;
         }
 
-        .comanda-item-qty {
+        .order-row-qty {
             background: #444;
-            padding: 0.2rem 0.4rem;
+            padding: 0.15rem 0.4rem;
             border-radius: 0.2rem;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.75rem;
-            min-width: 1.5rem;
-            text-align: center;
         }
 
-        .comanda-item-price {
+        .order-row-price {
             color: #f97316;
             font-weight: 700;
-            min-width: 2rem;
+            min-width: 2.2rem;
             text-align: right;
-            font-size: 0.8rem;
         }
 
-        .comanda-item-remove {
+        .order-row-del {
             background: #ef4444;
             color: #fff;
             border: none;
-            padding: 0.2rem 0.4rem;
-            border-radius: 0.2rem;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
             cursor: pointer;
             font-size: 0.7rem;
-            font-weight: 600;
-        }
-
-        .comanda-totals {
-            background: #1a1a1a;
-            padding: 0.5rem;
-            border-radius: 0.3rem;
-            border: 1px solid #f97316;
-            margin-bottom: 0.5rem;
-        }
-
-        .total-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.75rem;
-            margin-bottom: 0.25rem;
-        }
-
-        .total-row.final {
-            border-top: 1px solid #333;
-            padding-top: 0.3rem;
-            margin-top: 0.3rem;
-            font-size: 0.9rem;
             font-weight: 700;
-            color: #f97316;
+            flex-shrink: 0;
         }
+
+        /* ACCIONES: compactas, en una sola fila */
 
         .comanda-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.4rem;
+            grid-template-columns: 1fr 1fr 1.4fr;
+            gap: 0.3rem;
+            padding: 0.4rem;
+            background: #0d0d0d;
+            border-top: 1px solid #333;
         }
 
         .action-btn {
-            padding: 0.5rem;
+            padding: 0.5rem 0.3rem;
             border: none;
             border-radius: 0.3rem;
             font-weight: 700;
             cursor: pointer;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
 
         .btn-send {
             background: #10b981;
             color: #fff;
-            grid-column: 1 / -1;
         }
 
         .btn-print {
             background: #3b82f6;
             color: #fff;
+        }
+
+        .btn-close-account {
+            background: #dc2626;
+            color: #fff;
+        }
+
+        .btn-trash-header {
+            background: #444;
+            color: #fff;
+            border: none;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            font-size: 0.8rem;
         }
 
         .btn-clear {
@@ -826,40 +769,21 @@
                     </div>
                 </div>
             </div>
+            <button class="btn-trash-header" onclick="clearPendingCart()" title="Borrar lo que aún no se ha enviado">🗑️</button>
         </div>
 
-        <div class="consumed-section" id="consumedSection">
-            <div class="consumed-title">🧾 Ya pedido en esta mesa</div>
-            <div id="consumedItems"></div>
+        <div class="categories-fixed" id="categoriesFixed"></div>
+
+        <div class="products-fixed" id="productsFixed"></div>
+
+        <div class="order-list-wrap">
+            <div class="order-list" id="orderList"></div>
         </div>
 
-        <div class="categories-section" id="categoriesSection"></div>
-
-        <div class="comanda-bottom">
-            <div class="comanda-title">📋 NUEVO PEDIDO (por enviar)</div>
-            <div class="comanda-items" id="comandaItems"></div>
-
-            <div class="comanda-totals">
-                <div class="total-row">
-                    <span>Subtotal</span>
-                    <span id="subtotal">0,00€</span>
-                </div>
-                <div class="total-row">
-                    <span>IVA 21%</span>
-                    <span id="totalVat">0,00€</span>
-                </div>
-                <div class="total-row final">
-                    <span>TOTAL</span>
-                    <span id="totalPrice">0,00€</span>
-                </div>
-            </div>
-
-            <div class="comanda-actions">
-                <button class="action-btn btn-print" onclick="printOrder()">🖨️ IMPRIMIR</button>
-                <button class="action-btn btn-clear" onclick="clearOrder()">🗑️ LIMPIAR</button>
-                <button class="action-btn btn-send" onclick="sendOrder()">📤 ENVIAR A COCINA</button>
-                <button class="action-btn btn-close-account" onclick="closeAccount()">💰 COBRAR Y CERRAR MESA</button>
-            </div>
+        <div class="comanda-actions">
+            <button class="action-btn btn-print" onclick="printOrder()">🖨️</button>
+            <button class="action-btn btn-close-account" onclick="closeAccount()">💰 COBRAR</button>
+            <button class="action-btn btn-send" onclick="sendOrder()">📤 ENVIAR COCINA</button>
         </div>
     </div>
 
@@ -1090,8 +1014,8 @@
             const table = STATE.tables.find(t => t.id === tableId);
             if (table) {
                 STATE.currentTable = table;
-                // Recuperar la comanda en progreso de esta mesa (si la hay)
-                STATE.currentOrder = table.current_order || [];
+                if (!STATE.currentTable.consumed) STATE.currentTable.consumed = [];
+                STATE.selectedCategory = null;
                 showComandaScreen();
             }
         }
@@ -1106,167 +1030,143 @@
 
             document.getElementById('headerMesa').textContent = STATE.currentTable.name;
 
-            renderCategories();
-            renderConsumed();
-            updateComandaDisplay();
+            renderCategoriesFixed();
+            // Selecciona la primera categoría por defecto
+            selectCategory(STATE.categories[0].id);
+            renderOrderList();
         }
 
-        // Muestra todo lo que ya se ha ENVIADO a cocina en esta mesa (histórico acumulado)
-        function renderConsumed() {
-            const consumed = STATE.currentTable.consumed || [];
-
-            if (consumed.length === 0) {
-                document.getElementById('consumedItems').innerHTML = '<div class="consumed-empty">Nada pedido todavía</div>';
-                return;
-            }
-
-            // Agrupar por producto para no repetir líneas
-            const grouped = {};
-            consumed.forEach(item => {
-                if (!grouped[item.product_id]) {
-                    grouped[item.product_id] = { ...item, quantity: 0 };
-                }
-                grouped[item.product_id].quantity += item.quantity;
-            });
-
-            const html = Object.values(grouped).map(item => `
-                <div class="consumed-item">
-                    <span>${item.icon} ${item.quantity}x ${item.name}</span>
-                    <span>${(item.price * item.quantity).toFixed(2)}€</span>
+        // Categorías: SIEMPRE visibles, fijas arriba (no se cierran nunca)
+        function renderCategoriesFixed() {
+            const html = STATE.categories.map(cat => `
+                <div class="cat-btn ${cat.id === STATE.selectedCategory ? 'active' : ''}" onclick="selectCategory('${cat.id}')">
+                    <span class="cat-icon">${cat.icon}</span>${cat.name}
                 </div>
             `).join('');
-
-            document.getElementById('consumedItems').innerHTML = html;
+            document.getElementById('categoriesFixed').innerHTML = html;
         }
 
-        function renderCategories() {
-            let html = '';
-            STATE.categories.forEach(cat => {
-                const products = STATE.products.filter(p => p.category_id === cat.id);
-                html += `
-                    <div class="category-item">
-                        <div class="category-header" onclick="toggleCategory('${cat.id}')">
-                            <div>
-                                <span class="category-icon">${cat.icon}</span>
-                                ${cat.name}
-                            </div>
-                            <span class="category-arrow">▼</span>
-                        </div>
-                        <div class="category-products" id="cat-${cat.id}">
-                            ${products.map(p => `
-                                <button class="product-btn" onclick="addProduct('${p.id}')">
-                                    <div class="product-btn-icon">${p.icon}</div>
-                                    <div class="product-btn-name">${p.name}</div>
-                                    <div class="product-btn-price">${p.price.toFixed(2)}€</div>
-                                </button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('categoriesSection').innerHTML = html;
+        // Al clicar una categoría, solo cambia el contenido de productos debajo (el resto no se mueve)
+        function selectCategory(catId) {
+            STATE.selectedCategory = catId;
+            renderCategoriesFixed();
+
+            const products = STATE.products.filter(p => p.category_id === catId);
+            const html = products.map(p => `
+                <button class="product-btn" onclick="addProduct('${p.id}')">
+                    <div class="product-btn-icon">${p.icon}</div>
+                    <div class="product-btn-name">${p.name}</div>
+                    <div class="product-btn-price">${p.price.toFixed(2)}€</div>
+                </button>
+            `).join('');
+            document.getElementById('productsFixed').innerHTML = html;
         }
 
-        function toggleCategory(catId) {
-            const element = document.getElementById('cat-' + catId);
-            const header = element.previousElementSibling;
-
-            document.querySelectorAll('.category-products').forEach(el => {
-                if (el !== element) el.classList.remove('active');
-            });
-            document.querySelectorAll('.category-header').forEach(h => {
-                if (h !== header) h.classList.remove('active');
-            });
-
-            element.classList.toggle('active');
-            header.classList.toggle('active');
-        }
-
+        // Añade un producto: se guarda directamente como "pendiente" (sent:false) en la lista única de la mesa
         async function addProduct(productId) {
             const product = STATE.products.find(p => p.id === productId);
-            const existing = STATE.currentOrder.find(item => item.product_id === productId);
+            const consumed = STATE.currentTable.consumed || [];
 
+            const existing = consumed.find(item => item.product_id === productId && !item.sent);
             if (existing) {
                 existing.quantity += 1;
             } else {
-                STATE.currentOrder.push({
+                consumed.push({
                     product_id: productId,
                     name: product.name,
                     price: product.price,
                     quantity: 1,
                     icon: product.icon,
+                    sent: false,
                 });
             }
 
-            updateComandaDisplay();
-            await saveCurrentOrderToTable();
+            STATE.currentTable.consumed = consumed;
+            recalcTableTotal();
+            renderOrderList();
+            await persistTable();
             showToast(`✓ ${product.name}`);
         }
 
-        // Guarda la comanda en progreso en Supabase (para que persista al volver a la mesa)
-        async function saveCurrentOrderToTable() {
-            if (!STATE.currentTable) return;
+        // Recalcula el total de la mesa (con IVA 21%) a partir de la lista completa
+        function recalcTableTotal() {
+            const consumed = STATE.currentTable.consumed || [];
+            const subtotal = consumed.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            STATE.currentTable.total = subtotal * 1.21;
+        }
+
+        // Guarda mesa (total + lista) en Supabase
+        async function persistTable() {
             await supabaseClient
                 .from('tables')
-                .update({ current_order: STATE.currentOrder, updated_at: new Date().toISOString() })
+                .update({
+                    total: STATE.currentTable.total,
+                    consumed: STATE.currentTable.consumed,
+                    updated_at: new Date().toISOString(),
+                })
                 .eq('id', STATE.currentTable.id);
         }
 
-        function updateComandaDisplay() {
-            const itemsHtml = STATE.currentOrder.map((item, idx) => `
-                <div class="comanda-item">
-                    <span class="comanda-item-name">${item.icon} ${item.name}</span>
-                    <span class="comanda-item-qty">${item.quantity}</span>
-                    <span class="comanda-item-price">${(item.price * item.quantity).toFixed(2)}€</span>
-                    <button class="comanda-item-remove" onclick="removeItem(${idx})">✕</button>
-                </div>
-            `).join('');
+        // Lista ÚNICA combinada: pedidos ya enviados (verde) + pendientes de enviar (naranja)
+        function renderOrderList() {
+            const consumed = STATE.currentTable.consumed || [];
 
-            document.getElementById('comandaItems').innerHTML = itemsHtml || '<div style="text-align: center; color: #9ca3af; font-size: 0.8rem; padding: 1rem;">Sin productos</div>';
+            if (consumed.length === 0) {
+                document.getElementById('orderList').innerHTML = '<div class="order-empty">Sin productos todavía. Selecciona una categoría arriba.</div>';
+            } else {
+                const html = consumed.map((item, idx) => `
+                    <div class="order-row ${item.sent ? '' : 'pending'}">
+                        <span class="order-row-name">${item.icon} ${item.name} ${item.sent ? '' : '(sin enviar)'}</span>
+                        <span class="order-row-qty">${item.quantity}</span>
+                        <span class="order-row-price">${(item.price * item.quantity).toFixed(2)}€</span>
+                        <button class="order-row-del" onclick="removeItem(${idx})">✕</button>
+                    </div>
+                `).join('');
+                document.getElementById('orderList').innerHTML = html;
+            }
 
-            const subtotal = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const vat = subtotal * 0.21;
-            const total = subtotal + vat;
-
-            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + '€';
-            document.getElementById('totalVat').textContent = vat.toFixed(2) + '€';
-            document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
-
-            // Total de cabecera = lo ya enviado a cocina (acumulado) + lo que hay en el carrito sin enviar
-            const yaEnviado = parseFloat(STATE.currentTable.total) || 0;
-            const granTotal = yaEnviado + total;
-            document.getElementById('headerTotal').textContent = granTotal.toFixed(2) + '€';
+            document.getElementById('headerTotal').textContent = (parseFloat(STATE.currentTable.total) || 0).toFixed(2) + '€';
         }
 
         async function removeItem(idx) {
-            STATE.currentOrder.splice(idx, 1);
-            updateComandaDisplay();
-            await saveCurrentOrderToTable();
+            STATE.currentTable.consumed.splice(idx, 1);
+            recalcTableTotal();
+            renderOrderList();
+            await persistTable();
         }
 
-        async function clearOrder() {
-            if (confirm('¿Vaciar comanda?')) {
-                STATE.currentOrder = [];
-                updateComandaDisplay();
-                await saveCurrentOrderToTable();
+        // Borra solo lo que aún no se ha enviado a cocina (botón papelera de arriba)
+        async function clearPendingCart() {
+            const consumed = STATE.currentTable.consumed || [];
+            const hasPending = consumed.some(item => !item.sent);
+            if (!hasPending) {
+                showToast('❌ No hay nada pendiente de enviar', 'error');
+                return;
             }
+            if (!confirm('¿Borrar lo que aún no se ha enviado a cocina?')) return;
+
+            STATE.currentTable.consumed = consumed.filter(item => item.sent);
+            recalcTableTotal();
+            renderOrderList();
+            await persistTable();
         }
 
         async function sendOrder() {
-            if (STATE.currentOrder.length === 0) {
-                showToast('❌ Añade productos', 'error');
+            const pending = (STATE.currentTable.consumed || []).filter(item => !item.sent);
+
+            if (pending.length === 0) {
+                showToast('❌ No hay productos nuevos que enviar', 'error');
                 return;
             }
 
-            const subtotal = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const subtotal = pending.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const vat = subtotal * 0.21;
             const total = subtotal + vat;
 
-            // 1. Crear la orden en Supabase (esto lo verá la cocina en tiempo real)
             const { error: orderError } = await supabaseClient.from('orders').insert({
                 table_id: STATE.currentTable.id,
                 table_name: STATE.currentTable.name,
-                items: STATE.currentOrder,
+                items: pending,
                 subtotal: subtotal,
                 vat: vat,
                 total: total,
@@ -1279,25 +1179,12 @@
                 return;
             }
 
-            // 2. Actualizar el total de la mesa, acumular en el histórico "consumed" y limpiar el carrito
-            const newTotal = parseFloat(STATE.currentTable.total) + total;
-            const newConsumed = [...(STATE.currentTable.consumed || []), ...STATE.currentOrder];
-
-            await supabaseClient
-                .from('tables')
-                .update({ total: newTotal, consumed: newConsumed, current_order: [], updated_at: new Date().toISOString() })
-                .eq('id', STATE.currentTable.id);
-
-            // Actualizar estado local para que se refleje al instante
-            STATE.currentTable.total = newTotal;
-            STATE.currentTable.consumed = newConsumed;
+            // Marcar como enviados todos los pendientes
+            STATE.currentTable.consumed.forEach(item => { item.sent = true; });
+            await persistTable();
 
             showToast('✓ Comanda enviada a cocina');
-            STATE.currentOrder = [];
-            renderConsumed();
-            updateComandaDisplay();
-
-            setTimeout(() => goHome(), 1200);
+            renderOrderList();
         }
 
         // ============================================
@@ -1307,28 +1194,28 @@
         async function closeAccount() {
             const table = STATE.currentTable;
             const totalMesa = parseFloat(table.total) || 0;
+            const consumed = table.consumed || [];
 
-            if (totalMesa === 0 && STATE.currentOrder.length === 0) {
+            if (consumed.length === 0) {
                 showToast('❌ Esta mesa no tiene consumo', 'error');
                 return;
             }
 
-            if (STATE.currentOrder.length > 0) {
-                showToast('❌ Envía o limpia el pedido pendiente antes de cobrar', 'error');
+            const hasPending = consumed.some(item => !item.sent);
+            if (hasPending) {
+                showToast('❌ Envía o borra lo pendiente antes de cobrar', 'error');
                 return;
             }
 
             if (!confirm(`¿Cobrar mesa ${table.name} por ${totalMesa.toFixed(2)}€ y cerrarla?`)) return;
 
-            // 1. Guardar en el historial de ventas (contabilidad)
             await supabaseClient.from('sales_history').insert({
                 table_id: table.id,
                 table_name: table.name,
-                items: table.consumed || [],
+                items: consumed,
                 total: totalMesa,
             });
 
-            // 2. Resetear la mesa a cero
             await supabaseClient
                 .from('tables')
                 .update({ total: 0, consumed: [], current_order: [], updated_at: new Date().toISOString() })
@@ -1339,14 +1226,13 @@
         }
 
         function printOrder() {
-            if (STATE.currentOrder.length === 0) {
+            const consumed = STATE.currentTable.consumed || [];
+            if (consumed.length === 0) {
                 showToast('❌ Sin productos', 'error');
                 return;
             }
 
-            const subtotal = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const vat = subtotal * 0.21;
-            const total = subtotal + vat;
+            const total = parseFloat(STATE.currentTable.total) || 0;
 
             let html = `<html><head><style>body{font-family:monospace;width:80mm;padding:1rem;margin:0}h1{text-align:center;font-size:1rem}table{width:100%;font-size:0.8rem}td{padding:0.25rem}tr.total td{font-weight:bold}.line{border-top:1px dashed #000;margin:0.5rem 0}</style></head><body>`;
             html += `<h1>ALINA'S BAR</h1>`;
@@ -1354,11 +1240,11 @@
             html += `<p style="text-align:center;font-size:0.7rem">${new Date().toLocaleString('es-ES')}</p>`;
             html += `<div class="line"></div><table>`;
 
-            STATE.currentOrder.forEach(item => {
+            consumed.forEach(item => {
                 html += `<tr><td>${item.quantity}x ${item.name}</td><td style="text-align:right">${(item.price * item.quantity).toFixed(2)}€</td></tr>`;
             });
 
-            html += `</table><div class="line"></div><table style="margin-top:0.5rem"><tr><td>Subtotal:</td><td style="text-align:right">${subtotal.toFixed(2)}€</td></tr><tr><td>IVA:</td><td style="text-align:right">${vat.toFixed(2)}€</td></tr><tr class="total"><td>TOTAL:</td><td style="text-align:right">${total.toFixed(2)}€</td></tr></table><p style="text-align:center;margin-top:1rem;font-size:0.8rem">¡Gracias!</p></body></html>`;
+            html += `</table><div class="line"></div><table style="margin-top:0.5rem"><tr class="total"><td>TOTAL:</td><td style="text-align:right">${total.toFixed(2)}€</td></tr></table><p style="text-align:center;margin-top:1rem;font-size:0.8rem">¡Gracias!</p></body></html>`;
 
             const win = window.open();
             win.document.write(html);
