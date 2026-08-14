@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Alina's Bar - TPV</title>
+    <title>Alina's Bar - TPV Profesional</title>
     
     <style>
         * {
@@ -51,7 +51,8 @@
 
         .login-box p {
             color: #9ca3af;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
         }
 
         .form-group {
@@ -62,6 +63,7 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
+            font-size: 0.9rem;
         }
 
         .form-group input {
@@ -90,6 +92,24 @@
             font-size: 1rem;
             font-weight: 700;
             cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .login-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .login-options button {
+            padding: 0.75rem;
+            border: 1px solid #444;
+            background: #2a2a2a;
+            color: #fff;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .demo-info {
@@ -97,7 +117,7 @@
             border: 1px solid #444;
             padding: 1rem;
             border-radius: 0.5rem;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
             font-size: 0.75rem;
             line-height: 1.5;
         }
@@ -107,10 +127,10 @@
         }
 
         /* ============================================
-           PANTALLA 1: SELECCIÓN DE MESAS
+           PANTALLA: INICIO (MESAS)
            ============================================ */
 
-        .screen-mesas {
+        .screen-home {
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -119,115 +139,101 @@
             overflow: hidden;
         }
 
-        .header {
+        .home-header {
             text-align: center;
-            margin-bottom: 2rem;
-            padding: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
             border-bottom: 2px solid #f97316;
         }
 
-        .header h1 {
-            font-size: 2rem;
+        .home-header h1 {
+            font-size: 1.8rem;
             color: #f97316;
-            margin-bottom: 0.5rem;
         }
 
-        .header p {
+        .home-header p {
             color: #9ca3af;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
         }
 
-        .header-actions {
+        .home-actions {
             position: absolute;
             top: 1rem;
             right: 1rem;
             display: flex;
             gap: 0.5rem;
-            align-items: center;
         }
 
-        .header-actions .badge {
+        .home-actions .badge {
             background: #3b82f6;
             color: #fff;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.75rem;
             font-weight: 600;
         }
 
-        .header-actions .logout-btn {
+        .home-actions .logout-btn {
             background: #6b7280;
             color: #fff;
             border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 0.4rem;
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.75rem;
         }
 
         .mesas-grid {
             flex: 1;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+            gap: 0.75rem;
             overflow-y: auto;
-            padding: 1rem;
         }
 
-        .mesa-btn {
+        .mesa-item {
             aspect-ratio: 1;
             background: #2a2a2a;
             border: 2px solid #444;
-            border-radius: 0.75rem;
-            color: #fff;
-            font-size: 1.5rem;
-            font-weight: 700;
+            border-radius: 0.5rem;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: center;
+            align-items: center;
+            padding: 0.5rem;
+            text-align: center;
             position: relative;
         }
 
-        .mesa-btn:hover {
+        .mesa-item:hover {
             border-color: #f97316;
             transform: scale(1.05);
         }
 
-        .mesa-btn:active {
-            transform: scale(0.95);
-        }
-
-        .mesa-btn.ocupada {
+        .mesa-item.ocupada {
             background: #3a2a1a;
             border-color: #f59e0b;
         }
 
-        .mesa-btn.lista {
-            background: #1a3a2a;
-            border-color: #10b981;
-        }
-
-        .mesa-btn.enviada {
-            background: #1a2a3a;
-            border-color: #3b82f6;
+        .mesa-num {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
         }
 
         .mesa-total {
-            position: absolute;
-            bottom: 0.5rem;
-            right: 0.5rem;
-            background: #f97316;
-            color: #000;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.3rem;
-            font-size: 0.6rem;
+            font-size: 0.65rem;
+            color: #f97316;
             font-weight: 700;
+            margin-top: 0.25rem;
         }
 
         /* ============================================
-           PANTALLA 2: COMANDA
+           PANTALLA: COMANDA
            ============================================ */
 
         .screen-comanda {
@@ -240,153 +246,170 @@
 
         .comanda-header {
             background: #0d0d0d;
-            padding: 1.5rem;
+            padding: 0.75rem;
             border-bottom: 2px solid #f97316;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .comanda-header h2 {
-            font-size: 1.5rem;
-            color: #f97316;
-        }
-
-        .comanda-header-info {
-            display: flex;
-            gap: 2rem;
             font-size: 0.9rem;
         }
 
-        .comanda-header-info span {
-            color: #9ca3af;
-        }
-
-        .comanda-header-info strong {
-            color: #f97316;
-            display: block;
-            font-size: 1.2rem;
+        .comanda-header-left {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
         }
 
         .back-btn {
             background: #6b7280;
             color: #fff;
             border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            border-radius: 0.4rem;
             cursor: pointer;
             font-weight: 600;
+            font-size: 0.75rem;
         }
 
-        /* CATEGORÍAS TABS */
-
-        .categories-tabs {
-            background: #0d0d0d;
-            padding: 0.75rem;
-            border-bottom: 1px solid #333;
+        .header-mesa-info {
             display: flex;
-            gap: 0.5rem;
-            overflow-x: auto;
+            gap: 1rem;
         }
 
-        .category-tab {
-            background: #2a2a2a;
-            border: 2px solid transparent;
+        .header-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+
+        .header-label {
+            font-size: 0.65rem;
             color: #9ca3af;
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: all 0.2s;
-            font-size: 0.95rem;
+            text-transform: uppercase;
         }
 
-        .category-tab.active {
+        .header-value {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #f97316;
+        }
+
+        /* CATEGORÍAS COLAPSABLES */
+
+        .categories-section {
+            background: #0d0d0d;
+            padding: 0.5rem;
+            border-bottom: 1px solid #333;
+            max-height: 35%;
+            overflow-y: auto;
+        }
+
+        .category-item {
+            margin-bottom: 0.3rem;
+        }
+
+        .category-header {
+            background: #2a2a2a;
+            border: 1px solid #444;
+            padding: 0.6rem;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .category-header:hover {
+            border-color: #f97316;
+        }
+
+        .category-header.active {
             background: #f97316;
             color: #000;
             border-color: #f97316;
         }
 
-        .category-tab:active {
-            transform: scale(0.95);
+        .category-icon {
+            font-size: 1.2rem;
+            margin-right: 0.5rem;
         }
 
-        /* PRODUCTOS */
+        .category-arrow {
+            font-size: 0.8rem;
+            transition: transform 0.2s;
+        }
 
-        .products-container {
-            flex: 1;
-            padding: 1rem;
-            overflow-y: auto;
+        .category-header.active .category-arrow {
+            transform: rotate(180deg);
+        }
+
+        .category-products {
+            display: none;
+            background: #1a1a1a;
+            padding: 0.5rem;
+            gap: 0.5rem;
+            grid-template-columns: repeat(3, 1fr);
+            border-bottom: 1px solid #333;
+        }
+
+        .category-products.active {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 1rem;
         }
 
-        .product-card {
+        .product-btn {
             background: #2a2a2a;
-            border: 2px solid #444;
-            border-radius: 0.75rem;
-            overflow: hidden;
+            border: 1px solid #444;
+            border-radius: 0.4rem;
+            padding: 0.5rem;
             cursor: pointer;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #fff;
             transition: all 0.2s;
             display: flex;
             flex-direction: column;
-            min-height: 180px;
+            gap: 0.25rem;
         }
 
-        .product-card:hover {
+        .product-btn:hover {
             border-color: #f97316;
-            transform: translateY(-4px);
-            box-shadow: 0 8px 16px rgba(249, 115, 22, 0.2);
         }
 
-        .product-card:active {
-            transform: translateY(-2px);
+        .product-btn-icon {
+            font-size: 1.5rem;
         }
 
-        .product-image {
-            width: 100%;
-            height: 100px;
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3rem;
+        .product-btn-name {
+            font-weight: 600;
+            line-height: 1.1;
         }
 
-        .product-info {
-            padding: 0.75rem;
+        .product-btn-price {
+            color: #f97316;
+            font-weight: 700;
+            font-size: 0.75rem;
+        }
+
+        /* COMANDA Y TOTALES */
+
+        .comanda-bottom {
             flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .product-name {
-            font-weight: 700;
-            font-size: 0.95rem;
-            color: #fff;
-            line-height: 1.3;
-        }
-
-        .product-price {
-            font-size: 1.2rem;
-            color: #f97316;
-            font-weight: 700;
-        }
-
-        /* COMANDA */
-
-        .comanda-bottom {
-            background: #0d0d0d;
-            border-top: 2px solid #f97316;
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            max-height: 40%;
             overflow: hidden;
+            background: #0d0d0d;
+            padding: 0.75rem;
+            border-top: 1px solid #333;
+        }
+
+        .comanda-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #f97316;
+            margin-bottom: 0.5rem;
         }
 
         .comanda-items {
@@ -394,18 +417,20 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 0.4rem;
+            margin-bottom: 0.5rem;
         }
 
         .comanda-item {
             background: #2a2a2a;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border-left: 3px solid #f97316;
+            padding: 0.5rem;
+            border-radius: 0.3rem;
+            border-left: 2px solid #f97316;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            gap: 0.4rem;
         }
 
         .comanda-item-name {
@@ -415,19 +440,20 @@
 
         .comanda-item-qty {
             background: #444;
-            padding: 0.3rem 0.6rem;
-            border-radius: 0.3rem;
-            margin: 0 0.5rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.2rem;
             font-weight: 600;
-            min-width: 2.2rem;
+            font-size: 0.75rem;
+            min-width: 1.5rem;
             text-align: center;
         }
 
         .comanda-item-price {
             color: #f97316;
             font-weight: 700;
-            min-width: 2.5rem;
+            min-width: 2rem;
             text-align: right;
+            font-size: 0.8rem;
         }
 
         .comanda-item-remove {
@@ -435,49 +461,49 @@
             color: #fff;
             border: none;
             padding: 0.2rem 0.4rem;
-            border-radius: 0.3rem;
+            border-radius: 0.2rem;
             cursor: pointer;
-            font-size: 0.75rem;
-            margin-left: 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
         }
 
         .comanda-totals {
             background: #1a1a1a;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            border: 2px solid #f97316;
+            padding: 0.5rem;
+            border-radius: 0.3rem;
+            border: 1px solid #f97316;
+            margin-bottom: 0.5rem;
         }
 
         .total-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.4rem;
-            font-size: 0.9rem;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
         }
 
         .total-row.final {
-            font-size: 1.1rem;
+            border-top: 1px solid #333;
+            padding-top: 0.3rem;
+            margin-top: 0.3rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #f97316;
-            border-top: 1px solid #333;
-            padding-top: 0.5rem;
-            margin-top: 0.5rem;
         }
 
         .comanda-actions {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 0.5rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.4rem;
         }
 
         .action-btn {
-            padding: 0.75rem;
+            padding: 0.5rem;
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 0.3rem;
             font-weight: 700;
             cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
+            font-size: 0.75rem;
         }
 
         .btn-send {
@@ -486,26 +512,9 @@
             grid-column: 1 / -1;
         }
 
-        .btn-send:active {
-            background: #059669;
-        }
-
-        .btn-account {
-            background: #f97316;
-            color: #000;
-        }
-
-        .btn-account:active {
-            background: #ea580c;
-        }
-
         .btn-print {
             background: #3b82f6;
             color: #fff;
-        }
-
-        .btn-print:active {
-            background: #2563eb;
         }
 
         .btn-clear {
@@ -513,11 +522,123 @@
             color: #fff;
         }
 
-        .btn-clear:active {
-            background: #4b5563;
+        /* ============================================
+           PANTALLA: COCINA
+           ============================================ */
+
+        .screen-kitchen {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            background: #1a1a1a;
+            padding: 1rem;
+            overflow: hidden;
         }
 
-        /* TOAST */
+        .kitchen-header {
+            text-align: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #10b981;
+        }
+
+        .kitchen-header h1 {
+            font-size: 1.8rem;
+            color: #10b981;
+        }
+
+        .kitchen-orders {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            overflow-y: auto;
+        }
+
+        .kitchen-card {
+            background: #2a2a2a;
+            border: 2px solid #f59e0b;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .kitchen-card.done {
+            border-color: #10b981;
+            background: #1a3a2a;
+        }
+
+        .kitchen-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #444;
+        }
+
+        .kitchen-card-mesa {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #f97316;
+        }
+
+        .kitchen-card-time {
+            font-size: 0.8rem;
+            color: #9ca3af;
+        }
+
+        .kitchen-card-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .kitchen-card-item {
+            background: #1a1a1a;
+            padding: 0.5rem;
+            border-radius: 0.3rem;
+            border-left: 3px solid #f97316;
+        }
+
+        .kitchen-item-qty {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .kitchen-item-name {
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .kitchen-card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .kitchen-btn {
+            padding: 0.6rem;
+            border: none;
+            border-radius: 0.4rem;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .btn-done {
+            background: #10b981;
+            color: #fff;
+        }
+
+        .btn-cancel {
+            background: #6b7280;
+            color: #fff;
+        }
+
+        /* ============================================
+           TOAST
+           ============================================ */
 
         .toast {
             position: fixed;
@@ -525,11 +646,12 @@
             right: 1rem;
             background: #10b981;
             color: #fff;
-            padding: 1rem 1.5rem;
-            border-radius: 0.75rem;
+            padding: 0.75rem 1.2rem;
+            border-radius: 0.5rem;
             z-index: 1000;
             animation: slideUp 0.3s ease-out;
             font-weight: 600;
+            font-size: 0.85rem;
         }
 
         .toast.error {
@@ -553,44 +675,24 @@
 
         @media (max-width: 768px) {
             .mesas-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 0.75rem;
-                padding: 0.75rem;
-            }
-
-            .products-container {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 0.75rem;
-                padding: 0.75rem;
+                grid-template-columns: repeat(5, 1fr);
             }
 
             .comanda-header {
                 flex-wrap: wrap;
-                gap: 1rem;
+                gap: 0.5rem;
             }
 
-            .comanda-header-info {
-                width: 100%;
-                gap: 1rem;
+            .header-mesa-info {
+                gap: 0.5rem;
             }
 
-            .categories-tabs {
-                padding: 0.5rem;
-                gap: 0.3rem;
+            .product-btn {
+                font-size: 0.7rem;
             }
 
-            .category-tab {
-                padding: 0.5rem 1rem;
-                font-size: 0.8rem;
-            }
-
-            .product-card {
-                min-height: 160px;
-            }
-
-            .product-image {
-                height: 80px;
-                font-size: 2rem;
+            .product-btn-icon {
+                font-size: 1.2rem;
             }
         }
     </style>
@@ -600,7 +702,7 @@
     <div id="loginScreen" class="login-screen">
         <div class="login-box">
             <h1>🍷 Alina's Bar</h1>
-            <p>Sistema de Comandas</p>
+            <p>Sistema Profesional de Comandas</p>
 
             <form id="loginForm">
                 <div class="form-group">
@@ -614,82 +716,96 @@
                 </div>
 
                 <button type="submit" class="login-btn">ACCEDER</button>
+
+                <div class="login-options">
+                    <button type="button" onclick="quickLogin('camarero@alinas.bar', 'demo123')">📦 Camarero</button>
+                    <button type="button" onclick="quickLogin('cocina@alinas.bar', 'demo123')">👨‍🍳 Cocina</button>
+                </div>
             </form>
 
             <div class="demo-info">
-                <strong>👤 Usuarios de prueba:</strong><br>
-                📦 camarero@alinas.bar / demo123<br>
-                👨‍🍳 cocina@alinas.bar / demo123<br>
-                ⚙️ admin@alinas.bar / demo123
+                <strong>👤 Usuarios:</strong><br>
+                📦 camarero@alinas.bar<br>
+                👨‍🍳 cocina@alinas.bar<br>
+                Contraseña: demo123
             </div>
         </div>
     </div>
 
-    <!-- PANTALLA 1: MESAS -->
-    <div id="screenMesas" class="screen-mesas hidden">
-        <div class="header-actions">
+    <!-- PANTALLA: INICIO (MESAS) -->
+    <div id="screenHome" class="screen-home hidden">
+        <div class="home-actions">
             <span class="badge" id="userBadge">CAMARERO</span>
             <button class="logout-btn" onclick="logout()">SALIR</button>
         </div>
 
-        <div class="header">
+        <div class="home-header">
             <h1>🍷 ALINA'S BAR</h1>
-            <p>Selecciona una mesa para empezar</p>
+            <p>Selecciona una mesa para comenzar</p>
         </div>
 
         <div class="mesas-grid" id="mesasGrid"></div>
     </div>
 
-    <!-- PANTALLA 2: COMANDA -->
+    <!-- PANTALLA: COMANDA -->
     <div id="screenComanda" class="screen-comanda hidden">
         <div class="comanda-header">
-            <button class="back-btn" onclick="volverMesas()">← ATRÁS</button>
-            <h2 id="mesaTitle">Terraza 5</h2>
-            <div class="comanda-header-info">
-                <div>
-                    <span>Total</span>
-                    <strong id="headerTotal">0,00 €</strong>
-                </div>
-                <div>
-                    <span>Productos</span>
-                    <strong id="headerItems">0</strong>
+            <div class="comanda-header-left">
+                <button class="back-btn" onclick="goHome()">← ATRÁS</button>
+                <div class="header-mesa-info">
+                    <div class="header-item">
+                        <span class="header-label">Mesa</span>
+                        <span class="header-value" id="headerMesa">-</span>
+                    </div>
+                    <div class="header-item">
+                        <span class="header-label">Total</span>
+                        <span class="header-value" id="headerTotal">0,00€</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="categories-tabs" id="categoriasBar"></div>
-
-        <div class="products-container" id="productosContainer"></div>
+        <div class="categories-section" id="categoriesSection"></div>
 
         <div class="comanda-bottom">
+            <div class="comanda-title">📋 COMANDA</div>
             <div class="comanda-items" id="comandaItems"></div>
 
             <div class="comanda-totals">
                 <div class="total-row">
                     <span>Subtotal</span>
-                    <span id="subtotal">0,00 €</span>
+                    <span id="subtotal">0,00€</span>
                 </div>
                 <div class="total-row">
-                    <span>IVA (21%)</span>
-                    <span id="totalVat">0,00 €</span>
+                    <span>IVA 21%</span>
+                    <span id="totalVat">0,00€</span>
                 </div>
                 <div class="total-row final">
                     <span>TOTAL</span>
-                    <span id="totalPrice">0,00 €</span>
+                    <span id="totalPrice">0,00€</span>
                 </div>
             </div>
 
             <div class="comanda-actions">
-                <button class="action-btn btn-account" onclick="openAccount()">💰 CUENTA</button>
                 <button class="action-btn btn-print" onclick="printOrder()">🖨️ IMPRIMIR</button>
-                <button class="action-btn btn-send" onclick="sendOrder()">📤 ENVIAR</button>
+                <button class="action-btn btn-clear" onclick="clearOrder()">🗑️ LIMPIAR</button>
+                <button class="action-btn btn-send" onclick="sendOrder()">📤 ENVIAR A COCINA</button>
             </div>
         </div>
     </div>
 
+    <!-- PANTALLA: COCINA -->
+    <div id="screenKitchen" class="screen-kitchen hidden">
+        <div class="kitchen-header">
+            <h1>👨‍🍳 COCINA</h1>
+            <p id="kitchenTime">Cargando órdenes...</p>
+        </div>
+        <div class="kitchen-orders" id="kitchenOrders"></div>
+    </div>
+
     <script>
         // ============================================
-        // ESTADO
+        // ESTADO GLOBAL
         // ============================================
 
         const STATE = {
@@ -700,15 +816,16 @@
             categories: [],
             products: [],
             tables: [],
+            orders: [],
         };
 
         // ============================================
-        // BD LOCAL
+        // BASE DE DATOS LOCAL
         // ============================================
 
         class DB {
             static init() {
-                if (!localStorage.getItem('alinas_v4_init')) {
+                if (!localStorage.getItem('alinas_v5_init')) {
                     const categories = [
                         { id: '1', name: 'Cervezas', icon: '🍺' },
                         { id: '2', name: 'Bebidas', icon: '🥤' },
@@ -717,40 +834,40 @@
                         { id: '5', name: 'Refrescos', icon: '🧃' },
                         { id: '6', name: 'Tapas', icon: '🍤' },
                     ];
-                    localStorage.setItem('alinas_v4_categories', JSON.stringify(categories));
 
                     const products = [
                         { id: '1', name: 'Caña', price: 2.50, category_id: '1', icon: '🍺' },
                         { id: '2', name: 'Botellín', price: 3.00, category_id: '1', icon: '🍾' },
                         { id: '3', name: 'Tercio', price: 4.00, category_id: '1', icon: '🍻' },
                         { id: '4', name: 'Agua', price: 1.50, category_id: '2', icon: '💧' },
-                        { id: '5', name: 'Coca-Cola', price: 2.00, category_id: '2', icon: '🥤' },
-                        { id: '6', name: 'Fanta Naranja', price: 2.00, category_id: '2', icon: '🧡' },
+                        { id: '5', name: 'Coca', price: 2.00, category_id: '2', icon: '🥤' },
+                        { id: '6', name: 'Fanta', price: 2.00, category_id: '2', icon: '🧡' },
                         { id: '7', name: 'Tostada', price: 2.50, category_id: '3', icon: '🍞' },
                         { id: '8', name: 'Croissant', price: 2.00, category_id: '3', icon: '🥐' },
-                        { id: '9', name: 'Café Solo', price: 1.50, category_id: '4', icon: '☕' },
-                        { id: '10', name: 'Café con Leche', price: 2.00, category_id: '4', icon: '🥛' },
-                        { id: '11', name: 'Cortado', price: 1.75, category_id: '4', icon: '☕' },
-                        { id: '12', name: 'Zumo Natural', price: 2.50, category_id: '5', icon: '🍊' },
-                        { id: '13', name: 'Refresco', price: 1.50, category_id: '5', icon: '🧃' },
-                        { id: '14', name: 'Aceitunas', price: 1.50, category_id: '6', icon: '🫒' },
-                        { id: '15', name: 'Jamón', price: 3.50, category_id: '6', icon: '🍖' },
+                        { id: '9', name: 'Churro', price: 1.50, category_id: '3', icon: '🍮' },
+                        { id: '10', name: 'Café Solo', price: 1.50, category_id: '4', icon: '☕' },
+                        { id: '11', name: 'Café Leche', price: 2.00, category_id: '4', icon: '🥛' },
+                        { id: '12', name: 'Cortado', price: 1.75, category_id: '4', icon: '☕' },
+                        { id: '13', name: 'Zumo', price: 2.50, category_id: '5', icon: '🍊' },
+                        { id: '14', name: 'Refresco', price: 1.50, category_id: '5', icon: '🧃' },
+                        { id: '15', name: 'Aceitunas', price: 1.50, category_id: '6', icon: '🫒' },
+                        { id: '16', name: 'Jamón', price: 3.50, category_id: '6', icon: '🍖' },
                     ];
-                    localStorage.setItem('alinas_v4_products', JSON.stringify(products));
 
                     const tables = [];
-                    for (let i = 1; i <= 13; i++) tables.push({ id: 't' + i, name: 'Terraza ' + i, status: 'libre', total: 0 });
-                    for (let i = 1; i <= 6; i++) tables.push({ id: 'b' + i, name: 'Barra ' + i, status: 'libre', total: 0 });
-                    for (let i = 1; i <= 4; i++) tables.push({ id: 's' + i, name: 'Salón ' + i, status: 'libre', total: 0 });
-                    localStorage.setItem('alinas_v4_tables', JSON.stringify(tables));
+                    for (let i = 1; i <= 13; i++) tables.push({ id: 't' + i, name: 'T' + i, total: 0, consumed: [] });
+                    for (let i = 1; i <= 6; i++) tables.push({ id: 'b' + i, name: 'B' + i, total: 0, consumed: [] });
+                    for (let i = 1; i <= 4; i++) tables.push({ id: 's' + i, name: 'S' + i, total: 0, consumed: [] });
 
-                    localStorage.setItem('alinas_v4_users', JSON.stringify([
+                    localStorage.setItem('alinas_v5_categories', JSON.stringify(categories));
+                    localStorage.setItem('alinas_v5_products', JSON.stringify(products));
+                    localStorage.setItem('alinas_v5_tables', JSON.stringify(tables));
+                    localStorage.setItem('alinas_v5_orders', JSON.stringify([]));
+                    localStorage.setItem('alinas_v5_users', JSON.stringify([
                         { id: '1', email: 'camarero@alinas.bar', password: 'demo123', name: 'Camarero', role: 'camarero' },
                         { id: '2', email: 'cocina@alinas.bar', password: 'demo123', name: 'Cocina', role: 'cocina' },
-                        { id: '3', email: 'admin@alinas.bar', password: 'demo123', name: 'Admin', role: 'admin' },
                     ]));
-
-                    localStorage.setItem('alinas_v4_init', 'true');
+                    localStorage.setItem('alinas_v5_init', 'true');
                 }
             }
 
@@ -771,15 +888,25 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const users = DB.get('alinas_v4_users');
+            const users = DB.get('alinas_v5_users');
             const user = users.find(u => u.email === email && u.password === password);
 
             if (user) {
                 STATE.user = user;
-                showMesasScreen();
+                if (user.role === 'cocina') {
+                    showKitchenScreen();
+                } else {
+                    showHomeScreen();
+                }
             } else {
                 showToast('❌ Credenciales incorrectas', 'error');
             }
+        }
+
+        function quickLogin(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
         }
 
         function logout() {
@@ -787,21 +914,25 @@
             STATE.currentTable = null;
             STATE.currentOrder = [];
             document.getElementById('loginScreen').style.display = 'flex';
-            document.getElementById('screenMesas').classList.add('hidden');
+            document.getElementById('screenHome').classList.add('hidden');
+            document.getElementById('screenComanda').classList.add('hidden');
+            document.getElementById('screenKitchen').classList.add('hidden');
         }
 
         // ============================================
-        // PANTALLA 1: MESAS
+        // PANTALLA: INICIO
         // ============================================
 
-        function showMesasScreen() {
+        function showHomeScreen() {
             document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('screenMesas').classList.remove('hidden');
+            document.getElementById('screenHome').classList.remove('hidden');
             document.getElementById('screenComanda').classList.add('hidden');
+            document.getElementById('screenKitchen').classList.add('hidden');
 
-            STATE.categories = DB.get('alinas_v4_categories');
-            STATE.products = DB.get('alinas_v4_products');
-            STATE.tables = DB.get('alinas_v4_tables');
+            STATE.categories = DB.get('alinas_v5_categories');
+            STATE.products = DB.get('alinas_v5_products');
+            STATE.tables = DB.get('alinas_v5_tables');
+            STATE.orders = DB.get('alinas_v5_orders');
 
             document.getElementById('userBadge').textContent = STATE.user.role.toUpperCase();
 
@@ -809,11 +940,11 @@
         }
 
         function renderMesas() {
-            const html = STATE.tables.map(table => `
-                <button class="mesa-btn ${table.status}" onclick="selectMesa('${table.id}')">
-                    ${STATE.tables.indexOf(table) + 1}
-                    ${table.total > 0 ? `<span class="mesa-total">${table.total.toFixed(2)}€</span>` : ''}
-                </button>
+            const html = STATE.tables.map((table, idx) => `
+                <div class="mesa-item ${table.total > 0 ? 'ocupada' : ''}" onclick="selectMesa('${table.id}')">
+                    <div class="mesa-num">${idx + 1}</div>
+                    ${table.total > 0 ? `<div class="mesa-total">${table.total.toFixed(2)}€</div>` : ''}
+                </div>
             `).join('');
             document.getElementById('mesasGrid').innerHTML = html;
         }
@@ -823,61 +954,67 @@
             if (table) {
                 STATE.currentTable = table;
                 STATE.currentOrder = [];
-                STATE.currentCategory = null;
                 showComandaScreen();
             }
         }
 
         // ============================================
-        // PANTALLA 2: COMANDA
+        // PANTALLA: COMANDA
         // ============================================
 
         function showComandaScreen() {
-            document.getElementById('screenMesas').classList.add('hidden');
+            document.getElementById('screenHome').classList.add('hidden');
             document.getElementById('screenComanda').classList.remove('hidden');
 
-            document.getElementById('mesaTitle').textContent = STATE.currentTable.name;
+            document.getElementById('headerMesa').textContent = STATE.currentTable.name;
 
             renderCategories();
-            selectFirstCategory();
             updateComandaDisplay();
         }
 
         function renderCategories() {
-            const html = STATE.categories.map(cat => `
-                <button class="category-tab ${cat.id === STATE.currentCategory ? 'active' : ''}" 
-                    onclick="selectCategory('${cat.id}')">
-                    ${cat.icon} ${cat.name}
-                </button>
-            `).join('');
-            document.getElementById('categoriasBar').innerHTML = html;
-        }
-
-        function selectFirstCategory() {
-            if (!STATE.currentCategory && STATE.categories.length > 0) {
-                STATE.currentCategory = STATE.categories[0].id;
-                selectCategory(STATE.currentCategory);
-            }
-        }
-
-        function selectCategory(catId) {
-            STATE.currentCategory = catId;
-            renderCategories();
-            renderProducts();
-        }
-
-        function renderProducts() {
-            const products = STATE.products.filter(p => p.category_id === STATE.currentCategory);
-            const html = products.map(product => `
-                <div class="product-card" onclick="addProduct('${product.id}')">
-                    <div class="product-image">${product.icon}</div>
-                    <div class="product-info">
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-price">${product.price.toFixed(2)}€</div>
+            let html = '';
+            STATE.categories.forEach(cat => {
+                const products = STATE.products.filter(p => p.category_id === cat.id);
+                html += `
+                    <div class="category-item">
+                        <div class="category-header" onclick="toggleCategory('${cat.id}')">
+                            <div>
+                                <span class="category-icon">${cat.icon}</span>
+                                ${cat.name}
+                            </div>
+                            <span class="category-arrow">▼</span>
+                        </div>
+                        <div class="category-products" id="cat-${cat.id}">
+                            ${products.map(p => `
+                                <button class="product-btn" onclick="addProduct('${p.id}')">
+                                    <div class="product-btn-icon">${p.icon}</div>
+                                    <div class="product-btn-name">${p.name}</div>
+                                    <div class="product-btn-price">${p.price.toFixed(2)}€</div>
+                                </button>
+                            `).join('')}
+                        </div>
                     </div>
-                </div>
-            `).join('');
-            document.getElementById('productosContainer').innerHTML = html;
+                `;
+            });
+            document.getElementById('categoriesSection').innerHTML = html;
+        }
+
+        function toggleCategory(catId) {
+            const element = document.getElementById('cat-' + catId);
+            const header = element.previousElementSibling;
+
+            // Cerrar todas las demás
+            document.querySelectorAll('.category-products').forEach(el => {
+                if (el !== element) el.classList.remove('active');
+            });
+            document.querySelectorAll('.category-header').forEach(h => {
+                if (h !== header) h.classList.remove('active');
+            });
+
+            // Toggle la actual
+            element.classList.toggle('active');
+            header.classList.toggle('active');
         }
 
         function addProduct(productId) {
@@ -910,22 +1047,28 @@
                 </div>
             `).join('');
 
-            document.getElementById('comandaItems').innerHTML = itemsHtml || '<div style="text-align: center; color: #9ca3af; padding: 1rem;">Sin productos</div>';
+            document.getElementById('comandaItems').innerHTML = itemsHtml || '<div style="text-align: center; color: #9ca3af; font-size: 0.8rem; padding: 1rem;">Sin productos</div>';
 
             const subtotal = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             const vat = subtotal * 0.21;
             const total = subtotal + vat;
 
-            document.getElementById('subtotal').textContent = subtotal.toFixed(2).replace('.', ',') + ' €';
-            document.getElementById('totalVat').textContent = vat.toFixed(2).replace('.', ',') + ' €';
-            document.getElementById('totalPrice').textContent = total.toFixed(2).replace('.', ',') + ' €';
-            document.getElementById('headerTotal').textContent = total.toFixed(2).replace('.', ',') + ' €';
-            document.getElementById('headerItems').textContent = STATE.currentOrder.length;
+            document.getElementById('subtotal').textContent = subtotal.toFixed(2) + '€';
+            document.getElementById('totalVat').textContent = vat.toFixed(2) + '€';
+            document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
+            document.getElementById('headerTotal').textContent = total.toFixed(2) + '€';
         }
 
         function removeItem(idx) {
             STATE.currentOrder.splice(idx, 1);
             updateComandaDisplay();
+        }
+
+        function clearOrder() {
+            if (confirm('¿Vaciar comanda?')) {
+                STATE.currentOrder = [];
+                updateComandaDisplay();
+            }
         }
 
         function sendOrder() {
@@ -934,18 +1077,35 @@
                 return;
             }
 
-            const table = STATE.tables.find(t => t.id === STATE.currentTable.id);
-            const total = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            table.total += total;
-            table.status = 'enviada';
-            DB.set('alinas_v4_tables', STATE.tables);
+            const subtotal = STATE.currentOrder.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const vat = subtotal * 0.21;
+            const total = subtotal + vat;
 
-            showToast('✓ Comanda enviada');
-            playSound();
+            const order = {
+                id: Date.now(),
+                tableId: STATE.currentTable.id,
+                tableName: STATE.currentTable.name,
+                items: STATE.currentOrder,
+                total: total,
+                subtotal: subtotal,
+                vat: vat,
+                timestamp: new Date().toLocaleTimeString('es-ES'),
+                status: 'pendiente',
+            };
 
+            STATE.orders.push(order);
+            DB.set('alinas_v5_orders', STATE.orders);
+
+            // Actualizar mesa
+            STATE.currentTable.total += total;
+            STATE.currentTable.consumed.push(...STATE.currentOrder);
+            DB.set('alinas_v5_tables', STATE.tables);
+
+            showToast('✓ Comanda enviada a cocina');
             STATE.currentOrder = [];
             updateComandaDisplay();
-            setTimeout(() => volverMesas(), 1500);
+
+            setTimeout(() => goHome(), 1500);
         }
 
         function printOrder() {
@@ -958,89 +1118,101 @@
             const vat = subtotal * 0.21;
             const total = subtotal + vat;
 
-            let printHTML = `
-                <html>
-                <head>
-                    <style>
-                        body { font-family: monospace; width: 80mm; margin: 0; padding: 1rem; }
-                        h1 { text-align: center; font-size: 1.2em; }
-                        .line { border-top: 1px dashed #000; margin: 0.5rem 0; }
-                        table { width: 100%; }
-                        td { padding: 0.25rem 0; }
-                        .qty { width: 2rem; text-align: center; }
-                        .price { text-align: right; width: 3rem; }
-                        .total { font-weight: bold; font-size: 1.1em; text-align: right; }
-                    </style>
-                </head>
-                <body>
-                    <h1>ALINA'S BAR</h1>
-                    <div class="line"></div>
-                    <p><strong>Mesa:</strong> ${STATE.currentTable.name}</p>
-                    <p style="font-size: 0.9em; color: #666;">${new Date().toLocaleString('es-ES')}</p>
-                    <div class="line"></div>
-                    <table>
-            `;
+            let html = `<html><head><style>body{font-family:monospace;width:80mm;padding:1rem;margin:0}h1{text-align:center;font-size:1rem}table{width:100%;font-size:0.8rem}td{padding:0.25rem}tr.total td{font-weight:bold}.line{border-top:1px dashed #000;margin:0.5rem 0}</style></head><body>`;
+            html += `<h1>ALINA'S BAR</h1>`;
+            html += `<p style="text-align:center;font-size:0.8rem">Mesa: ${STATE.currentTable.name}</p>`;
+            html += `<p style="text-align:center;font-size:0.7rem">${new Date().toLocaleString('es-ES')}</p>`;
+            html += `<div class="line"></div><table>`;
 
             STATE.currentOrder.forEach(item => {
-                printHTML += `
-                    <tr>
-                        <td>${item.icon} ${item.name}</td>
-                        <td class="qty">${item.quantity}</td>
-                        <td class="price">${(item.price * item.quantity).toFixed(2)}€</td>
-                    </tr>
-                `;
+                html += `<tr><td>${item.quantity}x ${item.name}</td><td style="text-align:right">${(item.price * item.quantity).toFixed(2)}€</td></tr>`;
             });
 
-            printHTML += `
-                    </table>
-                    <div class="line"></div>
-                    <table>
-                        <tr>
-                            <td>Subtotal:</td>
-                            <td class="price">${subtotal.toFixed(2)}€</td>
-                        </tr>
-                        <tr>
-                            <td>IVA (21%):</td>
-                            <td class="price">${vat.toFixed(2)}€</td>
-                        </tr>
-                        <tr>
-                            <td class="total">TOTAL:</td>
-                            <td class="price total">${total.toFixed(2)}€</td>
-                        </tr>
-                    </table>
-                    <div class="line"></div>
-                    <p style="text-align: center; margin-top: 1rem; font-size: 0.9em;">¡Gracias!</p>
-                </body>
-                </html>
-            `;
+            html += `</table><div class="line"></div><table style="margin-top:0.5rem"><tr><td>Subtotal:</td><td style="text-align:right">${subtotal.toFixed(2)}€</td></tr><tr><td>IVA:</td><td style="text-align:right">${vat.toFixed(2)}€</td></tr><tr class="total"><td>TOTAL:</td><td style="text-align:right">${total.toFixed(2)}€</td></tr></table><p style="text-align:center;margin-top:1rem;font-size:0.8rem">¡Gracias!</p></body></html>`;
 
             const win = window.open();
-            win.document.write(printHTML);
+            win.document.write(html);
             win.print();
         }
 
-        function openAccount() {
-            showToast('💰 Función en desarrollo');
+        function goHome() {
+            showHomeScreen();
         }
 
-        function volverMesas() {
-            showMesasScreen();
+        // ============================================
+        // PANTALLA: COCINA
+        // ============================================
+
+        function showKitchenScreen() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('screenHome').classList.add('hidden');
+            document.getElementById('screenComanda').classList.add('hidden');
+            document.getElementById('screenKitchen').classList.remove('hidden');
+
+            STATE.orders = DB.get('alinas_v5_orders');
+
+            setInterval(() => {
+                STATE.orders = DB.get('alinas_v5_orders');
+                renderKitchenOrders();
+            }, 1000);
+
+            renderKitchenOrders();
         }
 
-        function playSound() {
-            try {
-                const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.frequency.value = 800;
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
-                osc.start(ctx.currentTime);
-                osc.stop(ctx.currentTime + 0.5);
-            } catch (e) {}
+        function renderKitchenOrders() {
+            const pendingOrders = STATE.orders.filter(o => o.status === 'pendiente');
+
+            if (pendingOrders.length === 0) {
+                document.getElementById('kitchenOrders').innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #9ca3af;">✓ Todas las órdenes completadas</div>';
+                return;
+            }
+
+            const html = pendingOrders.map(order => `
+                <div class="kitchen-card">
+                    <div class="kitchen-card-header">
+                        <div class="kitchen-card-mesa">🏠 ${order.tableName}</div>
+                        <div class="kitchen-card-time">${order.timestamp}</div>
+                    </div>
+                    <div class="kitchen-card-items">
+                        ${order.items.map(item => `
+                            <div class="kitchen-card-item">
+                                <div class="kitchen-item-qty">${item.quantity}x ${item.icon}</div>
+                                <div class="kitchen-item-name">${item.name}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="kitchen-card-actions">
+                        <button class="kitchen-btn btn-done" onclick="completeOrder(${order.id})">✓ LISTO</button>
+                        <button class="kitchen-btn btn-cancel" onclick="cancelOrder(${order.id})">✕ CANCEL</button>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('kitchenOrders').innerHTML = html;
         }
+
+        function completeOrder(orderId) {
+            const order = STATE.orders.find(o => o.id === orderId);
+            if (order) {
+                order.status = 'completada';
+                DB.set('alinas_v5_orders', STATE.orders);
+                renderKitchenOrders();
+                showToast('✓ Orden completada');
+            }
+        }
+
+        function cancelOrder(orderId) {
+            if (confirm('¿Cancelar orden?')) {
+                STATE.orders = STATE.orders.filter(o => o.id !== orderId);
+                DB.set('alinas_v5_orders', STATE.orders);
+                renderKitchenOrders();
+                showToast('✓ Orden cancelada');
+            }
+        }
+
+        // ============================================
+        // UTILIDADES
+        // ============================================
 
         function showToast(msg, type = 'info') {
             const toast = document.createElement('div');
@@ -1057,6 +1229,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             DB.init();
             document.getElementById('loginForm').addEventListener('submit', login);
+
+            // Si es cocina, mostrar pantalla de cocina
+            const url = new URLSearchParams(window.location.search);
+            if (url.get('kitchen') === 'true') {
+                STATE.user = { role: 'cocina' };
+                showKitchenScreen();
+            }
         });
     </script>
 </body>
