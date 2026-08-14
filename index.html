@@ -6,6 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Alina's Bar - TPV Profesional</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         * {
@@ -122,6 +123,15 @@
             line-height: 1.5;
         }
 
+        .connection-status {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.75rem;
+        }
+
+        .connection-status.online { color: #10b981; }
+        .connection-status.offline { color: #ef4444; }
+
         .hidden {
             display: none !important;
         }
@@ -163,6 +173,20 @@
             right: 1rem;
             display: flex;
             gap: 0.5rem;
+            align-items: center;
+        }
+
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
         }
 
         .home-actions .badge {
@@ -540,6 +564,7 @@
             margin-bottom: 1rem;
             padding-bottom: 1rem;
             border-bottom: 2px solid #10b981;
+            position: relative;
         }
 
         .kitchen-header h1 {
@@ -553,6 +578,7 @@
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 1rem;
             overflow-y: auto;
+            align-content: start;
         }
 
         .kitchen-card {
@@ -560,11 +586,6 @@
             border: 2px solid #f59e0b;
             border-radius: 0.5rem;
             padding: 1rem;
-        }
-
-        .kitchen-card.done {
-            border-color: #10b981;
-            background: #1a3a2a;
         }
 
         .kitchen-card-header {
@@ -729,12 +750,17 @@
                 👨‍🍳 cocina@alinas.bar<br>
                 Contraseña: demo123
             </div>
+
+            <div class="connection-status" id="connectionStatus">
+                ⏳ Conectando con la base de datos...
+            </div>
         </div>
     </div>
 
     <!-- PANTALLA: INICIO (MESAS) -->
     <div id="screenHome" class="screen-home hidden">
         <div class="home-actions">
+            <span class="sync-dot"></span>
             <span class="badge" id="userBadge">CAMARERO</span>
             <button class="logout-btn" onclick="logout()">SALIR</button>
         </div>
@@ -768,7 +794,7 @@
         <div class="categories-section" id="categoriesSection"></div>
 
         <div class="comanda-bottom">
-            <div class="comanda-title">📋 COMANDA</div>
+            <div class="comanda-title">📋 COMANDA ACTUAL</div>
             <div class="comanda-items" id="comandaItems"></div>
 
             <div class="comanda-totals">
@@ -797,13 +823,23 @@
     <!-- PANTALLA: COCINA -->
     <div id="screenKitchen" class="screen-kitchen hidden">
         <div class="kitchen-header">
+            <span class="sync-dot" style="position:absolute; top:0; right:0;"></span>
             <h1>👨‍🍳 COCINA</h1>
-            <p id="kitchenTime">Cargando órdenes...</p>
+            <p id="kitchenTime">Esperando órdenes...</p>
         </div>
         <div class="kitchen-orders" id="kitchenOrders"></div>
     </div>
 
     <script>
+        // ============================================
+        // SUPABASE CONFIG
+        // ============================================
+
+        const SUPABASE_URL = 'https://fasrtzqwbacchxrffxxm.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_HQOOb239BGQKhxSBgbX01w_zXyp0VA9';
+
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         // ============================================
         // ESTADO GLOBAL
         // ============================================
@@ -812,72 +848,88 @@
             user: null,
             currentTable: null,
             currentOrder: [],
-            currentCategory: null,
-            categories: [],
-            products: [],
+            categories: [
+                { id: '1', name: 'Cervezas', icon: '🍺' },
+                { id: '2', name: 'Bebidas', icon: '🥤' },
+                { id: '3', name: 'Desayunos', icon: '🥐' },
+                { id: '4', name: 'Cafés', icon: '☕' },
+                { id: '5', name: 'Refrescos', icon: '🧃' },
+                { id: '6', name: 'Tapas', icon: '🍤' },
+            ],
+            products: [
+                { id: '1', name: 'Caña', price: 2.50, category_id: '1', icon: '🍺' },
+                { id: '2', name: 'Botellín', price: 3.00, category_id: '1', icon: '🍾' },
+                { id: '3', name: 'Tercio', price: 4.00, category_id: '1', icon: '🍻' },
+                { id: '4', name: 'Agua', price: 1.50, category_id: '2', icon: '💧' },
+                { id: '5', name: 'Coca', price: 2.00, category_id: '2', icon: '🥤' },
+                { id: '6', name: 'Fanta', price: 2.00, category_id: '2', icon: '🧡' },
+                { id: '7', name: 'Tostada', price: 2.50, category_id: '3', icon: '🍞' },
+                { id: '8', name: 'Croissant', price: 2.00, category_id: '3', icon: '🥐' },
+                { id: '9', name: 'Churro', price: 1.50, category_id: '3', icon: '🍮' },
+                { id: '10', name: 'Café Solo', price: 1.50, category_id: '4', icon: '☕' },
+                { id: '11', name: 'Café Leche', price: 2.00, category_id: '4', icon: '🥛' },
+                { id: '12', name: 'Cortado', price: 1.75, category_id: '4', icon: '☕' },
+                { id: '13', name: 'Zumo', price: 2.50, category_id: '5', icon: '🍊' },
+                { id: '14', name: 'Refresco', price: 1.50, category_id: '5', icon: '🧃' },
+                { id: '15', name: 'Aceitunas', price: 1.50, category_id: '6', icon: '🫒' },
+                { id: '16', name: 'Jamón', price: 3.50, category_id: '6', icon: '🍖' },
+            ],
             tables: [],
             orders: [],
+            users: [
+                { email: 'camarero@alinas.bar', password: 'demo123', role: 'camarero' },
+                { email: 'cocina@alinas.bar', password: 'demo123', role: 'cocina' },
+            ],
         };
 
         // ============================================
-        // BASE DE DATOS LOCAL
+        // SUPABASE: CARGAR DATOS
         // ============================================
 
-        class DB {
-            static init() {
-                if (!localStorage.getItem('alinas_v5_init')) {
-                    const categories = [
-                        { id: '1', name: 'Cervezas', icon: '🍺' },
-                        { id: '2', name: 'Bebidas', icon: '🥤' },
-                        { id: '3', name: 'Desayunos', icon: '🥐' },
-                        { id: '4', name: 'Cafés', icon: '☕' },
-                        { id: '5', name: 'Refrescos', icon: '🧃' },
-                        { id: '6', name: 'Tapas', icon: '🍤' },
-                    ];
-
-                    const products = [
-                        { id: '1', name: 'Caña', price: 2.50, category_id: '1', icon: '🍺' },
-                        { id: '2', name: 'Botellín', price: 3.00, category_id: '1', icon: '🍾' },
-                        { id: '3', name: 'Tercio', price: 4.00, category_id: '1', icon: '🍻' },
-                        { id: '4', name: 'Agua', price: 1.50, category_id: '2', icon: '💧' },
-                        { id: '5', name: 'Coca', price: 2.00, category_id: '2', icon: '🥤' },
-                        { id: '6', name: 'Fanta', price: 2.00, category_id: '2', icon: '🧡' },
-                        { id: '7', name: 'Tostada', price: 2.50, category_id: '3', icon: '🍞' },
-                        { id: '8', name: 'Croissant', price: 2.00, category_id: '3', icon: '🥐' },
-                        { id: '9', name: 'Churro', price: 1.50, category_id: '3', icon: '🍮' },
-                        { id: '10', name: 'Café Solo', price: 1.50, category_id: '4', icon: '☕' },
-                        { id: '11', name: 'Café Leche', price: 2.00, category_id: '4', icon: '🥛' },
-                        { id: '12', name: 'Cortado', price: 1.75, category_id: '4', icon: '☕' },
-                        { id: '13', name: 'Zumo', price: 2.50, category_id: '5', icon: '🍊' },
-                        { id: '14', name: 'Refresco', price: 1.50, category_id: '5', icon: '🧃' },
-                        { id: '15', name: 'Aceitunas', price: 1.50, category_id: '6', icon: '🫒' },
-                        { id: '16', name: 'Jamón', price: 3.50, category_id: '6', icon: '🍖' },
-                    ];
-
-                    const tables = [];
-                    for (let i = 1; i <= 13; i++) tables.push({ id: 't' + i, name: 'T' + i, total: 0, consumed: [] });
-                    for (let i = 1; i <= 6; i++) tables.push({ id: 'b' + i, name: 'B' + i, total: 0, consumed: [] });
-                    for (let i = 1; i <= 4; i++) tables.push({ id: 's' + i, name: 'S' + i, total: 0, consumed: [] });
-
-                    localStorage.setItem('alinas_v5_categories', JSON.stringify(categories));
-                    localStorage.setItem('alinas_v5_products', JSON.stringify(products));
-                    localStorage.setItem('alinas_v5_tables', JSON.stringify(tables));
-                    localStorage.setItem('alinas_v5_orders', JSON.stringify([]));
-                    localStorage.setItem('alinas_v5_users', JSON.stringify([
-                        { id: '1', email: 'camarero@alinas.bar', password: 'demo123', name: 'Camarero', role: 'camarero' },
-                        { id: '2', email: 'cocina@alinas.bar', password: 'demo123', name: 'Cocina', role: 'cocina' },
-                    ]));
-                    localStorage.setItem('alinas_v5_init', 'true');
-                }
+        async function loadTables() {
+            const { data, error } = await supabaseClient.from('tables').select('*').order('id');
+            if (error) {
+                console.error('Error cargando mesas:', error);
+                return;
             }
+            STATE.tables = data;
+        }
 
-            static get(key) {
-                return JSON.parse(localStorage.getItem(key) || '[]');
+        async function loadOrders() {
+            const { data, error } = await supabaseClient.from('orders').select('*').order('created_at', { ascending: false });
+            if (error) {
+                console.error('Error cargando órdenes:', error);
+                return;
             }
+            STATE.orders = data;
+        }
 
-            static set(key, value) {
-                localStorage.setItem(key, JSON.stringify(value));
-            }
+        // ============================================
+        // SUPABASE: REALTIME SUBSCRIPTIONS
+        // ============================================
+
+        function setupRealtimeSubscriptions() {
+            supabaseClient
+                .channel('tables-changes')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'tables' }, (payload) => {
+                    loadTables().then(() => {
+                        if (!document.getElementById('screenHome').classList.contains('hidden')) {
+                            renderMesas();
+                        }
+                    });
+                })
+                .subscribe();
+
+            supabaseClient
+                .channel('orders-changes')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+                    loadOrders().then(() => {
+                        if (!document.getElementById('screenKitchen').classList.contains('hidden')) {
+                            renderKitchenOrders();
+                        }
+                    });
+                })
+                .subscribe();
         }
 
         // ============================================
@@ -888,8 +940,7 @@
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const users = DB.get('alinas_v5_users');
-            const user = users.find(u => u.email === email && u.password === password);
+            const user = STATE.users.find(u => u.email === email && u.password === password);
 
             if (user) {
                 STATE.user = user;
@@ -923,19 +974,15 @@
         // PANTALLA: INICIO
         // ============================================
 
-        function showHomeScreen() {
+        async function showHomeScreen() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('screenHome').classList.remove('hidden');
             document.getElementById('screenComanda').classList.add('hidden');
             document.getElementById('screenKitchen').classList.add('hidden');
 
-            STATE.categories = DB.get('alinas_v5_categories');
-            STATE.products = DB.get('alinas_v5_products');
-            STATE.tables = DB.get('alinas_v5_tables');
-            STATE.orders = DB.get('alinas_v5_orders');
-
             document.getElementById('userBadge').textContent = STATE.user.role.toUpperCase();
 
+            await loadTables();
             renderMesas();
         }
 
@@ -943,17 +990,18 @@
             const html = STATE.tables.map((table, idx) => `
                 <div class="mesa-item ${table.total > 0 ? 'ocupada' : ''}" onclick="selectMesa('${table.id}')">
                     <div class="mesa-num">${idx + 1}</div>
-                    ${table.total > 0 ? `<div class="mesa-total">${table.total.toFixed(2)}€</div>` : ''}
+                    ${table.total > 0 ? `<div class="mesa-total">${parseFloat(table.total).toFixed(2)}€</div>` : ''}
                 </div>
             `).join('');
             document.getElementById('mesasGrid').innerHTML = html;
         }
 
-        function selectMesa(tableId) {
+        async function selectMesa(tableId) {
             const table = STATE.tables.find(t => t.id === tableId);
             if (table) {
                 STATE.currentTable = table;
-                STATE.currentOrder = [];
+                // Recuperar la comanda en progreso de esta mesa (si la hay)
+                STATE.currentOrder = table.current_order || [];
                 showComandaScreen();
             }
         }
@@ -1004,7 +1052,6 @@
             const element = document.getElementById('cat-' + catId);
             const header = element.previousElementSibling;
 
-            // Cerrar todas las demás
             document.querySelectorAll('.category-products').forEach(el => {
                 if (el !== element) el.classList.remove('active');
             });
@@ -1012,12 +1059,11 @@
                 if (h !== header) h.classList.remove('active');
             });
 
-            // Toggle la actual
             element.classList.toggle('active');
             header.classList.toggle('active');
         }
 
-        function addProduct(productId) {
+        async function addProduct(productId) {
             const product = STATE.products.find(p => p.id === productId);
             const existing = STATE.currentOrder.find(item => item.product_id === productId);
 
@@ -1034,7 +1080,17 @@
             }
 
             updateComandaDisplay();
+            await saveCurrentOrderToTable();
             showToast(`✓ ${product.name}`);
+        }
+
+        // Guarda la comanda en progreso en Supabase (para que persista al volver a la mesa)
+        async function saveCurrentOrderToTable() {
+            if (!STATE.currentTable) return;
+            await supabaseClient
+                .from('tables')
+                .update({ current_order: STATE.currentOrder, updated_at: new Date().toISOString() })
+                .eq('id', STATE.currentTable.id);
         }
 
         function updateComandaDisplay() {
@@ -1059,19 +1115,21 @@
             document.getElementById('headerTotal').textContent = total.toFixed(2) + '€';
         }
 
-        function removeItem(idx) {
+        async function removeItem(idx) {
             STATE.currentOrder.splice(idx, 1);
             updateComandaDisplay();
+            await saveCurrentOrderToTable();
         }
 
-        function clearOrder() {
+        async function clearOrder() {
             if (confirm('¿Vaciar comanda?')) {
                 STATE.currentOrder = [];
                 updateComandaDisplay();
+                await saveCurrentOrderToTable();
             }
         }
 
-        function sendOrder() {
+        async function sendOrder() {
             if (STATE.currentOrder.length === 0) {
                 showToast('❌ Añade productos', 'error');
                 return;
@@ -1081,31 +1139,35 @@
             const vat = subtotal * 0.21;
             const total = subtotal + vat;
 
-            const order = {
-                id: Date.now(),
-                tableId: STATE.currentTable.id,
-                tableName: STATE.currentTable.name,
+            // 1. Crear la orden en Supabase (esto lo verá la cocina en tiempo real)
+            const { error: orderError } = await supabaseClient.from('orders').insert({
+                table_id: STATE.currentTable.id,
+                table_name: STATE.currentTable.name,
                 items: STATE.currentOrder,
-                total: total,
                 subtotal: subtotal,
                 vat: vat,
-                timestamp: new Date().toLocaleTimeString('es-ES'),
+                total: total,
                 status: 'pendiente',
-            };
+            });
 
-            STATE.orders.push(order);
-            DB.set('alinas_v5_orders', STATE.orders);
+            if (orderError) {
+                showToast('❌ Error al enviar', 'error');
+                console.error(orderError);
+                return;
+            }
 
-            // Actualizar mesa
-            STATE.currentTable.total += total;
-            STATE.currentTable.consumed.push(...STATE.currentOrder);
-            DB.set('alinas_v5_tables', STATE.tables);
+            // 2. Actualizar el total de la mesa y limpiar la comanda en progreso
+            const newTotal = parseFloat(STATE.currentTable.total) + total;
+            await supabaseClient
+                .from('tables')
+                .update({ total: newTotal, current_order: [], updated_at: new Date().toISOString() })
+                .eq('id', STATE.currentTable.id);
 
             showToast('✓ Comanda enviada a cocina');
             STATE.currentOrder = [];
             updateComandaDisplay();
 
-            setTimeout(() => goHome(), 1500);
+            setTimeout(() => goHome(), 1200);
         }
 
         function printOrder() {
@@ -1143,24 +1205,19 @@
         // PANTALLA: COCINA
         // ============================================
 
-        function showKitchenScreen() {
+        async function showKitchenScreen() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('screenHome').classList.add('hidden');
             document.getElementById('screenComanda').classList.add('hidden');
             document.getElementById('screenKitchen').classList.remove('hidden');
 
-            STATE.orders = DB.get('alinas_v5_orders');
-
-            setInterval(() => {
-                STATE.orders = DB.get('alinas_v5_orders');
-                renderKitchenOrders();
-            }, 1000);
-
+            await loadOrders();
             renderKitchenOrders();
         }
 
         function renderKitchenOrders() {
             const pendingOrders = STATE.orders.filter(o => o.status === 'pendiente');
+            document.getElementById('kitchenTime').textContent = pendingOrders.length + ' orden(es) pendiente(s)';
 
             if (pendingOrders.length === 0) {
                 document.getElementById('kitchenOrders').innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 3rem; color: #9ca3af;">✓ Todas las órdenes completadas</div>';
@@ -1170,8 +1227,8 @@
             const html = pendingOrders.map(order => `
                 <div class="kitchen-card">
                     <div class="kitchen-card-header">
-                        <div class="kitchen-card-mesa">🏠 ${order.tableName}</div>
-                        <div class="kitchen-card-time">${order.timestamp}</div>
+                        <div class="kitchen-card-mesa">🏠 ${order.table_name}</div>
+                        <div class="kitchen-card-time">${new Date(order.created_at).toLocaleTimeString('es-ES', {hour:'2-digit', minute:'2-digit'})}</div>
                     </div>
                     <div class="kitchen-card-items">
                         ${order.items.map(item => `
@@ -1191,21 +1248,14 @@
             document.getElementById('kitchenOrders').innerHTML = html;
         }
 
-        function completeOrder(orderId) {
-            const order = STATE.orders.find(o => o.id === orderId);
-            if (order) {
-                order.status = 'completada';
-                DB.set('alinas_v5_orders', STATE.orders);
-                renderKitchenOrders();
-                showToast('✓ Orden completada');
-            }
+        async function completeOrder(orderId) {
+            await supabaseClient.from('orders').update({ status: 'completada' }).eq('id', orderId);
+            showToast('✓ Orden completada');
         }
 
-        function cancelOrder(orderId) {
+        async function cancelOrder(orderId) {
             if (confirm('¿Cancelar orden?')) {
-                STATE.orders = STATE.orders.filter(o => o.id !== orderId);
-                DB.set('alinas_v5_orders', STATE.orders);
-                renderKitchenOrders();
+                await supabaseClient.from('orders').delete().eq('id', orderId);
                 showToast('✓ Orden cancelada');
             }
         }
@@ -1226,11 +1276,20 @@
         // INICIO
         // ============================================
 
-        document.addEventListener('DOMContentLoaded', () => {
-            DB.init();
+        document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById('loginForm').addEventListener('submit', login);
 
-            // Si es cocina, mostrar pantalla de cocina
+            try {
+                await loadTables();
+                document.getElementById('connectionStatus').textContent = '✓ Conectado a la base de datos';
+                document.getElementById('connectionStatus').className = 'connection-status online';
+            } catch (e) {
+                document.getElementById('connectionStatus').textContent = '❌ Error de conexión';
+                document.getElementById('connectionStatus').className = 'connection-status offline';
+            }
+
+            setupRealtimeSubscriptions();
+
             const url = new URLSearchParams(window.location.search);
             if (url.get('kitchen') === 'true') {
                 STATE.user = { role: 'cocina' };
