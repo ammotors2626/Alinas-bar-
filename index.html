@@ -173,7 +173,54 @@ const CATS=[
 ];
 
 const PRODS=[
- // CERVEZAS / VINOS
+ // ===== ENTRANTES (carta real) =====
+ {c:'entrantes',n:'Bolsa patatas fritas',p:1.50},{c:'entrantes',n:'Bicicleta',p:2.00},{c:'entrantes',n:'Marinera',p:2.50},
+ {c:'entrantes',n:'Olivas',p:1.50},{c:'entrantes',n:'Ración ensaladilla Rusa',p:4.50},{c:'entrantes',n:'Aros de cebolla (8)',p:5.00},
+ {c:'entrantes',n:'Croquetas jamón (6)',p:5.00},{c:'entrantes',n:'Palitos Mozzarella',p:6.00},{c:'entrantes',n:'Patatas Bravas',p:6.00},
+ {c:'entrantes',n:'Rollitos primavera',p:5.00},{c:'entrantes',n:'Fingers de pollo',p:6.00},{c:'entrantes',n:'Patatas fritas y olivas',p:3.50},
+ {c:'entrantes',n:'Tortilla patatas (pincho)',p:3.00},{c:'entrantes',n:'Mejillones',p:6.50},{c:'entrantes',n:'Berberechos',p:9.50},
+ {c:'entrantes',n:'Nachos Alina',p:9.50},{c:'entrantes',n:'Bacon Cheese fries',p:9.50},{c:'entrantes',n:'Huevos rotos',p:10.50},
+ {c:'entrantes',n:'Patatas Baby Ali-oli',p:4.50},{c:'entrantes',n:'Tabla de queso',p:10.50},{c:'entrantes',n:'Provolone',p:8.00},
+ {c:'entrantes',n:'Champiñones Parmesano',p:8.00},{c:'entrantes',n:'Tomate partido',p:5.00},
+ // ===== ENSALADAS =====
+ {c:'ensaladas',n:'Ensalada César',p:10.50},{c:'ensaladas',n:'Ensalada de atún',p:8.50},
+ {c:'ensaladas',n:"Alina's garden",p:9.00},{c:'ensaladas',n:'Gran ensalada',p:15.00},
+ // ===== HOT DOGS =====
+ {c:'hotdogs',n:'Especial',p:6.50},{c:'hotdogs',n:'Americanito',p:6.00},{c:'hotdogs',n:'Simple',p:5.50},
+ // ===== BOCADILLOS =====
+ {c:'bocadillos',n:'Catalán',p:5.00},{c:'bocadillos',n:'Granjero',p:6.50},{c:'bocadillos',n:'Fronterizo',p:6.50},
+ {c:'bocadillos',n:'Puerto',p:8.50},{c:'bocadillos',n:'Campero',p:6.50},{c:'bocadillos',n:'Vegetal',p:6.50},
+ {c:'bocadillos',n:'Primavera',p:6.50},{c:'bocadillos',n:'Tortilla de patatas',p:5.00},{c:'bocadillos',n:'Tortilla francesa',p:4.50},
+ {c:'bocadillos',n:'Sandwich Mixto',p:3.50},
+ // ===== HAMBURGUESAS =====
+ {c:'hamburguesas',n:'Simple',p:9.00},{c:'hamburguesas',n:'Completa',p:12.00},
+ {c:'hamburguesas',n:"Alina's Burguer",p:14.00},{c:'hamburguesas',n:'Especial',p:15.00},
+ // ===== PLATOS COMBINADOS =====
+ {c:'combinados',n:'Pollo',p:9.00},{c:'combinados',n:'Lomo',p:8.50},{c:'combinados',n:'Escalope',p:9.50},
+ {c:'combinados',n:'Pechuga empanada',p:10.50},{c:'combinados',n:'Envase para llevar',p:0.50},
+ // ===== CAFES / TES (carta desayunos) =====
+ {c:'cafes',n:'Solo',p:1.20},{c:'cafes',n:'Cortado',p:1.30},{c:'cafes',n:'Bombón',p:1.30},
+ {c:'cafes',n:'Americano',p:1.40},{c:'cafes',n:'Americano con leche',p:1.50},{c:'cafes',n:'Americano Baileys',p:1.70},
+ {c:'cafes',n:'Café con leche',p:1.50},{c:'cafes',n:'C/leche desnat. o vegetal',p:1.70},{c:'cafes',n:'Café leche grande',p:2.00},
+ {c:'cafes',n:'Carajillo',p:1.70},{c:'cafes',n:'Belmonte',p:1.70},{c:'cafes',n:'Canario',p:1.70},
+ {c:'cafes',n:'Canario con Baileys',p:2.00},{c:'cafes',n:'Capuchino',p:2.00},{c:'cafes',n:'Asiático',p:2.50},
+ {c:'cafes',n:'Irlandés',p:4.50},{c:'cafes',n:'Cola Cao',p:2.00},{c:'cafes',n:'Chocolate a la taza',p:2.00},
+ {c:'cafes',n:'Vaso de leche',p:1.30},
+ {c:'cafes',n:'Té Normal',p:1.20},{c:'cafes',n:'Té Pirámide',p:1.50},{c:'cafes',n:'Té con leche',p:1.50},{c:'cafes',n:'TEWI',p:2.00},
+ {c:'cafes',n:'Vaso llevar bebida',p:0.10},
+ // ===== DESAYUNOS: TOSTADAS + BOLLERIA + ZUMOS =====
+ {c:'desayunos',n:'Mantequilla y mermelada',p:1.50},{c:'desayunos',n:'Aceite',p:1.50},{c:'desayunos',n:'Tomate y aceite',p:1.50},
+ {c:'desayunos',n:'Tomate y atún',p:2.00},{c:'desayunos',n:'Tomate y queso',p:2.00},{c:'desayunos',n:'Tomate y aguacate',p:2.00},
+ {c:'desayunos',n:'Tomate y serrano',p:2.30},{c:'desayunos',n:'Tomate, q.fresco y aguacate',p:2.30},{c:'desayunos',n:'Tomate, atún y aguacate',p:2.50},
+ {c:'desayunos',n:'Tomate, atún y q.fresco',p:2.50},{c:'desayunos',n:'Tomate, atún, queso, aguac.',p:3.00},{c:'desayunos',n:'Sobrasada',p:2.00},
+ {c:'desayunos',n:'Jamón york y queso',p:2.30},{c:'desayunos',n:'Tomate, york y queso',p:2.70},{c:'desayunos',n:'Tomate, serrano y queso',p:2.70},
+ {c:'desayunos',n:'Salmón y queso crema',p:3.00},{c:'desayunos',n:'Salmón y tomate',p:3.00},{c:'desayunos',n:'Salmón + 2 ingred.',p:3.50},
+ {c:'desayunos',n:'Salmón + 3 ingred.',p:4.00},{c:'desayunos',n:'Salmón + 4 ingred.',p:4.50},
+ {c:'desayunos',n:'1 huevo frito y 2 bacon',p:3.00},{c:'desayunos',n:'2 huevos fritos y 2 bacon',p:3.50},{c:'desayunos',n:'3 huevos revueltos 2 bacon',p:4.00},
+ {c:'desayunos',n:'Madalena',p:1.00},{c:'desayunos',n:'Croissant',p:2.00},{c:'desayunos',n:'Croissant mermel. y manteq.',p:2.50},
+ {c:'desayunos',n:'Croissant york y queso',p:3.00},{c:'desayunos',n:'Napolitana',p:2.00},
+ {c:'desayunos',n:'Zumo natural naranja',p:2.50},{c:'desayunos',n:'Zumo botella',p:1.80},
+ // ===== CERVEZAS / VINOS =====
  {c:'cervezas',n:'Caña',p:2.50},{c:'cervezas',n:'Clara Caña',p:2.50},{c:'cervezas',n:'Tanque',p:4.00},
  {c:'cervezas',n:'Clara Tanque',p:4.00},{c:'cervezas',n:'Coronita',p:3.50},{c:'cervezas',n:'Alhambra 1925',p:3.50},
  {c:'cervezas',n:'San Miguel Tercio',p:3.00},{c:'cervezas',n:'1/3 Estrella Galicia',p:3.20},{c:'cervezas',n:'Mahou',p:3.00},
@@ -186,73 +233,36 @@ const PRODS=[
  {c:'cervezas',n:'Paulaner',p:4.50},{c:'cervezas',n:'Alemana',p:4.50},{c:'cervezas',n:'Tercio Levante',p:3.50},
  {c:'cervezas',n:'Quinto Levante',p:2.50},{c:'cervezas',n:'Verna',p:3.50},{c:'cervezas',n:'Cubana',p:3.50},
  {c:'cervezas',n:'Tercio Levante 00',p:3.50},
- // VINOS
+ // ===== VINOS =====
  {c:'vinos',n:'Copa Vino Blanco',p:2.50},{c:'vinos',n:'Copa Vino Tinto',p:2.50},{c:'vinos',n:'Copa Vino Rosado',p:2.50},
  {c:'vinos',n:'Botella Vino Blanco',p:12.00},{c:'vinos',n:'Botella Vino Tinto',p:12.00},{c:'vinos',n:'Botella Vino Rosado',p:12.00},
- // REFRESCOS
+ // ===== REFRESCOS =====
  {c:'refrescos',n:'Coca Cola',p:2.50},{c:'refrescos',n:'Coca Cola 0',p:2.50},{c:'refrescos',n:'Fanta Naranja',p:2.50},
  {c:'refrescos',n:'Fanta Limón',p:2.50},{c:'refrescos',n:'7UP',p:2.50},{c:'refrescos',n:'Aquarius',p:2.50},
  {c:'refrescos',n:'Nestea',p:2.50},{c:'refrescos',n:'Tónica',p:2.50},{c:'refrescos',n:'Bitter Kas',p:2.50},
  {c:'refrescos',n:'Red Bull',p:3.50},{c:'refrescos',n:'Casera',p:2.00},{c:'refrescos',n:'Agua Grande',p:2.50},
  {c:'refrescos',n:'Agua Medio L',p:1.50},{c:'refrescos',n:'Monster',p:3.50},{c:'refrescos',n:'Agua con Gas',p:2.00},
- {c:'refrescos',n:'Zumo Botella',p:2.50},{c:'refrescos',n:'Zumo Natural',p:3.50},{c:'refrescos',n:'Choleck',p:2.00},
+ {c:'refrescos',n:'Zumo Botella',p:1.80},{c:'refrescos',n:'Zumo Natural',p:2.50},{c:'refrescos',n:'Choleck',p:2.00},
  {c:'refrescos',n:'Bolsa de Hielo',p:2.00},
- // CAFES / TES
- {c:'cafes',n:'Café Solo',p:1.50},{c:'cafes',n:'Cortado',p:1.60},{c:'cafes',n:'Bombón',p:2.00},
- {c:'cafes',n:'Café Americano',p:2.00},{c:'cafes',n:'Café con Leche',p:1.80},{c:'cafes',n:'Carajillo',p:2.50},
- {c:'cafes',n:'Belmonte',p:2.50},{c:'cafes',n:'Canario',p:2.20},{c:'cafes',n:'Americano/Baileys',p:3.50},
- {c:'cafes',n:'Cola Cao',p:2.00},{c:'cafes',n:'Chocolate a la Taza',p:2.50},{c:'cafes',n:'Asiático',p:3.50},
- {c:'cafes',n:'Capuchino',p:2.50},{c:'cafes',n:'Irlandés',p:3.50},{c:'cafes',n:'Té Normal',p:1.80},
- {c:'cafes',n:'Té Pirámide',p:2.00},{c:'cafes',n:'Té con Leche',p:2.00},{c:'cafes',n:'Vaso de Leche',p:1.50},
- {c:'cafes',n:'Café con Leche Llevar',p:1.90},{c:'cafes',n:'Tewi',p:2.00},{c:'cafes',n:'Café con Leche Grande',p:2.50},
- {c:'cafes',n:'C/Leche Vegetal',p:2.20},{c:'cafes',n:'Vaso para Llevar',p:0.30},{c:'cafes',n:'Hielo',p:0.50},
- // HELADOS / POSTRES
+ // ===== HELADOS / POSTRES =====
  {c:'postres',n:'Helados Copa',p:4.50},{c:'postres',n:'Crepe',p:4.00},{c:'postres',n:'Crepe con Helado',p:5.50},
- {c:'postres',n:'Gofres',p:4.50},{c:'postres',n:'Magdalena',p:1.50},{c:'postres',n:'Churros',p:3.00},
+ {c:'postres',n:'Gofres',p:4.50},{c:'postres',n:'Magdalena',p:1.00},{c:'postres',n:'Churros',p:3.00},
  {c:'postres',n:'Natilla',p:2.50},{c:'postres',n:'Gelatina',p:2.50},{c:'postres',n:'Bombón Almendrado',p:2.50},
  {c:'postres',n:'Conos',p:2.00},{c:'postres',n:'Frutas',p:3.00},{c:'postres',n:'Napolitanas',p:2.00},
  {c:'postres',n:'Media Luna',p:2.00},
- // CARNES
+ // ===== CARNES =====
  {c:'carnes',n:'Entrecot',p:16.00},{c:'carnes',n:'Solomillo',p:18.00},{c:'carnes',n:'Churrasco',p:14.00},
- // ENSALADAS
- {c:'ensaladas',n:"Alina's Garden",p:9.50},{c:'ensaladas',n:'Ensalada de Atún',p:8.50},
- {c:'ensaladas',n:'Ensalada César',p:9.00},{c:'ensaladas',n:'Gran Ensalada',p:10.00},
- // PLATOS COMBINADOS
- {c:'combinados',n:'Combinado Pollo',p:10.00},{c:'combinados',n:'Combinado Lomo',p:10.00},{c:'combinados',n:'Combinado Escalope',p:10.00},
- {c:'combinados',n:'Comida Cubana',p:11.00},{c:'combinados',n:'Ración de Pan',p:1.80},{c:'combinados',n:'Ensalada',p:8.00},
- {c:'combinados',n:'Arroz Frito Menú',p:9.00},{c:'combinados',n:'Pechuga Empanada',p:9.50},{c:'combinados',n:'Pan Ración',p:1.80},
- {c:'combinados',n:'Huevos y Patatas',p:8.00},{c:'combinados',n:'Cena Fin de Año',p:35.00},{c:'combinados',n:'Emperador',p:14.00},
- {c:'combinados',n:'Empanadas Atún/Huevo',p:3.50},{c:'combinados',n:'Empanadas Ternera',p:3.50},
- // COPAS / COCKTAILS
+ // ===== COPAS / COCKTAILS =====
  {c:'copas',n:'Copas',p:7.00},{c:'copas',n:'Copas Solo',p:6.00},{c:'copas',n:'Copas Premium',p:9.00},
  {c:'copas',n:'Licores',p:4.00},{c:'copas',n:'Baileys',p:4.50},{c:'copas',n:'Licor 43',p:4.50},
  {c:'copas',n:'Mojito',p:8.00},{c:'copas',n:'Caipiriña',p:8.00},{c:'copas',n:'White Russian',p:8.00},
- {c:'copas',n:'Brandy',p:4.50},{c:'copas',n:'Apperol',p:7.00},{c:'copas',n:'Chuptio Normal',p:2.50},
+ {c:'copas',n:'Brandy',p:4.50},{c:'copas',n:'Apperol',p:7.00},{c:'copas',n:'Chupito Normal',p:2.50},
  {c:'copas',n:'Whiskey Vaso',p:6.00},{c:'copas',n:'Campari',p:5.00},{c:'copas',n:'Vaso Ron',p:6.00},
- // VARIOS (submenús del TPV convertidos en productos directos)
+ // ===== VARIOS =====
  {c:'varios',n:'Tapa + Caña',p:4.00},{c:'varios',n:'Pan y Mantequilla',p:2.50},{c:'varios',n:'Fajitas',p:9.00},
  {c:'varios',n:'Calimocho',p:3.50},{c:'varios',n:'Brocheta Atún y Queso',p:6.50},{c:'varios',n:'Pincho Pulpo',p:6.00},
- {c:'varios',n:'Dos Huevos y Patatas',p:8.00},{c:'varios',n:'Ensalada Simple',p:6.00},{c:'varios',n:'Tostada Bacon',p:4.50},
- {c:'varios',n:'Pan y Alioli',p:3.00},{c:'varios',n:'Snacks',p:3.00},
- // ENTRANTES
- {c:'entrantes',n:'Starters',p:6.00},{c:'entrantes',n:'Patatas Bravas',p:5.50},{c:'entrantes',n:'Croquetas',p:6.50},
- {c:'entrantes',n:'Calamares',p:9.50},{c:'entrantes',n:'Alitas de Pollo',p:7.50},{c:'entrantes',n:'Nachos',p:7.00},
- {c:'entrantes',n:'Aceitunas',p:2.50},{c:'entrantes',n:'Jamón',p:12.00},{c:'entrantes',n:'Queso',p:9.00},
- // DESAYUNOS
- {c:'desayunos',n:'Tostada',p:2.50},{c:'desayunos',n:'Tostada Tomate',p:3.00},{c:'desayunos',n:'Tostada Jamón',p:4.00},
- {c:'desayunos',n:'Tostada Bacon',p:4.50},{c:'desayunos',n:'Croissant',p:2.20},{c:'desayunos',n:'Croissant Mixto',p:4.00},
- {c:'desayunos',n:'Churros',p:3.00},{c:'desayunos',n:'Tortitas',p:5.00},{c:'desayunos',n:'Huevos Revueltos',p:5.50},
- {c:'desayunos',n:'Desayuno Completo',p:7.50},{c:'desayunos',n:'Napolitana',p:2.00},{c:'desayunos',n:'Media Luna',p:2.00},
- // BOCADILLOS
- {c:'bocadillos',n:'Bocadillo Jamón',p:5.50},{c:'bocadillos',n:'Bocadillo Queso',p:5.00},{c:'bocadillos',n:'Bocadillo Mixto',p:5.50},
- {c:'bocadillos',n:'Bocadillo Lomo',p:6.00},{c:'bocadillos',n:'Bocadillo Tortilla',p:5.50},{c:'bocadillos',n:'Bocadillo Bacon',p:6.00},
- {c:'bocadillos',n:'Bocadillo Pollo',p:6.00},{c:'bocadillos',n:'Bocadillo Calamares',p:6.50},{c:'bocadillos',n:'Bocadillo Vegetal',p:5.50},
- // HAMBURGUESAS
- {c:'hamburguesas',n:'Hamburguesa Simple',p:7.50},{c:'hamburguesas',n:'Hamburguesa Doble',p:10.00},{c:'hamburguesas',n:'Hamburguesa Pollo',p:8.00},
- {c:'hamburguesas',n:'Hamburguesa Bacon',p:9.00},{c:'hamburguesas',n:'Hamburguesa Queso',p:8.50},{c:'hamburguesas',n:'Hamburguesa Vegetal',p:8.00},
- // HOT DOGS
- {c:'hotdogs',n:'Hot Dog Simple',p:5.00},{c:'hotdogs',n:'Hot Dog Doble',p:7.00},{c:'hotdogs',n:'Hot Dog Queso',p:6.00},
- {c:'hotdogs',n:'Hot Dog Bacon',p:6.50}
+ {c:'varios',n:'Pan y Alioli',p:3.00},{c:'varios',n:'Ración de Pan',p:1.80},{c:'varios',n:'Envase para llevar',p:0.50},
+ {c:'varios',n:'Vaso llevar bebida',p:0.10}
 ];
 
 // dar id a cada producto
