@@ -436,6 +436,43 @@
             margin-bottom: 0.5rem;
         }
 
+        .consumed-section {
+            background: #0d0d0d;
+            padding: 0.6rem;
+            border-bottom: 1px solid #333;
+            max-height: 22%;
+            overflow-y: auto;
+        }
+
+        .consumed-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #9ca3af;
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+        }
+
+        .consumed-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            padding: 0.25rem 0;
+            color: #ccc;
+        }
+
+        .consumed-empty {
+            font-size: 0.75rem;
+            color: #666;
+            text-align: center;
+            padding: 0.4rem;
+        }
+
+        .btn-close-account {
+            background: #dc2626;
+            color: #fff;
+            grid-column: 1 / -1;
+        }
+
         .comanda-items {
             flex: 1;
             overflow-y: auto;
@@ -791,10 +828,15 @@
             </div>
         </div>
 
+        <div class="consumed-section" id="consumedSection">
+            <div class="consumed-title">🧾 Ya pedido en esta mesa</div>
+            <div id="consumedItems"></div>
+        </div>
+
         <div class="categories-section" id="categoriesSection"></div>
 
         <div class="comanda-bottom">
-            <div class="comanda-title">📋 COMANDA ACTUAL</div>
+            <div class="comanda-title">📋 NUEVO PEDIDO (por enviar)</div>
             <div class="comanda-items" id="comandaItems"></div>
 
             <div class="comanda-totals">
@@ -816,6 +858,7 @@
                 <button class="action-btn btn-print" onclick="printOrder()">🖨️ IMPRIMIR</button>
                 <button class="action-btn btn-clear" onclick="clearOrder()">🗑️ LIMPIAR</button>
                 <button class="action-btn btn-send" onclick="sendOrder()">📤 ENVIAR A COCINA</button>
+                <button class="action-btn btn-close-account" onclick="closeAccount()">💰 COBRAR Y CERRAR MESA</button>
             </div>
         </div>
     </div>
@@ -832,13 +875,31 @@
 
     <script>
         // ============================================
-        // SUPABASE CONFIG
+        // SUPABASE CONFIG (con protección de errores)
         // ============================================
 
         const SUPABASE_URL = 'https://fasrtzqwbacchxrffxxm.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_HQOOb239BGQKhxSBgbX01w_zXyp0VA9';
 
-        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let supabaseClient = null;
+
+        function initSupabase() {
+            try {
+                if (typeof window.supabase === 'undefined') {
+                    throw new Error('La librería de Supabase no se cargó (revisa tu conexión a internet)');
+                }
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+                return true;
+            } catch (e) {
+                console.error('Error inicializando Supabase:', e);
+                const status = document.getElementById('connectionStatus');
+                if (status) {
+                    status.textContent = '❌ ' + e.message + ' — recarga la página';
+                    status.className = 'connection-status offline';
+                }
+                return false;
+            }
+        }
 
         // ============================================
         // ESTADO GLOBAL
@@ -886,13 +947,24 @@
         // SUPABASE: CARGAR DATOS
         // ============================================
 
+        // Orden fijo y correcto de las mesas (evita que Supabase las ordene mal alfabéticamente)
+        const TABLE_ORDER = [
+            't1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13',
+            'b1','b2','b3','b4','b5','b6',
+            's1','s2','s3','s4'
+        ];
+
         async function loadTables() {
-            const { data, error } = await supabaseClient.from('tables').select('*').order('id');
+            const { data, error } = await supabaseClient.from('tables').select('*');
             if (error) {
                 console.error('Error cargando mesas:', error);
-                return;
+                alert('❌ Error cargando mesas: ' + error.message);
+                throw error;
             }
-            STATE.tables = data;
+            // Reordenar según TABLE_ORDER para que siempre salgan T1, T2, T3... en orden
+            STATE.tables = TABLE_ORDER
+                .map(id => data.find(t => t.id === id))
+                .filter(t => t !== undefined);
         }
 
         async function loadOrders() {
@@ -938,6 +1010,15 @@
 
         function login(e) {
             e.preventDefault();
+
+            if (!supabaseClient) {
+                const ok = initSupabase();
+                if (!ok) {
+                    showToast('❌ Sin conexión a la base de datos. Recarga la página.', 'error');
+                    return;
+                }
+            }
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const user = STATE.users.find(u => u.email === email && u.password === password);
@@ -982,8 +1063,13 @@
 
             document.getElementById('userBadge').textContent = STATE.user.role.toUpperCase();
 
-            await loadTables();
-            renderMesas();
+            try {
+                await loadTables();
+                renderMesas();
+            } catch (e) {
+                console.error('Error mostrando mesas:', e);
+                document.getElementById('mesasGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#ef4444;">❌ Error al cargar las mesas. Revisa la conexión a Supabase.</div>';
+            }
         }
 
         function renderMesas() {
@@ -1017,7 +1103,36 @@
             document.getElementById('headerMesa').textContent = STATE.currentTable.name;
 
             renderCategories();
+            renderConsumed();
             updateComandaDisplay();
+        }
+
+        // Muestra todo lo que ya se ha ENVIADO a cocina en esta mesa (histórico acumulado)
+        function renderConsumed() {
+            const consumed = STATE.currentTable.consumed || [];
+
+            if (consumed.length === 0) {
+                document.getElementById('consumedItems').innerHTML = '<div class="consumed-empty">Nada pedido todavía</div>';
+                return;
+            }
+
+            // Agrupar por producto para no repetir líneas
+            const grouped = {};
+            consumed.forEach(item => {
+                if (!grouped[item.product_id]) {
+                    grouped[item.product_id] = { ...item, quantity: 0 };
+                }
+                grouped[item.product_id].quantity += item.quantity;
+            });
+
+            const html = Object.values(grouped).map(item => `
+                <div class="consumed-item">
+                    <span>${item.icon} ${item.quantity}x ${item.name}</span>
+                    <span>${(item.price * item.quantity).toFixed(2)}€</span>
+                </div>
+            `).join('');
+
+            document.getElementById('consumedItems').innerHTML = html;
         }
 
         function renderCategories() {
@@ -1112,7 +1227,11 @@
             document.getElementById('subtotal').textContent = subtotal.toFixed(2) + '€';
             document.getElementById('totalVat').textContent = vat.toFixed(2) + '€';
             document.getElementById('totalPrice').textContent = total.toFixed(2) + '€';
-            document.getElementById('headerTotal').textContent = total.toFixed(2) + '€';
+
+            // Total de cabecera = lo ya enviado a cocina (acumulado) + lo que hay en el carrito sin enviar
+            const yaEnviado = parseFloat(STATE.currentTable.total) || 0;
+            const granTotal = yaEnviado + total;
+            document.getElementById('headerTotal').textContent = granTotal.toFixed(2) + '€';
         }
 
         async function removeItem(idx) {
@@ -1156,18 +1275,63 @@
                 return;
             }
 
-            // 2. Actualizar el total de la mesa y limpiar la comanda en progreso
+            // 2. Actualizar el total de la mesa, acumular en el histórico "consumed" y limpiar el carrito
             const newTotal = parseFloat(STATE.currentTable.total) + total;
+            const newConsumed = [...(STATE.currentTable.consumed || []), ...STATE.currentOrder];
+
             await supabaseClient
                 .from('tables')
-                .update({ total: newTotal, current_order: [], updated_at: new Date().toISOString() })
+                .update({ total: newTotal, consumed: newConsumed, current_order: [], updated_at: new Date().toISOString() })
                 .eq('id', STATE.currentTable.id);
+
+            // Actualizar estado local para que se refleje al instante
+            STATE.currentTable.total = newTotal;
+            STATE.currentTable.consumed = newConsumed;
 
             showToast('✓ Comanda enviada a cocina');
             STATE.currentOrder = [];
+            renderConsumed();
             updateComandaDisplay();
 
             setTimeout(() => goHome(), 1200);
+        }
+
+        // ============================================
+        // COBRAR Y CERRAR MESA (contabilidad)
+        // ============================================
+
+        async function closeAccount() {
+            const table = STATE.currentTable;
+            const totalMesa = parseFloat(table.total) || 0;
+
+            if (totalMesa === 0 && STATE.currentOrder.length === 0) {
+                showToast('❌ Esta mesa no tiene consumo', 'error');
+                return;
+            }
+
+            if (STATE.currentOrder.length > 0) {
+                showToast('❌ Envía o limpia el pedido pendiente antes de cobrar', 'error');
+                return;
+            }
+
+            if (!confirm(`¿Cobrar mesa ${table.name} por ${totalMesa.toFixed(2)}€ y cerrarla?`)) return;
+
+            // 1. Guardar en el historial de ventas (contabilidad)
+            await supabaseClient.from('sales_history').insert({
+                table_id: table.id,
+                table_name: table.name,
+                items: table.consumed || [],
+                total: totalMesa,
+            });
+
+            // 2. Resetear la mesa a cero
+            await supabaseClient
+                .from('tables')
+                .update({ total: 0, consumed: [], current_order: [], updated_at: new Date().toISOString() })
+                .eq('id', table.id);
+
+            showToast('✓ Mesa cobrada y cerrada');
+            setTimeout(() => goHome(), 1000);
         }
 
         function printOrder() {
