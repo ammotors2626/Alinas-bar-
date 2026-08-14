@@ -1045,6 +1045,10 @@
             STATE.user = null;
             STATE.currentTable = null;
             STATE.currentOrder = [];
+            if (kitchenPollInterval) {
+                clearInterval(kitchenPollInterval);
+                kitchenPollInterval = null;
+            }
             document.getElementById('loginScreen').style.display = 'flex';
             document.getElementById('screenHome').classList.add('hidden');
             document.getElementById('screenComanda').classList.add('hidden');
@@ -1369,6 +1373,8 @@
         // PANTALLA: COCINA
         // ============================================
 
+        let kitchenPollInterval = null;
+
         async function showKitchenScreen() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('screenHome').classList.add('hidden');
@@ -1377,6 +1383,13 @@
 
             await loadOrders();
             renderKitchenOrders();
+
+            // Respaldo: refresca cada 3 segundos por si el tiempo real falla en la red móvil
+            if (kitchenPollInterval) clearInterval(kitchenPollInterval);
+            kitchenPollInterval = setInterval(async () => {
+                await loadOrders();
+                renderKitchenOrders();
+            }, 3000);
         }
 
         function renderKitchenOrders() {
