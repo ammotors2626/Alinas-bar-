@@ -102,11 +102,16 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .or-del{background:#ef4444;color:#fff;border:none;width:1.3rem;height:1.3rem;border-radius:50%;font-size:.6rem;font-weight:800;flex-shrink:0}
 
 /* Acciones */
-.actions{display:grid;grid-template-columns:.7fr 1fr 1.4fr;gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
+.actions{display:grid;grid-template-columns:.6fr .9fr .9fr 1.3fr;gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
 .act{padding:.55rem .2rem;border:none;border-radius:.3rem;font-weight:800;font-size:.65rem}
 .a-print{background:#3b82f6;color:#fff}
 .a-cobrar{background:#dc2626;color:#fff}
 .a-send{background:#10b981;color:#fff}
+.a-nota{background:#8b5cf6;color:#fff}
+.nota-input{width:100%;padding:.6rem;background:#2a2a2a;border:1.5px solid #444;border-radius:.35rem;color:#fff;font-size:.85rem;font-family:inherit;resize:none}
+.nota-input:focus{outline:none;border-color:#f97316}
+.or-nota{border-left-color:#8b5cf6!important;background:#2d2440!important}
+.k-nota{border-left-color:#8b5cf6!important;background:#2d2440}
 
 /* COCINA */
 .screen-kitchen{display:flex;flex-direction:column;height:100vh;height:100dvh;padding:.6rem;overflow:hidden}
@@ -216,6 +221,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="actions">
     <button class="act a-print" onclick="printTicket()">🖨️</button>
     <button class="act a-cobrar" onclick="closeAccount()">💰 COBRAR</button>
+    <button class="act a-nota" onclick="openNota()">📝 NOTA</button>
     <button class="act a-send" onclick="sendOrder()">📤 ENVIAR COCINA</button>
   </div>
 </div>
@@ -226,6 +232,19 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <p id="kInfo">Esperando órdenes...</p>
   </div>
   <div class="k-orders" id="kOrders"></div>
+</div>
+
+<div id="notaModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head">📝 Nota / Aviso para cocina</div>
+    <div class="modal-body">
+      <textarea class="nota-input" id="notaText" rows="4" placeholder="Ej: sin cebolla, alergia al gluten, mesa con prisa..."></textarea>
+    </div>
+    <div class="modal-foot">
+      <button class="mf-btn mf-cancel" onclick="closeNota()">Cancelar</button>
+      <button class="mf-btn mf-ok" onclick="addNota()">Añadir nota</button>
+    </div>
+  </div>
 </div>
 
 <div id="modModal" class="modal hidden">
@@ -552,7 +571,7 @@ async function persist(){
 function renderOrder(){
  const c=STATE.table.consumed||[];
  document.getElementById('orderList').innerHTML=c.length?c.map((i,idx)=>
-  `<div class="order-row ${i.sent?'':'pending'}">
+  `<div class="order-row ${i.sent?'':'pending'} ${i.isNota?'or-nota':''}">
     <span class="or-name">${i.name}${i.sent?'':' •'}
       ${i.mods&&i.mods.length?`<span class="or-mods">${i.mods.join(', ')}</span>`:''}
     </span>
@@ -589,24 +608,41 @@ async function sendOrder(){
  await persist();toast('✓ Enviado a cocina');renderOrder();
 }
 async function closeAccount(){
- const t=STATE.table,c=t.consumed||[],tot=parseFloat(t.total)||0;
- if(!c.length){toast('❌ Mesa sin consumo','error');return}
- if(c.some(i=>!i.sent)){toast('❌ Envía o borra lo pendiente','error');return}
- if(!confirm(`¿Cobrar ${t.name} por ${tot.toFixed(2)}€?`))return;
- await sb.from('sales_history').insert({table_id:t.id,table_name:t.name,items:c,total:tot});
+ const t=STATE.table,c=(t.consumed||[]).slice(),tot=parseFloat(t.total)||0;
+ const cobrables=c.filter(i=>!i.isNota);
+ if(!cobrables.length){toast('❌ Mesa sin consumo','error');return}
+ if(c.some(i=>!i.sent&&!i.isNota)){toast('❌ Envía o borra lo pendiente','error');return}
+ if(!confirm(`¿Cobrar ${t.name} por ${tot.toFixed(2)}€?\n\nSe generará el ticket y la mesa quedará libre.`))return;
+
+ const fecha=new Date().toLocaleString('es-ES');
+ const num='T'+Date.now().toString().slice(-8);
+
+ // 1) Guardar la venta en el historial (contabilidad)
+ const{error}=await sb.from('sales_history').insert({
+  table_id:t.id,table_name:t.name,items:cobrables,total:tot
+ });
+ if(error){toast('❌ Error al guardar la venta','error');console.error(error);return}
+
+ // 2) Vaciar la mesa (queda libre para seguir usándola al momento)
  await sb.from('tables').update({total:0,consumed:[],current_order:[],updated_at:new Date().toISOString()}).eq('id',t.id);
- toast('✓ Mesa cobrada');setTimeout(goHome,900);
+ t.total=0;t.consumed=[];
+
+ // 3) Abrir el ticket para imprimir
+ const w=window.open('','_blank');
+ if(w){w.document.write(buildTicket(t.name,cobrables,tot,fecha,num));w.document.close();setTimeout(()=>w.print(),300)}
+ else toast('⚠️ Permite ventanas emergentes para el ticket','error');
+
+ toast('✓ Cobrado · Mesa libre');
+ renderOrder();
 }
 function printTicket(){
- const c=STATE.table.consumed||[];
+ const c=(STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Sin productos','error');return}
- let h=`<html><head><style>body{font-family:monospace;width:80mm;padding:8px;margin:0}h1{text-align:center;font-size:15px}table{width:100%;font-size:12px}td{padding:2px}.tot{font-weight:bold;font-size:14px}.l{border-top:1px dashed #000;margin:6px 0}</style></head><body>`;
- h+=`<h1>ALINA'S BAR</h1><p style="text-align:center;font-size:12px">Mesa: ${STATE.table.name}</p>`;
- h+=`<p style="text-align:center;font-size:10px">${new Date().toLocaleString('es-ES')}</p><div class="l"></div><table>`;
- c.forEach(i=>h+=`<tr><td>${i.quantity}x ${i.name}</td><td style="text-align:right">${(i.price*i.quantity).toFixed(2)}€</td></tr>`);
- h+=`</table><div class="l"></div><table><tr class="tot"><td>TOTAL:</td><td style="text-align:right">${(parseFloat(STATE.table.total)||0).toFixed(2)}€</td></tr></table>`;
- h+=`<p style="text-align:center;margin-top:12px;font-size:12px">¡Gracias!</p></body></html>`;
- const w=window.open();w.document.write(h);w.print();
+ const tot=parseFloat(STATE.table.total)||0;
+ const w=window.open('','_blank');
+ if(!w){toast('⚠️ Permite ventanas emergentes','error');return}
+ w.document.write(buildTicket(STATE.table.name,c,tot,new Date().toLocaleString('es-ES'),'PREVIO'));
+ w.document.close();setTimeout(()=>w.print(),300);
 }
 function goHome(){showHome()}
 
@@ -645,7 +681,7 @@ async function showKitchen(){
  document.getElementById('screenKitchen').classList.remove('hidden');
  await loadOrders();renderKitchen();
  if(kPoll)clearInterval(kPoll);
- kPoll=setInterval(async()=>{await loadOrders();renderKitchen()},3000);
+ kPoll=setInterval(async()=>{await loadOrders();checkNewOrders();renderKitchen()},3000);
 }
 function renderKitchen(){
  const p=STATE.orders.filter(o=>o.status==='pendiente');
@@ -653,12 +689,92 @@ function renderKitchen(){
  document.getElementById('kOrders').innerHTML=p.length?p.map(o=>
   `<div class="k-card">
     <div class="k-card-h"><div class="k-mesa">🏠 ${o.table_name}</div><div class="k-time">${new Date(o.created_at).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</div></div>
-    <div class="k-items">${o.items.map(i=>`<div class="k-item">${i.quantity}x ${i.name}</div>`).join('')}</div>
+    <div class="k-items">${o.items.map(i=>`<div class="k-item ${i.isNota?'k-nota':''}">${i.isNota?'':i.quantity+'x '}${i.name}</div>`).join('')}</div>
     <div class="k-acts"><button class="k-btn k-done" onclick="doneOrder(${o.id})">✓ LISTO</button><button class="k-btn k-cancel" onclick="cancelOrder(${o.id})">✕</button></div>
    </div>`).join(''):'<div style="grid-column:1/-1;text-align:center;padding:3rem;color:#9ca3af">✓ Todo completado</div>';
 }
 async function doneOrder(id){await sb.from('orders').update({status:'completada'}).eq('id',id);toast('✓ Completada')}
 async function cancelOrder(id){if(confirm('¿Cancelar orden?')){await sb.from('orders').delete().eq('id',id);toast('✓ Cancelada')}}
+
+
+// ===== NOTAS =====
+function openNota(){
+ document.getElementById('notaText').value='';
+ document.getElementById('notaModal').classList.remove('hidden');
+ setTimeout(()=>document.getElementById('notaText').focus(),100);
+}
+function closeNota(){document.getElementById('notaModal').classList.add('hidden')}
+async function addNota(){
+ const txt=document.getElementById('notaText').value.trim();
+ if(!txt){toast('❌ Escribe algo','error');return}
+ closeNota();
+ const c=STATE.table.consumed||[];
+ c.push({key:'nota|'+Date.now(),product_id:'nota',name:'📝 '+txt,mods:[],price:0,quantity:1,sent:false,isNota:true});
+ STATE.table.consumed=c;
+ recalc();renderOrder();await persist();
+ toast('✓ Nota añadida');
+}
+
+// ===== SONIDO DE AVISO EN COCINA =====
+let lastOrderIds=null;
+function playBell(){
+ try{
+  const ctx=new(window.AudioContext||window.webkitAudioContext)();
+  [880,1320].forEach((f,i)=>{
+   const o=ctx.createOscillator(),g=ctx.createGain();
+   o.connect(g);g.connect(ctx.destination);
+   o.type='sine';o.frequency.value=f;
+   const t=ctx.currentTime+i*0.18;
+   g.gain.setValueAtTime(0.0001,t);
+   g.gain.exponentialRampToValueAtTime(0.5,t+0.02);
+   g.gain.exponentialRampToValueAtTime(0.0001,t+0.5);
+   o.start(t);o.stop(t+0.5);
+  });
+ }catch(e){console.log('sonido no disponible')}
+}
+function checkNewOrders(){
+ const ids=STATE.orders.filter(o=>o.status==='pendiente').map(o=>o.id);
+ if(lastOrderIds!==null && ids.some(id=>!lastOrderIds.includes(id))){
+  playBell();
+  if(navigator.vibrate)navigator.vibrate([200,100,200]);
+ }
+ lastOrderIds=ids;
+}
+
+// ===== TICKET =====
+const BAR={nombre:"ALINA'S BAR",titular:"Alexei Martin Alvarez",dni:"60542811A"};
+function buildTicket(mesa,items,total,fecha,num){
+ let h=`<html><head><meta charset="utf-8"><style>
+ body{font-family:monospace;width:80mm;padding:8px;margin:0;font-size:12px}
+ .c{text-align:center}.b{font-weight:bold}
+ h1{font-size:16px;margin:0}
+ .l{border-top:1px dashed #000;margin:6px 0}
+ table{width:100%;font-size:12px;border-collapse:collapse}
+ td{padding:2px 0;vertical-align:top}
+ .r{text-align:right}
+ .tot{font-size:15px;font-weight:bold}
+ .sm{font-size:10px}
+ </style></head><body>`;
+ h+=`<div class="c"><h1>${BAR.nombre}</h1>`;
+ h+=`<div class="sm">${BAR.titular}</div>`;
+ h+=`<div class="sm">DNI: ${BAR.dni}</div></div>`;
+ h+=`<div class="l"></div>`;
+ h+=`<table><tr><td>Ticket:</td><td class="r b">${num}</td></tr>`;
+ h+=`<tr><td>Mesa:</td><td class="r b">${mesa}</td></tr>`;
+ h+=`<tr><td>Fecha:</td><td class="r">${fecha}</td></tr></table>`;
+ h+=`<div class="l"></div><table>`;
+ items.filter(i=>!i.isNota).forEach(i=>{
+  h+=`<tr><td>${i.quantity} x ${i.name}</td><td class="r">${(i.price*i.quantity).toFixed(2)}</td></tr>`;
+  if(i.mods&&i.mods.length)h+=`<tr><td colspan="2" class="sm">&nbsp;&nbsp;${i.mods.join(', ')}</td></tr>`;
+ });
+ h+=`</table><div class="l"></div>`;
+ const base=total/1.21,iva=total-base;
+ h+=`<table><tr><td>Base imponible</td><td class="r">${base.toFixed(2)}</td></tr>`;
+ h+=`<tr><td>IVA 21%</td><td class="r">${iva.toFixed(2)}</td></tr>`;
+ h+=`<tr class="tot"><td>TOTAL</td><td class="r">${total.toFixed(2)} EUR</td></tr></table>`;
+ h+=`<div class="l"></div><div class="c sm">Gracias por su visita</div></body></html>`;
+ return h;
+}
 
 function toast(m,t){const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
 
