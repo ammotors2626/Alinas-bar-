@@ -31,7 +31,36 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .screen-home{display:flex;flex-direction:column;height:100vh;height:100dvh;padding:.5rem;overflow:hidden}
 .home-top{display:flex;justify-content:space-between;align-items:center;padding:.3rem .2rem .5rem;border-bottom:2px solid #f97316;margin-bottom:.5rem;flex-shrink:0}
 .home-top h1{font-size:1rem;color:#f97316;font-weight:800}
-.home-top-right{display:flex;gap:.4rem;align-items:center}
+.home-top-right{display:flex;gap:.3rem;align-items:center}
+.icon-btn{background:#6b7280;color:#fff;border:none;padding:.3rem .5rem;border-radius:.35rem;font-size:.75rem}
+.zones{display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-bottom:.5rem;flex-shrink:0}
+.zone-btn{background:#2a2a2a;border:1.5px solid #444;color:#9ca3af;padding:.45rem .2rem;border-radius:.35rem;font-size:.7rem;font-weight:800}
+.zone-btn.active{background:#f97316;color:#000;border-color:#f97316}
+/* MODAL */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:center;justify-content:center;padding:.6rem}
+.modal-box{background:#1a1a1a;border:2px solid #f97316;border-radius:.6rem;width:100%;max-width:420px;max-height:92vh;display:flex;flex-direction:column}
+.modal-head{padding:.6rem;border-bottom:1px solid #333;font-weight:800;color:#f97316;font-size:.9rem;flex-shrink:0}
+.modal-body{padding:.5rem;overflow-y:auto;flex:1}
+.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.3rem}
+.mod-opt{background:#2a2a2a;border:1.5px solid #444;border-radius:.3rem;padding:.45rem .3rem;font-size:.65rem;font-weight:700;color:#fff;text-align:center;line-height:1.15}
+.mod-opt.on{background:#10b981;border-color:#10b981;color:#fff}
+.modal-foot{padding:.5rem;border-top:1px solid #333;display:grid;grid-template-columns:1fr 1.5fr;gap:.4rem;flex-shrink:0}
+.mf-btn{padding:.6rem;border:none;border-radius:.35rem;font-weight:800;font-size:.75rem}
+.mf-cancel{background:#6b7280;color:#fff}
+.mf-ok{background:#10b981;color:#fff}
+/* INFORME */
+.rep-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.6rem}
+.rep-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.5rem;border-bottom:2px solid #f97316;margin-bottom:.5rem;flex-shrink:0}
+.rep-head h1{font-size:1rem;color:#f97316}
+.rep-body{flex:1;overflow-y:auto}
+.rep-tot{background:#10b981;color:#fff;padding:.7rem;border-radius:.4rem;text-align:center;margin-bottom:.6rem}
+.rep-tot .big{font-size:1.6rem;font-weight:800}
+.rep-tot .sm{font-size:.7rem;opacity:.9}
+.rep-row{background:#2a2a2a;padding:.4rem .5rem;border-radius:.3rem;display:flex;justify-content:space-between;font-size:.75rem;margin-bottom:.2rem}
+.rep-row .q{color:#f97316;font-weight:800;min-width:2rem}
+.rep-sec{font-size:.75rem;font-weight:800;color:#f97316;margin:.6rem 0 .3rem}
+/* qty +/- en lista */
+.or-pm{background:#3b82f6;color:#fff;border:none;width:1.4rem;height:1.4rem;border-radius:.25rem;font-size:.8rem;font-weight:800;flex-shrink:0}
 .badge{background:#3b82f6;color:#fff;padding:.3rem .6rem;border-radius:.35rem;font-size:.65rem;font-weight:700}
 .logout-btn{background:#6b7280;color:#fff;border:none;padding:.3rem .6rem;border-radius:.35rem;font-weight:700;font-size:.65rem}
 .mesas-grid{flex:1;display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:.35rem;overflow:hidden}
@@ -96,6 +125,47 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .k-done{background:#10b981;color:#fff}
 .k-cancel{background:#6b7280;color:#fff}
 
+
+/* Zonas terraza/sala/barra */
+.zones{display:flex;gap:.3rem;margin-bottom:.4rem;flex-shrink:0}
+.zone-btn{flex:1;background:#2a2a2a;border:1px solid #444;color:#9ca3af;padding:.35rem;border-radius:.35rem;font-size:.65rem;font-weight:700}
+.zone-btn.active{background:#f97316;color:#000;border-color:#f97316}
+.gear-btn{background:#4b5563;color:#fff;border:none;padding:.3rem .5rem;border-radius:.35rem;font-size:.75rem}
+
+/* Modal modificadores */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:900;display:flex;align-items:flex-end;justify-content:center}
+.modal-box{background:#1a1a1a;border-top:3px solid #f97316;border-radius:1rem 1rem 0 0;width:100%;max-width:600px;max-height:88vh;display:flex;flex-direction:column}
+.modal-head{padding:.7rem;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.modal-title{font-size:.95rem;font-weight:800;color:#f97316}
+.modal-price{font-size:.95rem;font-weight:800;color:#10b981}
+.modal-body{flex:1;overflow-y:auto;padding:.5rem;display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;align-content:start}
+.mod-chip{background:#2a2a2a;border:1.5px solid #444;border-radius:.35rem;padding:.45rem .2rem;text-align:center;font-size:.6rem;font-weight:700;color:#fff;line-height:1.1}
+.mod-chip.on{background:#10b981;border-color:#10b981;color:#fff}
+.mod-extra{font-size:.52rem;color:#f97316;display:block}
+.mod-chip.on .mod-extra{color:#fff}
+.modal-acts{display:grid;grid-template-columns:1fr 2fr;gap:.4rem;padding:.5rem;border-top:1px solid #333;flex-shrink:0}
+.m-cancel{background:#6b7280;color:#fff;border:none;padding:.7rem;border-radius:.4rem;font-weight:800;font-size:.75rem}
+.m-ok{background:#10b981;color:#fff;border:none;padding:.7rem;border-radius:.4rem;font-weight:800;font-size:.75rem}
+
+/* Cantidad +/- en lista */
+.qty-box{display:flex;align-items:center;gap:.2rem}
+.qty-btn{background:#4b5563;color:#fff;border:none;width:1.25rem;height:1.25rem;border-radius:.2rem;font-size:.75rem;font-weight:800;line-height:1}
+.or-mods{font-size:.55rem;color:#9ca3af;display:block;font-weight:500}
+
+/* Informe del día */
+.screen-report{display:flex;flex-direction:column;height:100vh;height:100dvh;padding:.6rem;overflow:hidden}
+.rep-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.5rem;border-bottom:2px solid #f97316;margin-bottom:.5rem;flex-shrink:0}
+.rep-head h1{font-size:1rem;color:#f97316}
+.rep-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:.4rem;margin-bottom:.5rem;flex-shrink:0}
+.rep-card{background:#2a2a2a;border:1px solid #444;border-radius:.4rem;padding:.5rem;text-align:center}
+.rep-card-lbl{font-size:.55rem;color:#9ca3af;text-transform:uppercase}
+.rep-card-val{font-size:1rem;font-weight:800;color:#10b981}
+.rep-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.2rem}
+.rep-row{background:#2a2a2a;padding:.4rem .5rem;border-radius:.25rem;display:flex;align-items:center;gap:.4rem;font-size:.7rem;border-left:3px solid #f97316}
+.rep-name{flex:1;font-weight:600}
+.rep-qty{background:#444;padding:.1rem .35rem;border-radius:.2rem;font-weight:800;font-size:.65rem}
+.rep-eur{color:#10b981;font-weight:800;min-width:3rem;text-align:right}
+
 .toast{position:fixed;bottom:.7rem;left:50%;transform:translateX(-50%);background:#10b981;color:#fff;padding:.5rem 1rem;border-radius:.5rem;z-index:999;font-weight:700;font-size:.75rem}
 .toast.error{background:#ef4444}
 </style>
@@ -124,8 +194,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <h1>🍷 ALINA'S BAR</h1>
     <div class="home-top-right">
       <span class="badge" id="userBadge">CAMARERO</span>
+      <button class="gear-btn" onclick="showReport()">⚙️</button>
       <button class="logout-btn" onclick="logout()">SALIR</button>
     </div>
+  </div>
+  <div class="zones">
+    <button class="zone-btn active" onclick="selZone('t')">TERRAZA</button>
+    <button class="zone-btn" onclick="selZone('s')">SALA</button>
+    <button class="zone-btn" onclick="selZone('b')">BARRA</button>
   </div>
   <div class="mesas-grid" id="mesasGrid"></div>
 </div>
@@ -155,6 +231,34 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <p id="kInfo">Esperando órdenes...</p>
   </div>
   <div class="k-orders" id="kOrders"></div>
+</div>
+
+<div id="modModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head">
+      <span class="modal-title" id="modTitle">Producto</span>
+      <span class="modal-price" id="modPrice">0,00€</span>
+    </div>
+    <div class="modal-body" id="modBody"></div>
+    <div class="modal-acts">
+      <button class="m-cancel" onclick="closeMod()">Cancelar</button>
+      <button class="m-ok" onclick="confirmMod()">✓ AÑADIR</button>
+    </div>
+  </div>
+</div>
+
+<div id="screenReport" class="screen-report hidden">
+  <div class="rep-head">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <h1>📊 CUENTAS DEL DÍA</h1>
+    <button class="logout-btn" onclick="loadReport()">🔄</button>
+  </div>
+  <div class="rep-totals">
+    <div class="rep-card"><div class="rep-card-lbl">Facturado</div><div class="rep-card-val" id="repTotal">0€</div></div>
+    <div class="rep-card"><div class="rep-card-lbl">Mesas</div><div class="rep-card-val" id="repMesas">0</div></div>
+    <div class="rep-card"><div class="rep-card-lbl">Artículos</div><div class="rep-card-val" id="repArts">0</div></div>
+  </div>
+  <div class="rep-list" id="repList"></div>
 </div>
 
 <script>
@@ -209,6 +313,8 @@ const PRODS=[
  {c:'cafes',n:'Té Normal',p:1.20},{c:'cafes',n:'Té Pirámide',p:1.50},{c:'cafes',n:'Té con leche',p:1.50},{c:'cafes',n:'TEWI',p:2.00},
  {c:'cafes',n:'Vaso llevar bebida',p:0.10},
  // ===== DESAYUNOS: TOSTADAS + BOLLERIA + ZUMOS =====
+ {c:'desayunos',n:'⭐ TOSTADA EXTRA (crear)',p:1.20},
+ {c:'desayunos',n:'⭐ EXTRA (crear tostada)',p:1.50},
  {c:'desayunos',n:'Mantequilla y mermelada',p:1.50},{c:'desayunos',n:'Aceite',p:1.50},{c:'desayunos',n:'Tomate y aceite',p:1.50},
  {c:'desayunos',n:'Tomate y atún',p:2.00},{c:'desayunos',n:'Tomate y queso',p:2.00},{c:'desayunos',n:'Tomate y aguacate',p:2.00},
  {c:'desayunos',n:'Tomate y serrano',p:2.30},{c:'desayunos',n:'Tomate, q.fresco y aguacate',p:2.30},{c:'desayunos',n:'Tomate, atún y aguacate',p:2.50},
@@ -268,9 +374,62 @@ const PRODS=[
 // dar id a cada producto
 PRODS.forEach((p,i)=>p.id='p'+i);
 
-const TABLE_ORDER=['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','b1','b2','b3','b4','b5','b6','s1','s2','s3','s4'];
 
-const STATE={user:null,table:null,cat:null,tables:[],orders:[],
+// ===== ZONAS =====
+const ZONES=[
+ {id:'terraza',n:'TERRAZA',ids:['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13']},
+ {id:'sala',n:'SALA',ids:['s1','s2','s3','s4','s5','s6','s7']},
+ {id:'barra',n:'BARRA',ids:['b1','b2','b3','b4','b5','b6','b7','b8']}
+];
+
+// ===== MODIFICADORES =====
+// Cafes: opciones sueltas, algunas con recargo
+const MOD_CAFE=[
+ {n:'Leche fría',x:0},{n:'Leche templada',x:0},{n:'Leche caliente',x:0},
+ {n:'En vaso',x:0},{n:'En taza',x:0},{n:'Muy caliente',x:0},
+ {n:'Largo de café',x:0},{n:'Corto de café',x:0},{n:'Sin espuma',x:0},
+ {n:'Con espuma',x:0},{n:'Edulcorante',x:0},{n:'Sacarina',x:0},
+ {n:'Azúcar moreno',x:0},{n:'Sin azúcar',x:0},{n:'Leche desnatada',x:0},
+ {n:'Leche vegetal',x:0.20},{n:'CON HIELO (+0,10)',x:0.10},{n:'Para llevar (+0,10)',x:0.10}
+];
+// Ingredientes para construir tostadas a medida
+const MOD_TOSTA=[
+ {n:'Mantequilla',x:0.30},{n:'Mermelada',x:0.30},{n:'Aceite',x:0},
+ {n:'Tomate',x:0.30},{n:'Atún',x:0.70},{n:'Queso',x:0.70},
+ {n:'Queso fresco',x:0.70},{n:'Aguacate',x:0.80},{n:'Jamón serrano',x:0.80},
+ {n:'Jamón york',x:0.70},{n:'Sobrasada',x:0.70},{n:'Salmón',x:1.50},
+ {n:'Huevo frito',x:0.80},{n:'Bacon',x:0.80},{n:'Pavo',x:0.70},
+ {n:'Rulo de cabra',x:1.00},{n:'Cebolla caramelizada',x:0.50},{n:'Pan sin gluten',x:0.50},
+ {n:'Pan integral',x:0},{n:'Poco tostada',x:0},{n:'Muy tostada',x:0},{n:'Para llevar (+0,50)',x:0.50}
+];
+
+function modsFor(p){
+ if(p.c==='cafes')return MOD_CAFE;
+ if(p.c==='desayunos')return MOD_TOSTA;
+ return null;
+}
+
+const TABLE_ORDER=['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','b1','b2','b3','b4','b5','b6','b7','b8','s1','s2','s3','s4','s5','s6','s7'];
+
+// ===== MODIFICADORES =====
+const MODS_CAFE=[
+ {n:'Leche fría',e:0},{n:'Leche templada',e:0},{n:'En vaso',e:0},{n:'En taza',e:0},
+ {n:'Con hielo',e:0.10},{n:'Largo de café',e:0},{n:'Corto de café',e:0},
+ {n:'Muy caliente',e:0},{n:'Sin espuma',e:0},{n:'Con espuma',e:0},
+ {n:'Edulcorante',e:0},{n:'Sacarina',e:0},{n:'Miel',e:0},{n:'Sin azúcar',e:0},
+ {n:'Leche desnatada',e:0.20},{n:'Leche sin lactosa',e:0.20},{n:'Leche de soja',e:0.20},
+ {n:'Leche de avena',e:0.20},{n:'Descafeinado',e:0},{n:'Para llevar',e:0.10}
+];
+const MODS_TOSTADA=[
+ {n:'Tomate',e:0.30},{n:'Aceite',e:0.20},{n:'Mantequilla',e:0.30},{n:'Mermelada',e:0.30},
+ {n:'Atún',e:0.70},{n:'Queso',e:0.60},{n:'Queso fresco',e:0.60},{n:'Aguacate',e:0.80},
+ {n:'Jamón serrano',e:0.80},{n:'Jamón york',e:0.60},{n:'Sobrasada',e:0.60},{n:'Salmón',e:1.20},
+ {n:'Huevo frito',e:0.70},{n:'Bacon',e:0.70},{n:'Pavo',e:0.60},{n:'Lechuga',e:0.20},
+ {n:'Cebolla',e:0.20},{n:'Sin tomate',e:0},{n:'Sin aceite',e:0},{n:'Pan integral',e:0.20},
+ {n:'Pan sin gluten',e:0.50},{n:'Poco tostada',e:0},{n:'Muy tostada',e:0},{n:'Para llevar',e:0.10}
+];
+
+const STATE={user:null,table:null,cat:null,zone:'t',tables:[],orders:[],pendingMod:null,
  users:[{email:'camarero@alinas.bar',password:'demo123',role:'camarero'},{email:'cocina@alinas.bar',password:'demo123',role:'cocina'}]};
 
 async function loadTables(){
@@ -302,15 +461,28 @@ async function showHome(){
  document.getElementById('screenHome').classList.remove('hidden');
  document.getElementById('screenComanda').classList.add('hidden');
  document.getElementById('screenKitchen').classList.add('hidden');
+ document.getElementById('screenReport').classList.add('hidden');
  document.getElementById('userBadge').textContent=STATE.user.role.toUpperCase();
- try{await loadTables();renderMesas()}catch(e){document.getElementById('mesasGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#ef4444;font-size:.8rem">❌ Error al cargar las mesas</div>'}
+ renderZones();try{await loadTables();renderMesas()}catch(e){document.getElementById('mesasGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#ef4444;font-size:.8rem">❌ Error al cargar las mesas</div>'}
 }
+function renderZones(){
+ document.getElementById('zones').innerHTML=ZONES.map(z=>
+  `<button class="zone-btn ${z.id===STATE.zone?'active':''}" onclick="selZone('${z.id}')">${z.n}</button>`).join('');
+}
+function selZone(z){STATE.zone=z;renderZones();renderMesas()}
 function renderMesas(){
- document.getElementById('mesasGrid').innerHTML=STATE.tables.map((t,i)=>
+ const zone=ZONES.find(z=>z.id===STATE.zone);
+ const list=zone.ids.map(id=>STATE.tables.find(t=>t.id===id)).filter(Boolean);
+ document.getElementById('mesasGrid').innerHTML=list.map((t,i)=>
   `<div class="mesa-item ${t.total>0?'ocupada':''}" onclick="selMesa('${t.id}')">
     <div class="mesa-num">${i+1}</div>
     ${t.total>0?`<div class="mesa-total">${parseFloat(t.total).toFixed(2)}€</div>`:''}
    </div>`).join('');
+}
+function selZone(z){
+ STATE.zone=z;
+ document.querySelectorAll('.zone-btn').forEach((b,i)=>b.classList.toggle('active',['t','s','b'][i]===z));
+ renderMesas();
 }
 function selMesa(id){
  const t=STATE.tables.find(x=>x.id===id);
@@ -336,12 +508,47 @@ function selCat(id){
     <div class="prod-name">${p.n}</div><div class="prod-price">${p.p.toFixed(2)}€</div>
    </button>`).join('')||'<div style="grid-column:1/-1;text-align:center;color:#666;font-size:.7rem;padding:1rem">Sin productos</div>';
 }
-async function addProd(pid){
+function addProd(pid){
  const p=PRODS.find(x=>x.id===pid);
+ // Cafés y desayunos abren el selector de opciones
+ if(p.c==='cafes'||p.c==='desayunos'){
+  STATE.pendingMod={prod:p,sel:[]};
+  openMod(p);
+  return;
+ }
+ pushItem(p,[],p.p);
+}
+function openMod(p){
+ const list=p.c==='cafes'?MODS_CAFE:MODS_TOSTADA;
+ document.getElementById('modTitle').textContent=p.n;
+ document.getElementById('modPrice').textContent=p.p.toFixed(2)+'€';
+ document.getElementById('modBody').innerHTML=list.map((m,i)=>
+  `<div class="mod-chip" id="mc${i}" onclick="togMod(${i})">${m.n}${m.e>0?`<span class="mod-extra">+${m.e.toFixed(2)}€</span>`:''}</div>`).join('');
+ document.getElementById('modModal').classList.remove('hidden');
+}
+function togMod(i){
+ const p=STATE.pendingMod.prod;
+ const list=p.c==='cafes'?MODS_CAFE:MODS_TOSTADA;
+ const m=list[i];
+ const idx=STATE.pendingMod.sel.findIndex(x=>x.n===m.n);
+ if(idx>=0)STATE.pendingMod.sel.splice(idx,1);else STATE.pendingMod.sel.push(m);
+ document.getElementById('mc'+i).classList.toggle('on',idx<0);
+ const extra=STATE.pendingMod.sel.reduce((s,x)=>s+x.e,0);
+ document.getElementById('modPrice').textContent=(p.p+extra).toFixed(2)+'€';
+}
+function closeMod(){document.getElementById('modModal').classList.add('hidden');STATE.pendingMod=null}
+async function confirmMod(){
+ const{prod,sel}=STATE.pendingMod;
+ const extra=sel.reduce((s,x)=>s+x.e,0);
+ closeMod();
+ await pushItem(prod,sel.map(x=>x.n),prod.p+extra);
+}
+async function pushItem(p,mods,price){
  const c=STATE.table.consumed||[];
- const ex=c.find(i=>i.product_id===pid&&!i.sent);
+ const key=p.id+'|'+mods.join(',');
+ const ex=c.find(i=>i.key===key&&!i.sent);
  if(ex)ex.quantity+=1;
- else c.push({product_id:pid,name:p.n,price:p.p,quantity:1,sent:false});
+ else c.push({key:key,product_id:p.id,name:p.n,mods:mods,price:price,quantity:1,sent:false});
  STATE.table.consumed=c;
  recalc();renderOrder();await persist();
 }
@@ -356,12 +563,24 @@ function renderOrder(){
  const c=STATE.table.consumed||[];
  document.getElementById('orderList').innerHTML=c.length?c.map((i,idx)=>
   `<div class="order-row ${i.sent?'':'pending'}">
-    <span class="or-name">${i.name}${i.sent?'':' •'}</span>
-    <span class="or-qty">${i.quantity}</span>
+    <span class="or-name">${i.name}${i.sent?'':' •'}
+      ${i.mods&&i.mods.length?`<span class="or-mods">${i.mods.join(', ')}</span>`:''}
+    </span>
+    <span class="qty-box">
+      <button class="qty-btn" onclick="chgQty(${idx},-1)">−</button>
+      <span class="or-qty">${i.quantity}</span>
+      <button class="qty-btn" onclick="chgQty(${idx},1)">+</button>
+    </span>
     <span class="or-price">${(i.price*i.quantity).toFixed(2)}€</span>
     <button class="or-del" onclick="delItem(${idx})">✕</button>
    </div>`).join(''):'<div class="order-empty">Sin productos. Elige una categoría arriba.</div>';
  document.getElementById('hdrTotal').textContent=(parseFloat(STATE.table.total)||0).toFixed(2)+'€';
+}
+async function chgQty(i,d){
+ const it=STATE.table.consumed[i];
+ it.quantity+=d;
+ if(it.quantity<=0)STATE.table.consumed.splice(i,1);
+ recalc();renderOrder();await persist();
 }
 async function delItem(i){STATE.table.consumed.splice(i,1);recalc();renderOrder();await persist()}
 async function clearPending(){
@@ -400,6 +619,35 @@ function printTicket(){
  const w=window.open();w.document.write(h);w.print();
 }
 function goHome(){showHome()}
+
+// ===== INFORME DEL DÍA =====
+async function showReport(){
+ document.getElementById('screenHome').classList.add('hidden');
+ document.getElementById('screenComanda').classList.add('hidden');
+ document.getElementById('screenReport').classList.remove('hidden');
+ await loadReport();
+}
+async function loadReport(){
+ const hoy=new Date();hoy.setHours(0,0,0,0);
+ const{data,error}=await sb.from('sales_history').select('*').gte('closed_at',hoy.toISOString()).order('closed_at',{ascending:false});
+ if(error){console.error(error);document.getElementById('repList').innerHTML='<div class="order-empty">❌ Error al cargar</div>';return}
+ const ventas=data||[];
+ const total=ventas.reduce((s,v)=>s+parseFloat(v.total),0);
+ // Agrupar artículos vendidos
+ const cont={};let arts=0;
+ ventas.forEach(v=>(v.items||[]).forEach(i=>{
+  const k=i.name+(i.mods&&i.mods.length?' ('+i.mods.join(', ')+')':'');
+  if(!cont[k])cont[k]={q:0,e:0};
+  cont[k].q+=i.quantity;cont[k].e+=i.price*i.quantity;arts+=i.quantity;
+ }));
+ document.getElementById('repTotal').textContent=total.toFixed(2)+'€';
+ document.getElementById('repMesas').textContent=ventas.length;
+ document.getElementById('repArts').textContent=arts;
+ const rows=Object.entries(cont).sort((a,b)=>b[1].q-a[1].q);
+ document.getElementById('repList').innerHTML=rows.length?rows.map(([n,d])=>
+  `<div class="rep-row"><span class="rep-name">${n}</span><span class="rep-qty">${d.q}</span><span class="rep-eur">${d.e.toFixed(2)}€</span></div>`
+ ).join(''):'<div class="order-empty">Sin ventas cerradas hoy</div>';
+}
 
 async function showKitchen(){
  document.getElementById('loginScreen').style.display='none';
