@@ -127,7 +127,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 
 
 /* Zonas terraza/sala/barra */
-.zones{display:flex;gap:.3rem;margin-bottom:.4rem;flex-shrink:0}
 .zone-btn{flex:1;background:#2a2a2a;border:1px solid #444;color:#9ca3af;padding:.35rem;border-radius:.35rem;font-size:.65rem;font-weight:700}
 .zone-btn.active{background:#f97316;color:#000;border-color:#f97316}
 .gear-btn{background:#4b5563;color:#fff;border:none;padding:.3rem .5rem;border-radius:.35rem;font-size:.75rem}
@@ -198,11 +197,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
       <button class="logout-btn" onclick="logout()">SALIR</button>
     </div>
   </div>
-  <div class="zones">
-    <button class="zone-btn active" onclick="selZone('t')">TERRAZA</button>
-    <button class="zone-btn" onclick="selZone('s')">SALA</button>
-    <button class="zone-btn" onclick="selZone('b')">BARRA</button>
-  </div>
+  <div class="zones" id="zones"></div>
   <div class="mesas-grid" id="mesasGrid"></div>
 </div>
 
@@ -429,7 +424,7 @@ const MODS_TOSTADA=[
  {n:'Pan sin gluten',e:0.50},{n:'Poco tostada',e:0},{n:'Muy tostada',e:0},{n:'Para llevar',e:0.10}
 ];
 
-const STATE={user:null,table:null,cat:null,zone:'t',tables:[],orders:[],pendingMod:null,
+const STATE={user:null,table:null,cat:null,zone:'terraza',tables:[],orders:[],pendingMod:null,
  users:[{email:'camarero@alinas.bar',password:'demo123',role:'camarero'},{email:'cocina@alinas.bar',password:'demo123',role:'cocina'}]};
 
 async function loadTables(){
@@ -478,11 +473,6 @@ function renderMesas(){
     <div class="mesa-num">${i+1}</div>
     ${t.total>0?`<div class="mesa-total">${parseFloat(t.total).toFixed(2)}€</div>`:''}
    </div>`).join('');
-}
-function selZone(z){
- STATE.zone=z;
- document.querySelectorAll('.zone-btn').forEach((b,i)=>b.classList.toggle('active',['t','s','b'][i]===z));
- renderMesas();
 }
 function selMesa(id){
  const t=STATE.tables.find(x=>x.id===id);
