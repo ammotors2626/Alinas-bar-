@@ -102,12 +102,30 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .or-del{background:#ef4444;color:#fff;border:none;width:1.3rem;height:1.3rem;border-radius:50%;font-size:.6rem;font-weight:800;flex-shrink:0}
 
 /* Acciones */
-.actions{display:grid;grid-template-columns:.6fr .9fr .9fr 1.3fr;gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
+.actions{display:grid;grid-template-columns:.95fr .95fr .8fr 1.3fr;gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
 .act{padding:.55rem .2rem;border:none;border-radius:.3rem;font-weight:800;font-size:.65rem}
 .a-print{background:#3b82f6;color:#fff}
 .a-cobrar{background:#dc2626;color:#fff}
 .a-send{background:#10b981;color:#fff}
 .a-nota{background:#8b5cf6;color:#fff}
+.a-ticket{background:#f59e0b;color:#000}
+.tk-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#1a1a1a}
+.tk-head{display:flex;justify-content:space-between;align-items:center;padding:.5rem;border-bottom:2px solid #f59e0b;flex-shrink:0}
+.tk-head h1{font-size:.95rem;color:#f59e0b}
+.tk-body{flex:1;overflow-y:auto;padding:.8rem;display:flex;justify-content:center}
+.tk-paper{background:#fff;color:#000;width:100%;max-width:340px;padding:1rem;font-family:monospace;font-size:12px;border-radius:.3rem}
+.tk-paper h2{font-size:16px;text-align:center;margin:0}
+.tk-c{text-align:center}
+.tk-sm{font-size:10px}
+.tk-l{border-top:1px dashed #000;margin:6px 0}
+.tk-paper table{width:100%;border-collapse:collapse}
+.tk-paper td{padding:2px 0;vertical-align:top}
+.tk-r{text-align:right}
+.tk-tot{font-size:15px;font-weight:bold}
+.tk-foot{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.5rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
+.tk-btn{padding:.7rem;border:none;border-radius:.35rem;font-weight:800;font-size:.8rem}
+.tk-print{background:#3b82f6;color:#fff}
+.tk-share{background:#10b981;color:#fff}
 .nota-input{width:100%;padding:.6rem;background:#2a2a2a;border:1.5px solid #444;border-radius:.35rem;color:#fff;font-size:.85rem;font-family:inherit;resize:none}
 .nota-input:focus{outline:none;border-color:#f97316}
 .or-nota{border-left-color:#8b5cf6!important;background:#2d2440!important}
@@ -219,7 +237,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="prods" id="prods"></div>
   <div class="order-list" id="orderList"></div>
   <div class="actions">
-    <button class="act a-print" onclick="printTicket()">🖨️</button>
+    <button class="act a-ticket" onclick="showTicket()">🧾 TICKET</button>
     <button class="act a-cobrar" onclick="closeAccount()">💰 COBRAR</button>
     <button class="act a-nota" onclick="openNota()">📝 NOTA</button>
     <button class="act a-send" onclick="sendOrder()">📤 ENVIAR COCINA</button>
@@ -232,6 +250,19 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <p id="kInfo">Esperando órdenes...</p>
   </div>
   <div class="k-orders" id="kOrders"></div>
+</div>
+
+<div id="screenTicket" class="tk-wrap hidden">
+  <div class="tk-head">
+    <button class="back-btn" onclick="closeTicket()">← ATRÁS</button>
+    <h1>🧾 TICKET</h1>
+    <span style="width:3rem"></span>
+  </div>
+  <div class="tk-body"><div class="tk-paper" id="tkPaper"></div></div>
+  <div class="tk-foot">
+    <button class="tk-btn tk-print" onclick="doPrintTicket()">🖨️ Imprimir</button>
+    <button class="tk-btn tk-share" onclick="doShareTicket()">📤 Enviar</button>
+  </div>
 </div>
 
 <div id="notaModal" class="modal hidden">
@@ -327,8 +358,6 @@ const PRODS=[
  {c:'cafes',n:'Té Normal',p:1.20},{c:'cafes',n:'Té Pirámide',p:1.50},{c:'cafes',n:'Té con leche',p:1.50},{c:'cafes',n:'TEWI',p:2.00},
  {c:'cafes',n:'Vaso llevar bebida',p:0.10},
  // ===== DESAYUNOS: TOSTADAS + BOLLERIA + ZUMOS =====
- {c:'desayunos',n:'⭐ TOSTADA EXTRA (crear)',p:1.20},
- {c:'desayunos',n:'⭐ EXTRA (crear tostada)',p:1.50},
  {c:'desayunos',n:'Mantequilla y mermelada',p:1.50},{c:'desayunos',n:'Aceite',p:1.50},{c:'desayunos',n:'Tomate y aceite',p:1.50},
  {c:'desayunos',n:'Tomate y atún',p:2.00},{c:'desayunos',n:'Tomate y queso',p:2.00},{c:'desayunos',n:'Tomate y aguacate',p:2.00},
  {c:'desayunos',n:'Tomate y serrano',p:2.30},{c:'desayunos',n:'Tomate, q.fresco y aguacate',p:2.30},{c:'desayunos',n:'Tomate, atún y aguacate',p:2.50},
@@ -612,7 +641,7 @@ async function closeAccount(){
  const cobrables=c.filter(i=>!i.isNota);
  if(!cobrables.length){toast('❌ Mesa sin consumo','error');return}
  if(c.some(i=>!i.sent&&!i.isNota)){toast('❌ Envía o borra lo pendiente','error');return}
- if(!confirm(`¿Cobrar ${t.name} por ${tot.toFixed(2)}€?\n\nSe generará el ticket y la mesa quedará libre.`))return;
+ if(!confirm(`¿Cobrar ${t.name} por ${tot.toFixed(2)}€?\n\nLa mesa quedará libre.`))return;
 
  const fecha=new Date().toLocaleString('es-ES');
  const num='T'+Date.now().toString().slice(-8);
@@ -627,22 +656,75 @@ async function closeAccount(){
  await sb.from('tables').update({total:0,consumed:[],current_order:[],updated_at:new Date().toISOString()}).eq('id',t.id);
  t.total=0;t.consumed=[];
 
- // 3) Abrir el ticket para imprimir
- const w=window.open('','_blank');
- if(w){w.document.write(buildTicket(t.name,cobrables,tot,fecha,num));w.document.close();setTimeout(()=>w.print(),300)}
- else toast('⚠️ Permite ventanas emergentes para el ticket','error');
+ // 3) Guardar el último ticket por si se quiere imprimir después
+ STATE.lastTicket={mesa:t.name,items:cobrables,total:tot,fecha:fecha,num:num};
 
  toast('✓ Cobrado · Mesa libre');
  renderOrder();
 }
-function printTicket(){
- const c=(STATE.table.consumed||[]).filter(i=>!i.isNota);
- if(!c.length){toast('❌ Sin productos','error');return}
- const tot=parseFloat(STATE.table.total)||0;
+// ===== PANTALLA DE TICKET =====
+function showTicket(){
+ let d;
+ const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
+ if(c.length){
+  d={mesa:STATE.table.name,items:c,total:parseFloat(STATE.table.total)||0,
+     fecha:new Date().toLocaleString('es-ES'),num:'PREVIO'};
+ }else if(STATE.lastTicket){
+  d=STATE.lastTicket;
+ }else{toast('❌ No hay ticket que mostrar','error');return}
+ STATE.viewTicket=d;
+ document.getElementById('tkPaper').innerHTML=ticketHTML(d);
+ document.getElementById('screenComanda').classList.add('hidden');
+ document.getElementById('screenTicket').classList.remove('hidden');
+}
+function closeTicket(){
+ document.getElementById('screenTicket').classList.add('hidden');
+ if(STATE.table)document.getElementById('screenComanda').classList.remove('hidden');
+ else showHome();
+}
+// Cuerpo del ticket (se usa en pantalla y al imprimir)
+function ticketHTML(d){
+ const base=d.total/1.21,iva=d.total-base;
+ let h=`<h2>${BAR.nombre}</h2>`;
+ h+=`<div class="tk-c tk-sm">${BAR.titular}</div>`;
+ h+=`<div class="tk-c tk-sm">DNI: ${BAR.dni}</div>`;
+ h+=`<div class="tk-l"></div><table>`;
+ h+=`<tr><td>Ticket:</td><td class="tk-r"><b>${d.num}</b></td></tr>`;
+ h+=`<tr><td>Mesa:</td><td class="tk-r"><b>${d.mesa}</b></td></tr>`;
+ h+=`<tr><td>Fecha:</td><td class="tk-r">${d.fecha}</td></tr></table>`;
+ h+=`<div class="tk-l"></div><table>`;
+ d.items.forEach(i=>{
+  h+=`<tr><td>${i.quantity} x ${i.name}</td><td class="tk-r">${(i.price*i.quantity).toFixed(2)}</td></tr>`;
+  if(i.mods&&i.mods.length)h+=`<tr><td colspan="2" class="tk-sm">&nbsp;&nbsp;${i.mods.join(', ')}</td></tr>`;
+ });
+ h+=`</table><div class="tk-l"></div><table>`;
+ h+=`<tr><td>Base imponible</td><td class="tk-r">${base.toFixed(2)}</td></tr>`;
+ h+=`<tr><td>IVA 21%</td><td class="tk-r">${iva.toFixed(2)}</td></tr>`;
+ h+=`<tr class="tk-tot"><td>TOTAL</td><td class="tk-r">${d.total.toFixed(2)} EUR</td></tr></table>`;
+ h+=`<div class="tk-l"></div><div class="tk-c tk-sm">Gracias por su visita</div>`;
+ return h;
+}
+function doPrintTicket(){
+ const d=STATE.viewTicket;if(!d)return;
  const w=window.open('','_blank');
  if(!w){toast('⚠️ Permite ventanas emergentes','error');return}
- w.document.write(buildTicket(STATE.table.name,c,tot,new Date().toLocaleString('es-ES'),'PREVIO'));
+ w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
  w.document.close();setTimeout(()=>w.print(),300);
+}
+async function doShareTicket(){
+ const d=STATE.viewTicket;if(!d)return;
+ let t=`${BAR.nombre}\n${BAR.titular}\nDNI: ${BAR.dni}\n`;
+ t+=`--------------------\nTicket: ${d.num}\nMesa: ${d.mesa}\n${d.fecha}\n--------------------\n`;
+ d.items.forEach(i=>{
+  t+=`${i.quantity} x ${i.name}  ${(i.price*i.quantity).toFixed(2)}\n`;
+  if(i.mods&&i.mods.length)t+=`   (${i.mods.join(', ')})\n`;
+ });
+ const base=d.total/1.21;
+ t+=`--------------------\nBase: ${base.toFixed(2)}\nIVA 21%: ${(d.total-base).toFixed(2)}\nTOTAL: ${d.total.toFixed(2)} EUR\n--------------------\nGracias por su visita`;
+ try{
+  if(navigator.share){await navigator.share({title:'Ticket '+d.num,text:t})}
+  else{await navigator.clipboard.writeText(t);toast('✓ Ticket copiado')}
+ }catch(e){}
 }
 function goHome(){showHome()}
 
