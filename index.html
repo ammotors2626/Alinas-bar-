@@ -21,6 +21,16 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .form-group label{display:block;margin-bottom:.35rem;font-weight:600;font-size:.85rem}
 .form-group input{width:100%;padding:.7rem;border:1px solid #444;border-radius:.5rem;background:#1a1a1a;color:#fff;font-size:1rem}
 .login-btn{width:100%;padding:.9rem;background:#f97316;color:#1a1a1a;border:none;border-radius:.5rem;font-size:1rem;font-weight:700;margin-bottom:.8rem}
+.role-grid{display:flex;flex-direction:column;gap:.7rem;margin-top:1rem}
+.role-btn{padding:1.1rem .8rem;border:2px solid #444;background:#2a2a2a;color:#fff;border-radius:.6rem;font-weight:800;font-size:1rem;display:flex;align-items:center;gap:.8rem;text-align:left}
+.role-btn .ico{font-size:1.6rem}
+.role-btn .txt{flex:1}
+.role-btn .sub{display:block;font-size:.65rem;font-weight:600;color:#9ca3af;margin-top:.15rem}
+.role-gerente{border-color:#8b5cf6}
+.role-camarero{border-color:#3b82f6}
+.role-cocina{border-color:#10b981}
+.pin-box{margin-top:1rem}
+.pin-box input{width:100%;padding:.8rem;background:#1a1a1a;border:2px solid #8b5cf6;border-radius:.5rem;color:#fff;font-size:1.4rem;text-align:center;letter-spacing:.5rem;font-weight:800}
 .login-options{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
 .login-options button{padding:.7rem;border:1px solid #444;background:#2a2a2a;color:#fff;border-radius:.5rem;font-weight:600;font-size:.8rem}
 .connection-status{text-align:center;margin-top:.8rem;font-size:.7rem;color:#9ca3af}
@@ -102,12 +112,37 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .or-del{background:#ef4444;color:#fff;border:none;width:1.3rem;height:1.3rem;border-radius:50%;font-size:.6rem;font-weight:800;flex-shrink:0}
 
 /* Acciones */
-.actions{display:grid;grid-template-columns:.95fr .95fr .8fr 1.3fr;gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
+.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
 .act{padding:.55rem .2rem;border:none;border-radius:.3rem;font-weight:800;font-size:.65rem}
 .a-print{background:#3b82f6;color:#fff}
 .a-cobrar{background:#dc2626;color:#fff}
 .a-send{background:#10b981;color:#fff}
 .a-nota{background:#8b5cf6;color:#fff}
+.a-extra{background:#f97316;color:#000}
+.ed-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
+.ed-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #10b981;margin-bottom:.4rem;flex-shrink:0}
+.ed-head h1{font-size:.9rem;color:#10b981}
+.ed-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:.2rem;margin-bottom:.4rem;flex-shrink:0}
+.ed-cat{background:#2a2a2a;border:1px solid #444;color:#9ca3af;padding:.3rem .1rem;border-radius:.25rem;font-size:.5rem;font-weight:800;line-height:1.1}
+.ed-cat.active{background:#10b981;color:#fff;border-color:#10b981}
+.ed-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.25rem}
+.ed-row{background:#2a2a2a;border-radius:.3rem;padding:.35rem .4rem;display:flex;align-items:center;gap:.3rem}
+.ed-name{flex:1;background:#1a1a1a;border:1px solid #444;color:#fff;padding:.3rem;border-radius:.25rem;font-size:.7rem;min-width:0}
+.ed-price{width:3.6rem;background:#1a1a1a;border:1px solid #444;color:#f97316;padding:.3rem;border-radius:.25rem;font-size:.7rem;font-weight:800;text-align:right}
+.ed-cost{width:3.6rem;background:#1a1a1a;border:1px solid #444;color:#9ca3af;padding:.3rem;border-radius:.25rem;font-size:.7rem;text-align:right}
+.ed-del{background:#ef4444;color:#fff;border:none;width:1.5rem;height:1.5rem;border-radius:.25rem;font-size:.65rem;font-weight:800;flex-shrink:0}
+.ed-lbls{display:flex;gap:.3rem;font-size:.55rem;color:#9ca3af;padding:0 .4rem .2rem;flex-shrink:0}
+.ed-foot{display:grid;grid-template-columns:1fr 1.3fr;gap:.4rem;padding-top:.4rem;flex-shrink:0}
+.ed-btn{padding:.6rem;border:none;border-radius:.35rem;font-weight:800;font-size:.75rem}
+.ed-add{background:#3b82f6;color:#fff}
+.ed-save{background:#10b981;color:#fff}
+.rep-periods{display:grid;grid-template-columns:repeat(4,1fr);gap:.25rem;padding:.3rem 0;flex-shrink:0}
+.rep-per{background:#2a2a2a;border:1.5px solid #444;color:#9ca3af;padding:.4rem .1rem;border-radius:.3rem;font-size:.65rem;font-weight:800}
+.rep-per.active{background:#f97316;color:#000;border-color:#f97316}
+.rep-nav{display:flex;justify-content:space-between;align-items:center;padding:.3rem 0;flex-shrink:0}
+.rep-nav button{background:#2a2a2a;border:1.5px solid #444;color:#fff;padding:.35rem .7rem;border-radius:.3rem;font-weight:800;font-size:.8rem}
+.rep-nav span{font-size:.75rem;font-weight:800;color:#f97316}
+.or-tap{cursor:pointer}
 .a-ticket{background:#f59e0b;color:#000}
 .tk-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;background:#1a1a1a}
 .tk-head{display:flex;justify-content:space-between;align-items:center;padding:.5rem;border-bottom:2px solid #f59e0b;flex-shrink:0}
@@ -197,16 +232,29 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 <div id="loginScreen" class="login-screen">
   <div class="login-box">
     <h1>🍷 Alina's Bar</h1>
-    <p>Sistema de Comandas</p>
-    <form id="loginForm">
-      <div class="form-group"><label>Email</label><input type="email" id="email" value="camarero@alinas.bar" required></div>
-      <div class="form-group"><label>Contraseña</label><input type="password" id="password" value="demo123" required></div>
-      <button type="submit" class="login-btn">ACCEDER</button>
-      <div class="login-options">
-        <button type="button" onclick="quickLogin('camarero@alinas.bar')">📦 Camarero</button>
-        <button type="button" onclick="quickLogin('cocina@alinas.bar')">👨‍🍳 Cocina</button>
+    <p>¿Quién eres?</p>
+
+    <div class="role-grid" id="roleGrid">
+      <button class="role-btn role-camarero" onclick="pickRole('camarero')">
+        <span class="ico">📦</span><span class="txt">CAMARERO<span class="sub">Tomar comandas y cobrar</span></span>
+      </button>
+      <button class="role-btn role-cocina" onclick="pickRole('cocina')">
+        <span class="ico">👨‍🍳</span><span class="txt">COCINA<span class="sub">Ver los pedidos que llegan</span></span>
+      </button>
+      <button class="role-btn role-gerente" onclick="pickRole('gerente')">
+        <span class="ico">🔑</span><span class="txt">GERENTE<span class="sub">Editar carta y ver cuentas</span></span>
+      </button>
+    </div>
+
+    <div class="pin-box hidden" id="pinBox">
+      <p style="font-size:.8rem;margin-bottom:.5rem">🔑 Introduce el PIN de gerente</p>
+      <input type="tel" id="pinInput" maxlength="4" inputmode="numeric" placeholder="••••">
+      <div class="login-options" style="margin-top:.8rem">
+        <button type="button" onclick="cancelPin()">Cancelar</button>
+        <button type="button" onclick="checkPin()" style="background:#8b5cf6;border-color:#8b5cf6">Entrar</button>
       </div>
-    </form>
+    </div>
+
     <div class="connection-status" id="connStatus">⏳ Conectando...</div>
   </div>
 </div>
@@ -216,7 +264,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <h1>🍷 ALINA'S BAR</h1>
     <div class="home-top-right">
       <span class="badge" id="userBadge">CAMARERO</span>
-      <button class="gear-btn" onclick="showReport()">⚙️</button>
+      <button class="gear-btn gerente-only hidden" onclick="showReport()">⚙️</button>
+      <button class="gear-btn gerente-only hidden" onclick="showEditor()">✏️</button>
       <button class="logout-btn" onclick="logout()">SALIR</button>
     </div>
   </div>
@@ -239,6 +288,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="actions">
     <button class="act a-ticket" onclick="showTicket()">🧾 TICKET</button>
     <button class="act a-cobrar" onclick="closeAccount()">💰 COBRAR</button>
+    <button class="act a-extra" onclick="openExtras()">➕ EXTRA</button>
     <button class="act a-nota" onclick="openNota()">📝 NOTA</button>
     <button class="act a-send" onclick="sendOrder()">📤 ENVIAR COCINA</button>
   </div>
@@ -250,6 +300,21 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <p id="kInfo">Esperando órdenes...</p>
   </div>
   <div class="k-orders" id="kOrders"></div>
+</div>
+
+<div id="screenEditor" class="ed-wrap hidden">
+  <div class="ed-head">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <h1>✏️ EDITAR CARTA</h1>
+    <span style="width:2.5rem"></span>
+  </div>
+  <div class="ed-cats" id="edCats"></div>
+  <div class="ed-lbls"><span style="flex:1">Producto</span><span style="width:3.6rem;text-align:right">Precio €</span><span style="width:3.6rem;text-align:right">Coste €</span><span style="width:1.5rem"></span></div>
+  <div class="ed-list" id="edList"></div>
+  <div class="ed-foot">
+    <button class="ed-btn ed-add" onclick="edAdd()">➕ Añadir</button>
+    <button class="ed-btn ed-save" onclick="edSave()">💾 Guardar cambios</button>
+  </div>
 </div>
 
 <div id="screenTicket" class="tk-wrap hidden">
@@ -298,6 +363,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <h1>📊 CUENTAS DEL DÍA</h1>
     <button class="logout-btn" onclick="loadReport()">🔄</button>
   </div>
+  <div class="rep-periods" id="repPeriods"></div>
+  <div class="rep-nav" id="repNav"></div>
   <div class="rep-totals">
     <div class="rep-card"><div class="rep-card-lbl">Facturado</div><div class="rep-card-val" id="repTotal">0€</div></div>
     <div class="rep-card"><div class="rep-card-lbl">Mesas</div><div class="rep-card-val" id="repMesas">0</div></div>
@@ -321,7 +388,7 @@ const CATS=[
  {id:'carnes',n:'CARNES'},{id:'ensaladas',n:'ENSALADAS'},{id:'varios',n:'VARIOS'}
 ];
 
-const PRODS=[
+const SEED_PRODS=[
  // ===== ENTRANTES (carta real) =====
  {c:'entrantes',n:'Bolsa patatas fritas',p:1.50},{c:'entrantes',n:'Bicicleta',p:2.00},{c:'entrantes',n:'Marinera',p:2.50},
  {c:'entrantes',n:'Olivas',p:1.50},{c:'entrantes',n:'Ración ensaladilla Rusa',p:4.50},{c:'entrantes',n:'Aros de cebolla (8)',p:5.00},
@@ -415,7 +482,22 @@ const PRODS=[
 ];
 
 // dar id a cada producto
-PRODS.forEach((p,i)=>p.id='p'+i);
+SEED_PRODS.forEach((p,i)=>p.id='p'+i);
+// PRODS se llena desde Supabase (editable). Si la BD está vacía, se siembra con SEED_PRODS.
+let PRODS=SEED_PRODS.slice();
+
+async function loadProducts(){
+ const{data,error}=await sb.from('products').select('*').eq('active',true).order('pos');
+ if(error){console.warn('products no disponible, uso catálogo fijo',error);return}
+ if(!data||!data.length){
+  // Primera vez: sembrar la BD con el catálogo de la app
+  const rows=SEED_PRODS.map((p,i)=>({id:p.id,cat:p.c,name:p.n,price:p.p,cost:0,pos:i,active:true}));
+  for(let i=0;i<rows.length;i+=100){await sb.from('products').insert(rows.slice(i,i+100))}
+  PRODS=SEED_PRODS.slice();
+  return;
+ }
+ PRODS=data.map(r=>({id:r.id,c:r.cat,n:r.name,p:parseFloat(r.price),cost:parseFloat(r.cost||0)}));
+}
 
 
 // ===== ZONAS =====
@@ -486,18 +568,42 @@ async function loadOrders(){
  STATE.orders=data;
 }
 
-function login(e){
- e.preventDefault();
+const PIN_GERENTE='1234';
+function pickRole(r){
  if(!sb&&!initSb()){toast('❌ Sin conexión. Recarga.','error');return}
- const em=document.getElementById('email').value,pw=document.getElementById('password').value;
- const u=STATE.users.find(x=>x.email===em&&x.password===pw);
- if(u){STATE.user=u;u.role==='cocina'?showKitchen():showHome()}else toast('❌ Credenciales incorrectas','error');
+ if(r==='gerente'){
+  document.getElementById('roleGrid').classList.add('hidden');
+  document.getElementById('pinBox').classList.remove('hidden');
+  setTimeout(()=>document.getElementById('pinInput').focus(),100);
+  return;
+ }
+ enterAs(r);
 }
-function quickLogin(em){document.getElementById('email').value=em;document.getElementById('password').value='demo123';document.getElementById('loginForm').dispatchEvent(new Event('submit'))}
+function cancelPin(){
+ document.getElementById('pinInput').value='';
+ document.getElementById('pinBox').classList.add('hidden');
+ document.getElementById('roleGrid').classList.remove('hidden');
+}
+function checkPin(){
+ const v=document.getElementById('pinInput').value;
+ if(v===PIN_GERENTE){cancelPin();enterAs('gerente')}
+ else{toast('❌ PIN incorrecto','error');document.getElementById('pinInput').value=''}
+}
+function enterAs(role){
+ STATE.user={role:role};
+ applyRole(role);
+ if(role==='cocina')showKitchen();else showHome();
+}
+// Muestra u oculta lo que cada rol puede tocar
+function applyRole(role){
+ const esGerente=(role==='gerente');
+ document.querySelectorAll('.gerente-only').forEach(el=>el.classList.toggle('hidden',!esGerente));
+}
 let kPoll=null;
 function logout(){STATE.user=null;STATE.table=null;if(kPoll){clearInterval(kPoll);kPoll=null}
+ cancelPin();
  document.getElementById('loginScreen').style.display='flex';
- ['screenHome','screenComanda','screenKitchen'].forEach(i=>document.getElementById(i).classList.add('hidden'));}
+ ['screenHome','screenComanda','screenKitchen','screenReport','screenEditor','screenTicket'].forEach(i=>document.getElementById(i).classList.add('hidden'));}
 
 async function showHome(){
  document.getElementById('loginScreen').style.display='none';
@@ -505,7 +611,10 @@ async function showHome(){
  document.getElementById('screenComanda').classList.add('hidden');
  document.getElementById('screenKitchen').classList.add('hidden');
  document.getElementById('screenReport').classList.add('hidden');
- document.getElementById('userBadge').textContent=STATE.user.role.toUpperCase();
+ document.getElementById('screenEditor').classList.add('hidden');
+ const b=document.getElementById('userBadge');
+ b.textContent=STATE.user.role.toUpperCase();
+ b.style.background=STATE.user.role==='gerente'?'#8b5cf6':'#3b82f6';
  renderZones();try{await loadTables();renderMesas()}catch(e){document.getElementById('mesasGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:2rem;color:#ef4444;font-size:.8rem">❌ Error al cargar las mesas</div>'}
 }
 function renderZones(){
@@ -548,12 +657,6 @@ function selCat(id){
 }
 function addProd(pid){
  const p=PRODS.find(x=>x.id===pid);
- // Cafés y desayunos abren el selector de opciones
- if(p.c==='cafes'||p.c==='desayunos'){
-  STATE.pendingMod={prod:p,sel:[]};
-  openMod(p);
-  return;
- }
  pushItem(p,[],p.p);
 }
 function openMod(p){
@@ -576,10 +679,20 @@ function togMod(i){
 }
 function closeMod(){document.getElementById('modModal').classList.add('hidden');STATE.pendingMod=null}
 async function confirmMod(){
- const{prod,sel}=STATE.pendingMod;
- const extra=sel.reduce((s,x)=>s+x.e,0);
+ const s=STATE.pendMod;if(!s)return;
+ const extra=s.mods.filter(m=>s.sel.includes(m.n)).reduce((a,m)=>a+m.x,0);
+ const idx=s.editIdx;
  closeMod();
- await pushItem(prod,sel.map(x=>x.n),prod.p+extra);
+ if(idx!==undefined&&idx!==null){
+  const it=STATE.table.consumed[idx];
+  it.mods=s.sel;
+  it.price=+(s.p.p+extra).toFixed(2);
+  it.key=s.p.id+'|'+s.sel.join(',');
+  recalc();renderOrder();await persist();
+  toast('✓ Extras aplicados');
+ }else{
+  await pushItem(s.p,s.sel,s.p.p+extra);
+ }
 }
 async function pushItem(p,mods,price){
  const c=STATE.table.consumed||[];
@@ -601,7 +714,7 @@ function renderOrder(){
  const c=STATE.table.consumed||[];
  document.getElementById('orderList').innerHTML=c.length?c.map((i,idx)=>
   `<div class="order-row ${i.sent?'':'pending'} ${i.isNota?'or-nota':''}">
-    <span class="or-name">${i.name}${i.sent?'':' •'}
+    <span class="or-name or-tap" onclick="editExtras(${idx})">${i.name}${i.sent?'':' •'}
       ${i.mods&&i.mods.length?`<span class="or-mods">${i.mods.join(', ')}</span>`:''}
     </span>
     <span class="qty-box">
@@ -730,18 +843,59 @@ function goHome(){showHome()}
 
 // ===== INFORME DEL DÍA =====
 async function showReport(){
+ if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
  document.getElementById('screenHome').classList.add('hidden');
  document.getElementById('screenComanda').classList.add('hidden');
  document.getElementById('screenReport').classList.remove('hidden');
  await loadReport();
 }
+// periodo: 'dia' | 'semana' | 'mes' | 'todo' ; offset: 0=actual, -1=anterior...
+function repRange(){
+ const p=STATE.repPeriod||'dia', o=STATE.repOffset||0;
+ const now=new Date();
+ let ini,fin,lbl;
+ if(p==='dia'){
+  ini=new Date(now);ini.setDate(ini.getDate()+o);ini.setHours(0,0,0,0);
+  fin=new Date(ini);fin.setDate(fin.getDate()+1);
+  lbl=o===0?'HOY · '+ini.toLocaleDateString('es-ES'):ini.toLocaleDateString('es-ES',{weekday:'short',day:'2-digit',month:'2-digit',year:'numeric'});
+ }else if(p==='semana'){
+  ini=new Date(now);const d=(ini.getDay()+6)%7;
+  ini.setDate(ini.getDate()-d+o*7);ini.setHours(0,0,0,0);
+  fin=new Date(ini);fin.setDate(fin.getDate()+7);
+  const f2=new Date(fin);f2.setDate(f2.getDate()-1);
+  lbl=(o===0?'ESTA SEMANA · ':'')+ini.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'})+' – '+f2.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'});
+ }else if(p==='mes'){
+  ini=new Date(now.getFullYear(),now.getMonth()+o,1);
+  fin=new Date(now.getFullYear(),now.getMonth()+o+1,1);
+  lbl=(o===0?'ESTE MES · ':'')+ini.toLocaleDateString('es-ES',{month:'long',year:'numeric'}).toUpperCase();
+ }else{
+  ini=new Date(2000,0,1);fin=new Date(2100,0,1);lbl='TODO EL HISTÓRICO';
+ }
+ return{ini,fin,lbl,p,o};
+}
+function setPeriod(p){STATE.repPeriod=p;STATE.repOffset=0;loadReport()}
+function movePeriod(d){STATE.repOffset=(STATE.repOffset||0)+d;loadReport()}
 async function loadReport(){
- const hoy=new Date();hoy.setHours(0,0,0,0);
- const{data,error}=await sb.from('sales_history').select('*').gte('closed_at',hoy.toISOString()).order('closed_at',{ascending:false});
+ if(!STATE.repPeriod)STATE.repPeriod='dia';
+ const r=repRange();
+
+ // Botones de periodo
+ document.getElementById('repPeriods').innerHTML=
+  [['dia','DÍA'],['semana','SEMANA'],['mes','MES'],['todo','TODO']].map(([k,n])=>
+   `<button class="rep-per ${r.p===k?'active':''}" onclick="setPeriod('${k}')">${n}</button>`).join('');
+
+ // Navegación anterior/siguiente
+ document.getElementById('repNav').innerHTML = r.p==='todo'
+  ? `<span style="margin:auto">${r.lbl}</span>`
+  : `<button onclick="movePeriod(-1)">◀</button><span>${r.lbl}</span><button onclick="movePeriod(1)" ${r.o>=0?'style="opacity:.3"':''}>▶</button>`;
+
+ const{data,error}=await sb.from('sales_history').select('*')
+   .gte('closed_at',r.ini.toISOString()).lt('closed_at',r.fin.toISOString())
+   .order('closed_at',{ascending:false});
  if(error){console.error(error);document.getElementById('repList').innerHTML='<div class="order-empty">❌ Error al cargar</div>';return}
+
  const ventas=data||[];
  const total=ventas.reduce((s,v)=>s+parseFloat(v.total),0);
- // Agrupar artículos vendidos
  const cont={};let arts=0;
  ventas.forEach(v=>(v.items||[]).forEach(i=>{
   const k=i.name+(i.mods&&i.mods.length?' ('+i.mods.join(', ')+')':'');
@@ -754,7 +908,7 @@ async function loadReport(){
  const rows=Object.entries(cont).sort((a,b)=>b[1].q-a[1].q);
  document.getElementById('repList').innerHTML=rows.length?rows.map(([n,d])=>
   `<div class="rep-row"><span class="rep-name">${n}</span><span class="rep-qty">${d.q}</span><span class="rep-eur">${d.e.toFixed(2)}€</span></div>`
- ).join(''):'<div class="order-empty">Sin ventas cerradas hoy</div>';
+ ).join(''):'<div class="order-empty">Sin ventas en este periodo</div>';
 }
 
 async function showKitchen(){
@@ -778,6 +932,100 @@ function renderKitchen(){
 async function doneOrder(id){await sb.from('orders').update({status:'completada'}).eq('id',id);toast('✓ Completada')}
 async function cancelOrder(id){if(confirm('¿Cancelar orden?')){await sb.from('orders').delete().eq('id',id);toast('✓ Cancelada')}}
 
+
+
+
+// ===== EDITOR DE CARTA =====
+function showEditor(){
+ if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
+ STATE.edCat=STATE.edCat||CATS[0].id;
+ STATE.edDraft=PRODS.map(p=>({...p}));
+ STATE.edDeleted=[];
+ document.getElementById('screenHome').classList.add('hidden');
+ document.getElementById('screenReport').classList.add('hidden');
+ document.getElementById('screenEditor').classList.remove('hidden');
+ edRender();
+}
+function edSelCat(c){edSyncInputs();STATE.edCat=c;edRender()}
+function edRender(){
+ document.getElementById('edCats').innerHTML=CATS.map(c=>
+  `<button class="ed-cat ${c.id===STATE.edCat?'active':''}" onclick="edSelCat('${c.id}')">${c.n}</button>`).join('');
+ const list=STATE.edDraft.filter(p=>p.c===STATE.edCat);
+ document.getElementById('edList').innerHTML=list.length?list.map(p=>
+  `<div class="ed-row">
+    <input class="ed-name" data-id="${p.id}" data-f="n" value="${(p.n||'').replace(/"/g,'&quot;')}">
+    <input class="ed-price" data-id="${p.id}" data-f="p" type="number" step="0.05" inputmode="decimal" value="${p.p.toFixed(2)}">
+    <input class="ed-cost" data-id="${p.id}" data-f="cost" type="number" step="0.05" inputmode="decimal" value="${(p.cost||0).toFixed(2)}">
+    <button class="ed-del" onclick="edDel('${p.id}')">✕</button>
+   </div>`).join(''):'<div class="order-empty">Sin productos. Pulsa Añadir.</div>';
+}
+// Vuelca lo escrito en los inputs al borrador
+function edSyncInputs(){
+ document.querySelectorAll('#edList input').forEach(inp=>{
+  const p=STATE.edDraft.find(x=>x.id===inp.dataset.id);
+  if(!p)return;
+  const f=inp.dataset.f;
+  if(f==='n')p.n=inp.value;
+  else p[f]=parseFloat(inp.value)||0;
+ });
+}
+function edAdd(){
+ edSyncInputs();
+ STATE.edDraft.push({id:'x'+Date.now()+Math.floor(Math.random()*999),c:STATE.edCat,n:'Nuevo producto',p:0,cost:0});
+ edRender();
+ setTimeout(()=>{const i=document.querySelectorAll('#edList .ed-name');if(i.length){i[i.length-1].focus();i[i.length-1].select()}},80);
+}
+function edDel(id){
+ edSyncInputs();
+ const p=STATE.edDraft.find(x=>x.id===id);
+ if(!p)return;
+ if(!confirm('¿Borrar "'+p.n+'"?'))return;
+ STATE.edDeleted.push(id);
+ STATE.edDraft=STATE.edDraft.filter(x=>x.id!==id);
+ edRender();
+}
+async function edSave(){
+ edSyncInputs();
+ const bad=STATE.edDraft.find(p=>!p.n||!p.n.trim());
+ if(bad){toast('❌ Hay un producto sin nombre','error');return}
+ try{
+  // Marcar como inactivos los borrados
+  for(const id of STATE.edDeleted){await sb.from('products').update({active:false}).eq('id',id)}
+  // Guardar/actualizar el resto
+  const rows=STATE.edDraft.map((p,i)=>({id:p.id,cat:p.c,name:p.n.trim(),price:p.p,cost:p.cost||0,pos:i,active:true,updated_at:new Date().toISOString()}));
+  for(let i=0;i<rows.length;i+=100){
+   const{error}=await sb.from('products').upsert(rows.slice(i,i+100));
+   if(error)throw error;
+  }
+  await loadProducts();
+  STATE.edDeleted=[];
+  toast('✓ Carta guardada');
+ }catch(e){console.error(e);toast('❌ Error al guardar','error')}
+}
+
+// ===== EXTRAS: añadir opciones a un producto ya puesto en la comanda =====
+function openExtras(){
+ const c=STATE.table.consumed||[];
+ const cand=c.map((it,i)=>({it,i})).filter(x=>!x.it.sent&&!x.it.isNota);
+ if(!cand.length){toast('❌ Añade primero un producto','error');return}
+ // el último añadido que admita extras
+ const last=cand[cand.length-1];
+ const prod=PRODS.find(p=>p.id===last.it.product_id);
+ if(!prod||!modsFor(prod)){toast('❌ Ese producto no tiene extras','error');return}
+ editExtras(last.i);
+}
+// Abre las opciones de una línea concreta (también al tocarla en la lista)
+function editExtras(idx){
+ const it=STATE.table.consumed[idx];
+ if(!it||it.sent||it.isNota)return;
+ const prod=PRODS.find(p=>p.id===it.product_id);
+ const mods=prod?modsFor(prod):null;
+ if(!mods){toast('❌ Sin extras para este producto','error');return}
+ STATE.pendMod={p:prod,mods:mods,sel:(it.mods||[]).slice(),editIdx:idx};
+ document.getElementById('modTitle').textContent=prod.n+'  ·  '+prod.p.toFixed(2)+'€';
+ renderModGrid();
+ document.getElementById('modModal').classList.remove('hidden');
+}
 
 // ===== NOTAS =====
 function openNota(){
@@ -861,9 +1109,9 @@ function buildTicket(mesa,items,total,fecha,num){
 function toast(m,t){const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
 
 document.addEventListener('DOMContentLoaded',async()=>{
- document.getElementById('loginForm').addEventListener('submit',login);
+ const pi=document.getElementById('pinInput');if(pi)pi.addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
  if(initSb()){
-  try{await loadTables();const s=document.getElementById('connStatus');s.textContent='✓ Conectado';s.className='connection-status online'}
+  try{await loadProducts();await loadTables();const s=document.getElementById('connStatus');s.textContent='✓ Conectado';s.className='connection-status online'}
   catch(e){}
   sb.channel('t-ch').on('postgres_changes',{event:'*',schema:'public',table:'tables'},()=>{loadTables().then(()=>{if(!document.getElementById('screenHome').classList.contains('hidden'))renderMesas()})}).subscribe();
   sb.channel('o-ch').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{loadOrders().then(()=>{if(!document.getElementById('screenKitchen').classList.contains('hidden'))renderKitchen()})}).subscribe();
