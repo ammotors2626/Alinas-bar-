@@ -222,6 +222,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .rep-card-lbl{font-size:.55rem;color:#9ca3af;text-transform:uppercase}
 .rep-card-val{font-size:1rem;font-weight:800;color:#10b981}
 .rep-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.2rem}
+.rep-send{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.5rem 0 .2rem;flex-shrink:0}
+.rep-send button{padding:.65rem;border:none;border-radius:.35rem;font-weight:800;font-size:.72rem}
+.rs-mail{background:#3b82f6;color:#fff}
+.rs-share{background:#10b981;color:#fff}
 .rep-row{background:#2a2a2a;padding:.4rem .5rem;border-radius:.25rem;display:flex;align-items:center;gap:.4rem;font-size:.7rem;border-left:3px solid #f97316}
 .rep-name{flex:1;font-weight:600}
 .rep-qty{background:#444;padding:.1rem .35rem;border-radius:.2rem;font-weight:800;font-size:.65rem}
@@ -380,6 +384,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <div class="rep-card"><div class="rep-card-lbl">Artículos</div><div class="rep-card-val" id="repArts">0</div></div>
   </div>
   <div class="rep-list" id="repList"></div>
+  <div class="rep-send">
+    <button class="rs-mail" onclick="mailReport()">📧 Correo</button>
+    <button class="rs-share" onclick="shareReport()">📤 Compartir</button>
+  </div>
 </div>
 
 <script>
@@ -651,6 +659,39 @@ function addProd(pid){
  const p=PRODS.find(x=>x.id===pid);
  pushItem(p,[],p.p);
 }
+
+// ===== ENVIAR INFORME =====
+const EMAIL_INFORME='dealinasbar@gmail.com';
+function reportText(){
+ const r=repRange();
+ let t=`ALINA'S BAR - CIERRE\n${r.lbl}\n`;
+ t+=`Generado: ${new Date().toLocaleString('es-ES')}\n`;
+ t+='========================\n';
+ t+=`FACTURADO: ${document.getElementById('repTotal').textContent}\n`;
+ t+=`Mesas cobradas: ${document.getElementById('repMesas').textContent}\n`;
+ t+=`Articulos: ${document.getElementById('repArts').textContent}\n`;
+ t+='========================\nDETALLE\n';
+ document.querySelectorAll('#repList .rep-row').forEach(row=>{
+  const c=row.querySelectorAll('span');
+  if(c.length>=3)t+=`${c[1].textContent} x ${c[0].textContent} = ${c[2].textContent}\n`;
+ });
+ t+='========================\n';
+ return t;
+}
+function mailReport(){
+ const r=repRange();
+ const asunto=encodeURIComponent("Cierre Alina's Bar - "+r.lbl);
+ const cuerpo=encodeURIComponent(reportText());
+ location.href=`mailto:${EMAIL_INFORME}?subject=${asunto}&body=${cuerpo}`;
+}
+async function shareReport(){
+ const t=reportText();
+ try{
+  if(navigator.share)await navigator.share({title:"Cierre Alina's Bar",text:t});
+  else{await navigator.clipboard.writeText(t);toast('✓ Informe copiado')}
+ }catch(e){}
+}
+
 // ===== EXTRAS / OPCIONES =====
 // Abre las opciones del último producto añadido que las admita
 function openExtras(){
