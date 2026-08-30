@@ -119,6 +119,10 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .a-send{background:#10b981;color:#fff}
 .a-nota{background:#8b5cf6;color:#fff}
 .a-extra{background:#f97316;color:#000}
+.mod-manual{display:flex;align-items:center;gap:.4rem;padding:.5rem;border-top:1px solid #333;flex-shrink:0}
+.mod-manual label{font-size:.7rem;font-weight:700;color:#9ca3af;flex:1}
+.mod-manual input{width:5rem;background:#1a1a1a;border:1.5px solid #f97316;color:#f97316;padding:.4rem;border-radius:.3rem;font-size:.85rem;font-weight:800;text-align:right}
+.mod-manual button{background:#444;color:#fff;border:none;padding:.4rem .6rem;border-radius:.3rem;font-size:.8rem}
 .ed-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
 .ed-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #10b981;margin-bottom:.4rem;flex-shrink:0}
 .ed-head h1{font-size:.9rem;color:#10b981}
@@ -350,9 +354,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
       <span class="modal-price" id="modPrice">0,00€</span>
     </div>
     <div class="modal-body" id="modBody"></div>
+    <div class="mod-manual">
+      <label>💶 Precio manual</label>
+      <input type="number" step="0.05" inputmode="decimal" id="modManual" placeholder="auto">
+      <button onclick="clearManual()">↺</button>
+    </div>
     <div class="modal-acts">
       <button class="m-cancel" onclick="closeMod()">Cancelar</button>
-      <button class="m-ok" onclick="confirmMod()">✓ AÑADIR</button>
+      <button class="m-ok" id="modOkBtn" onclick="confirmMod()">✓ AÑADIR</button>
     </div>
   </div>
 </div>
@@ -507,32 +516,6 @@ const ZONES=[
  {id:'barra',n:'BARRA',ids:['b1','b2','b3','b4','b5','b6','b7','b8']}
 ];
 
-// ===== MODIFICADORES =====
-// Cafes: opciones sueltas, algunas con recargo
-const MOD_CAFE=[
- {n:'Leche fría',x:0},{n:'Leche templada',x:0},{n:'Leche caliente',x:0},
- {n:'En vaso',x:0},{n:'En taza',x:0},{n:'Muy caliente',x:0},
- {n:'Largo de café',x:0},{n:'Corto de café',x:0},{n:'Sin espuma',x:0},
- {n:'Con espuma',x:0},{n:'Edulcorante',x:0},{n:'Sacarina',x:0},
- {n:'Azúcar moreno',x:0},{n:'Sin azúcar',x:0},{n:'Leche desnatada',x:0},
- {n:'Leche vegetal',x:0.20},{n:'CON HIELO (+0,10)',x:0.10},{n:'Para llevar (+0,10)',x:0.10}
-];
-// Ingredientes para construir tostadas a medida
-const MOD_TOSTA=[
- {n:'Mantequilla',x:0.30},{n:'Mermelada',x:0.30},{n:'Aceite',x:0},
- {n:'Tomate',x:0.30},{n:'Atún',x:0.70},{n:'Queso',x:0.70},
- {n:'Queso fresco',x:0.70},{n:'Aguacate',x:0.80},{n:'Jamón serrano',x:0.80},
- {n:'Jamón york',x:0.70},{n:'Sobrasada',x:0.70},{n:'Salmón',x:1.50},
- {n:'Huevo frito',x:0.80},{n:'Bacon',x:0.80},{n:'Pavo',x:0.70},
- {n:'Rulo de cabra',x:1.00},{n:'Cebolla caramelizada',x:0.50},{n:'Pan sin gluten',x:0.50},
- {n:'Pan integral',x:0},{n:'Poco tostada',x:0},{n:'Muy tostada',x:0},{n:'Para llevar (+0,50)',x:0.50}
-];
-
-function modsFor(p){
- if(p.c==='cafes')return MOD_CAFE;
- if(p.c==='desayunos')return MOD_TOSTA;
- return null;
-}
 
 const TABLE_ORDER=['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','b1','b2','b3','b4','b5','b6','b7','b8','s1','s2','s3','s4','s5','s6','s7'];
 
@@ -554,7 +537,16 @@ const MODS_TOSTADA=[
  {n:'Pan sin gluten',e:0.50},{n:'Poco tostada',e:0},{n:'Muy tostada',e:0},{n:'Para llevar',e:0.10}
 ];
 
+// Devuelve la lista de extras según la categoría del producto
+function modsFor(p){
+ if(!p)return null;
+ if(p.c==='cafes')return MODS_CAFE;
+ if(p.c==='desayunos')return MODS_TOSTADA;
+ return null;
+}
+
 const STATE={user:null,table:null,cat:null,zone:'terraza',tables:[],orders:[],pendingMod:null,
+ repPeriod:'dia',repOffset:0,edCat:null,edDraft:[],edDeleted:[],lastTicket:null,viewTicket:null,
  users:[{email:'camarero@alinas.bar',password:'demo123',role:'camarero'},{email:'cocina@alinas.bar',password:'demo123',role:'cocina'}]};
 
 async function loadTables(){
@@ -659,47 +651,89 @@ function addProd(pid){
  const p=PRODS.find(x=>x.id===pid);
  pushItem(p,[],p.p);
 }
-function openMod(p){
- const list=p.c==='cafes'?MODS_CAFE:MODS_TOSTADA;
+// ===== EXTRAS / OPCIONES =====
+// Abre las opciones del último producto añadido que las admita
+function openExtras(){
+ const c=(STATE.table&&STATE.table.consumed)||[];
+ const cand=c.map((it,i)=>({it,i})).filter(x=>!x.it.sent&&!x.it.isNota);
+ if(!cand.length){toast('❌ Añade primero un producto','error');return}
+ for(let k=cand.length-1;k>=0;k--){
+  const prod=PRODS.find(p=>p.id===cand[k].it.product_id);
+  if(prod&&modsFor(prod)){editExtras(cand[k].i);return}
+ }
+ // ninguno admite extras: abrir el último solo para precio manual
+ editExtras(cand[cand.length-1].i);
+}
+// Abre el panel de opciones de una línea concreta de la comanda
+function editExtras(idx){
+ const it=STATE.table.consumed[idx];
+ if(!it||it.sent||it.isNota){toast('❌ Ya enviado a cocina','error');return}
+ const prod=PRODS.find(p=>p.id===it.product_id);
+ if(!prod){toast('❌ Producto no encontrado','error');return}
+ STATE.pendingMod={prod:prod,sel:(it.mods||[]).slice(),editIdx:idx,manual:it.manual?it.price:null};
+ paintMod();
+}
+// Pinta el modal (sirve tanto para añadir nuevo como para editar)
+function paintMod(){
+ const s=STATE.pendingMod,p=s.prod,list=modsFor(p)||[];
  document.getElementById('modTitle').textContent=p.n;
- document.getElementById('modPrice').textContent=p.p.toFixed(2)+'€';
- document.getElementById('modBody').innerHTML=list.map((m,i)=>
-  `<div class="mod-chip" id="mc${i}" onclick="togMod(${i})">${m.n}${m.e>0?`<span class="mod-extra">+${m.e.toFixed(2)}€</span>`:''}</div>`).join('');
+ document.getElementById('modBody').innerHTML=list.length?list.map((m,i)=>
+  `<div class="mod-chip ${s.sel.includes(m.n)?'on':''}" onclick="togMod(${i})">${m.n}${m.e>0?`<span class="mod-extra">+${m.e.toFixed(2)}€</span>`:''}</div>`
+ ).join(''):'<div style="text-align:center;color:#666;font-size:.75rem;padding:1rem">Este producto no tiene extras.<br>Puedes ajustar el precio abajo.</div>';
+ document.getElementById('modManual').value=s.manual!==null&&s.manual!==undefined?s.manual.toFixed(2):'';
+ document.getElementById('modOkBtn').textContent=s.editIdx!==undefined&&s.editIdx!==null?'✓ APLICAR':'✓ AÑADIR';
+ updModPrice();
  document.getElementById('modModal').classList.remove('hidden');
 }
-function togMod(i){
- const p=STATE.pendingMod.prod;
- const list=p.c==='cafes'?MODS_CAFE:MODS_TOSTADA;
- const m=list[i];
- const idx=STATE.pendingMod.sel.findIndex(x=>x.n===m.n);
- if(idx>=0)STATE.pendingMod.sel.splice(idx,1);else STATE.pendingMod.sel.push(m);
- document.getElementById('mc'+i).classList.toggle('on',idx<0);
- const extra=STATE.pendingMod.sel.reduce((s,x)=>s+x.e,0);
- document.getElementById('modPrice').textContent=(p.p+extra).toFixed(2)+'€';
+function modExtra(){
+ const s=STATE.pendingMod,list=modsFor(s.prod)||[];
+ return list.filter(m=>s.sel.includes(m.n)).reduce((a,m)=>a+m.e,0);
 }
+function modFinalPrice(){
+ const s=STATE.pendingMod;
+ const man=parseFloat(document.getElementById('modManual').value);
+ if(!isNaN(man)&&man>=0)return man;
+ return +(s.prod.p+modExtra()).toFixed(2);
+}
+function updModPrice(){
+ document.getElementById('modPrice').textContent=modFinalPrice().toFixed(2)+'€';
+}
+function togMod(i){
+ const s=STATE.pendingMod,list=modsFor(s.prod)||[],m=list[i];
+ const k=s.sel.indexOf(m.n);
+ if(k>=0)s.sel.splice(k,1);else s.sel.push(m.n);
+ paintModChips();updModPrice();
+}
+function paintModChips(){
+ const s=STATE.pendingMod,list=modsFor(s.prod)||[];
+ document.querySelectorAll('#modBody .mod-chip').forEach((el,i)=>el.classList.toggle('on',s.sel.includes(list[i].n)));
+}
+function clearManual(){document.getElementById('modManual').value='';updModPrice()}
 function closeMod(){document.getElementById('modModal').classList.add('hidden');STATE.pendingMod=null}
 async function confirmMod(){
- const s=STATE.pendMod;if(!s)return;
- const extra=s.mods.filter(m=>s.sel.includes(m.n)).reduce((a,m)=>a+m.x,0);
- const idx=s.editIdx;
+ const s=STATE.pendingMod;if(!s)return;
+ const man=parseFloat(document.getElementById('modManual').value);
+ const esManual=!isNaN(man)&&man>=0;
+ const price=modFinalPrice();
+ const idx=s.editIdx,sel=s.sel.slice(),prod=s.prod;
  closeMod();
  if(idx!==undefined&&idx!==null){
   const it=STATE.table.consumed[idx];
-  it.mods=s.sel;
-  it.price=+(s.p.p+extra).toFixed(2);
-  it.key=s.p.id+'|'+s.sel.join(',');
+  it.mods=sel;it.price=price;it.manual=esManual;
+  it.key=prod.id+'|'+sel.join(',')+(esManual?'|m'+price:'');
   recalc();renderOrder();await persist();
-  toast('✓ Extras aplicados');
+  toast('✓ Aplicado');
  }else{
-  await pushItem(s.p,s.sel,s.p.p+extra);
+  await pushItem(prod,sel,price,esManual);
  }
 }
-async function pushItem(p,mods,price){
+
+async function pushItem(p,mods,price,manual){
  const c=STATE.table.consumed||[];
- const key=p.id+'|'+mods.join(',');
+ const key=p.id+'|'+mods.join(',')+(manual?'|m'+price:'');
  const ex=c.find(i=>i.key===key&&!i.sent);
  if(ex)ex.quantity+=1;
- else c.push({key:key,product_id:p.id,name:p.n,mods:mods,price:price,quantity:1,sent:false});
+ else c.push({key:key,product_id:p.id,name:p.n,mods:mods,price:price,quantity:1,sent:false,manual:!!manual});
  STATE.table.consumed=c;
  recalc();renderOrder();await persist();
 }
@@ -722,7 +756,7 @@ function renderOrder(){
       <span class="or-qty">${i.quantity}</span>
       <button class="qty-btn" onclick="chgQty(${idx},1)">+</button>
     </span>
-    <span class="or-price">${(i.price*i.quantity).toFixed(2)}€</span>
+    <span class="or-price">${i.manual?"✏️":""}${(i.price*i.quantity).toFixed(2)}€</span>
     <button class="or-del" onclick="delItem(${idx})">✕</button>
    </div>`).join(''):'<div class="order-empty">Sin productos. Elige una categoría arriba.</div>';
  document.getElementById('hdrTotal').textContent=(parseFloat(STATE.table.total)||0).toFixed(2)+'€';
@@ -1004,28 +1038,7 @@ async function edSave(){
 }
 
 // ===== EXTRAS: añadir opciones a un producto ya puesto en la comanda =====
-function openExtras(){
- const c=STATE.table.consumed||[];
- const cand=c.map((it,i)=>({it,i})).filter(x=>!x.it.sent&&!x.it.isNota);
- if(!cand.length){toast('❌ Añade primero un producto','error');return}
- // el último añadido que admita extras
- const last=cand[cand.length-1];
- const prod=PRODS.find(p=>p.id===last.it.product_id);
- if(!prod||!modsFor(prod)){toast('❌ Ese producto no tiene extras','error');return}
- editExtras(last.i);
-}
 // Abre las opciones de una línea concreta (también al tocarla en la lista)
-function editExtras(idx){
- const it=STATE.table.consumed[idx];
- if(!it||it.sent||it.isNota)return;
- const prod=PRODS.find(p=>p.id===it.product_id);
- const mods=prod?modsFor(prod):null;
- if(!mods){toast('❌ Sin extras para este producto','error');return}
- STATE.pendMod={p:prod,mods:mods,sel:(it.mods||[]).slice(),editIdx:idx};
- document.getElementById('modTitle').textContent=prod.n+'  ·  '+prod.p.toFixed(2)+'€';
- renderModGrid();
- document.getElementById('modModal').classList.remove('hidden');
-}
 
 // ===== NOTAS =====
 function openNota(){
@@ -1109,6 +1122,7 @@ function buildTicket(mesa,items,total,fecha,num){
 function toast(m,t){const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
 
 document.addEventListener('DOMContentLoaded',async()=>{
+ const mm=document.getElementById('modManual');if(mm)mm.addEventListener('input',updModPrice);
  const pi=document.getElementById('pinInput');if(pi)pi.addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
  if(initSb()){
   try{await loadProducts();await loadTables();const s=document.getElementById('connStatus');s.textContent='✓ Conectado';s.className='connection-status online'}
