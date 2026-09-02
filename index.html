@@ -119,6 +119,37 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .a-send{background:#10b981;color:#fff}
 .a-nota{background:#8b5cf6;color:#fff}
 .a-extra{background:#f97316;color:#000}
+.cj-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
+.cj-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #eab308;margin-bottom:.4rem;flex-shrink:0}
+.cj-head h1{font-size:.9rem;color:#eab308}
+.cj-body{flex:1;overflow-y:auto}
+.cj-sys{background:#1a3a2a;border:1.5px solid #10b981;border-radius:.4rem;padding:.6rem;margin-bottom:.6rem;text-align:center}
+.cj-sys .v{font-size:1.4rem;font-weight:800;color:#10b981}
+.cj-sys .l{font-size:.6rem;color:#9ca3af}
+.cj-grp{background:#2a2a2a;border-radius:.4rem;padding:.5rem;margin-bottom:.5rem}
+.cj-grp h3{font-size:.7rem;color:#eab308;margin-bottom:.45rem;font-weight:800}
+.cj-f{display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem}
+.cj-f label{flex:1;font-size:.72rem;font-weight:600}
+.cj-f input{width:5.5rem;background:#1a1a1a;border:1.5px solid #444;color:#fff;padding:.45rem;border-radius:.3rem;font-size:.85rem;font-weight:800;text-align:right}
+.cj-f input:focus{outline:none;border-color:#eab308}
+.cj-f.tot{border-top:1px solid #444;padding-top:.4rem;margin-top:.4rem}
+.cj-f.tot label{font-weight:800;color:#eab308}
+.cj-f .val{width:5.5rem;text-align:right;font-size:.9rem;font-weight:800;color:#eab308;padding:.45rem}
+.cj-desc{border-radius:.4rem;padding:.6rem;text-align:center;margin-bottom:.5rem}
+.cj-desc.ok{background:#1a3a2a;border:1.5px solid #10b981}
+.cj-desc.bad{background:#3a1a1a;border:1.5px solid #ef4444}
+.cj-desc .v{font-size:1.2rem;font-weight:800}
+.cj-desc.ok .v{color:#10b981}
+.cj-desc.bad .v{color:#ef4444}
+.cj-desc .l{font-size:.6rem;color:#9ca3af}
+.cj-note{width:100%;background:#1a1a1a;border:1.5px solid #444;color:#fff;padding:.5rem;border-radius:.3rem;font-size:.8rem;font-family:inherit;resize:none}
+.cj-save{width:100%;padding:.75rem;border:none;border-radius:.35rem;font-weight:800;font-size:.8rem;background:#eab308;color:#000;margin-top:.5rem;flex-shrink:0}
+.cj-hist{background:#2a2a2a;border-left:3px solid #eab308;border-radius:.3rem;padding:.4rem .5rem;margin-bottom:.25rem;font-size:.7rem}
+.cj-hist .d{font-weight:800;color:#eab308}
+.cj-hist .m{font-size:.6rem;color:#9ca3af;margin-top:.15rem;line-height:1.4}
+.tot-info{background:#2a2a2a;border-radius:.35rem;padding:.6rem;font-size:.75rem;margin-bottom:.7rem;line-height:1.5}
+.tot-info b{color:#f97316}
+.tot-big{width:100%;padding:.8rem;background:#1a1a1a;border:2px solid #10b981;border-radius:.4rem;color:#10b981;font-size:1.5rem;font-weight:800;text-align:center}
 .mod-manual{display:flex;align-items:center;gap:.4rem;padding:.5rem;border-top:1px solid #333;flex-shrink:0}
 .mod-manual label{font-size:.7rem;font-weight:700;color:#9ca3af;flex:1}
 .mod-manual input{width:5rem;background:#1a1a1a;border:1.5px solid #f97316;color:#f97316;padding:.4rem;border-radius:.3rem;font-size:.85rem;font-weight:800;text-align:right}
@@ -222,6 +253,30 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .rep-card-lbl{font-size:.55rem;color:#9ca3af;text-transform:uppercase}
 .rep-card-val{font-size:1rem;font-weight:800;color:#10b981}
 .rep-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.2rem}
+.ct-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
+.ct-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #ef4444;margin-bottom:.4rem;flex-shrink:0}
+.ct-head h1{font-size:.9rem;color:#ef4444}
+.ct-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem;margin-bottom:.4rem;flex-shrink:0}
+.ct-box{background:#2a2a2a;border-radius:.35rem;padding:.45rem .3rem;text-align:center}
+.ct-box .v{font-size:.95rem;font-weight:800}
+.ct-box .l{font-size:.55rem;color:#9ca3af;margin-top:.1rem}
+.ct-ing .v{color:#10b981}
+.ct-gas .v{color:#ef4444}
+.ct-ben .v{color:#f97316}
+.ct-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.25rem}
+.ct-row{background:#2a2a2a;border-left:3px solid #ef4444;border-radius:.3rem;padding:.4rem .5rem;display:flex;align-items:center;gap:.4rem;font-size:.72rem}
+.ct-row.nomina{border-left-color:#8b5cf6}
+.ct-row.prov{border-left-color:#3b82f6}
+.ct-info{flex:1;min-width:0}
+.ct-con{font-weight:700;line-height:1.15}
+.ct-meta{font-size:.58rem;color:#9ca3af;margin-top:.1rem}
+.ct-imp{color:#ef4444;font-weight:800;min-width:3.2rem;text-align:right}
+.ct-del{background:#ef4444;color:#fff;border:none;width:1.4rem;height:1.4rem;border-radius:.25rem;font-size:.6rem;font-weight:800;flex-shrink:0}
+.ct-add{padding:.7rem;border:none;border-radius:.35rem;font-weight:800;font-size:.78rem;background:#ef4444;color:#fff;margin-top:.4rem;flex-shrink:0}
+.gf{margin-bottom:.6rem}
+.gf label{display:block;font-size:.68rem;font-weight:700;color:#9ca3af;margin-bottom:.25rem}
+.gf input,.gf select,.gf textarea{width:100%;padding:.55rem;background:#1a1a1a;border:1.5px solid #444;border-radius:.35rem;color:#fff;font-size:.85rem;font-family:inherit}
+.gf input:focus,.gf select:focus,.gf textarea:focus{outline:none;border-color:#ef4444}
 .rep-send{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;padding:.5rem 0 .2rem;flex-shrink:0}
 .rep-send button{padding:.65rem;border:none;border-radius:.35rem;font-weight:800;font-size:.72rem}
 .rs-mail{background:#3b82f6;color:#fff}
@@ -274,6 +329,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
       <span class="badge" id="userBadge">CAMARERO</span>
       <button class="gear-btn gerente-only hidden" onclick="showReport()">⚙️</button>
       <button class="gear-btn gerente-only hidden" onclick="showEditor()">✏️</button>
+      <button class="gear-btn gerente-only hidden" onclick="showConta()">📒</button>
+      <button class="gear-btn gerente-only hidden" onclick="showCaja()">💰</button>
       <button class="logout-btn" onclick="logout()">SALIR</button>
     </div>
   </div>
@@ -287,7 +344,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
       <button class="back-btn" onclick="goHome()">←</button>
       <span class="hdr-mesa" id="hdrMesa">-</span>
     </div>
-    <span class="hdr-total" id="hdrTotal">0,00€</span>
+    <span class="hdr-total" id="hdrTotal" onclick="openTotalEdit()" style="cursor:pointer">0,00€</span>
     <button class="btn-trash" onclick="clearPending()">🗑️</button>
   </div>
   <div class="cats" id="cats"></div>
@@ -322,6 +379,124 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="ed-foot">
     <button class="ed-btn ed-add" onclick="edAdd()">➕ Añadir</button>
     <button class="ed-btn ed-save" onclick="edSave()">💾 Guardar cambios</button>
+  </div>
+</div>
+
+<div id="screenConta" class="ct-wrap hidden">
+  <div class="ct-head">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <h1>📒 CONTABILIDAD</h1>
+    <button class="gear-btn" onclick="loadConta()">🔄</button>
+  </div>
+  <div class="rep-periods" id="ctPeriods"></div>
+  <div class="rep-nav" id="ctNav"></div>
+  <div class="ct-sum">
+    <div class="ct-box ct-ing"><div class="v" id="ctIng">0€</div><div class="l">INGRESOS</div></div>
+    <div class="ct-box ct-gas"><div class="v" id="ctGas">0€</div><div class="l">GASTOS</div></div>
+    <div class="ct-box ct-ben"><div class="v" id="ctBen">0€</div><div class="l">BENEFICIO</div></div>
+  </div>
+  <div class="ct-list" id="ctList"></div>
+  <button class="ct-add" onclick="openGasto()">➕ Añadir gasto / pago</button>
+</div>
+
+<div id="screenCaja" class="cj-wrap hidden">
+  <div class="cj-head">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <h1>💰 CIERRE DE CAJA</h1>
+    <button class="gear-btn" onclick="loadCaja()">🔄</button>
+  </div>
+  <div class="rep-nav" id="cjNav"></div>
+  <div class="cj-body">
+    <div class="cj-sys">
+      <div class="v" id="cjSys">0,00€</div>
+      <div class="l">VENTAS SEGÚN EL SISTEMA</div>
+    </div>
+
+    <div class="cj-grp">
+      <h3>💵 RECAUDACIÓN</h3>
+      <div class="cj-f"><label>Fondo inicial</label><input type="number" step="0.01" inputmode="decimal" id="cjFondo" value="0"></div>
+      <div class="cj-f"><label>Efectivo contado</label><input type="number" step="0.01" inputmode="decimal" id="cjEfe" value="0"></div>
+      <div class="cj-f"><label>Tarjeta / datáfono</label><input type="number" step="0.01" inputmode="decimal" id="cjTar" value="0"></div>
+      <div class="cj-f tot"><label>Total recaudado</label><span class="val" id="cjRecau">0,00€</span></div>
+    </div>
+
+    <div class="cj-grp">
+      <h3>🗄️ REPARTO DE CAJA</h3>
+      <div class="cj-f"><label>Caja A</label><input type="number" step="0.01" inputmode="decimal" id="cjA" value="0"></div>
+      <div class="cj-f"><label>Caja B</label><input type="number" step="0.01" inputmode="decimal" id="cjB" value="0"></div>
+      <div class="cj-f tot"><label>Total repartido</label><span class="val" id="cjRep">0,00€</span></div>
+    </div>
+
+    <div class="cj-grp">
+      <h3>📤 PAGOS DEL DÍA</h3>
+      <div class="cj-f"><label>Facturas y nóminas pagadas</label><span class="val" id="cjGastos">0,00€</span></div>
+      <div class="cj-f"><label style="font-size:.6rem;color:#9ca3af">Se calcula solo desde Contabilidad</label></div>
+    </div>
+
+    <div class="cj-desc ok" id="cjDescBox">
+      <div class="v" id="cjDesc">0,00€</div>
+      <div class="l">DESCUADRE (recaudado − sistema)</div>
+    </div>
+
+    <div class="cj-grp">
+      <h3>📝 OBSERVACIONES</h3>
+      <textarea class="cj-note" id="cjNota" rows="2" placeholder="Incidencias, invitaciones, propinas..."></textarea>
+    </div>
+
+    <div id="cjHist"></div>
+  </div>
+  <button class="cj-save" onclick="saveCaja()">💾 Guardar cierre del día</button>
+</div>
+
+<div id="totalModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head"><span class="modal-title">💶 Precio total de la cuenta</span></div>
+    <div class="modal-body">
+      <div class="tot-info" id="totInfo"></div>
+      <label style="display:block;font-size:.7rem;font-weight:700;color:#9ca3af;margin-bottom:.3rem">Nuevo total de la mesa</label>
+      <input type="number" step="0.05" inputmode="decimal" id="totInput" class="tot-big">
+      <div style="font-size:.65rem;color:#9ca3af;margin-top:.5rem;text-align:center">
+        El importe se repartirá proporcionalmente entre todos los productos
+      </div>
+    </div>
+    <div class="modal-acts">
+      <button class="m-cancel" onclick="closeTotalEdit()">Cancelar</button>
+      <button class="m-ok" onclick="applyTotalEdit()">✓ APLICAR</button>
+    </div>
+  </div>
+</div>
+
+<div id="gastoModal" class="modal hidden">
+  <div class="modal-box">
+    <div class="modal-head"><span class="modal-title">➕ Nuevo gasto</span></div>
+    <div class="modal-body">
+      <div class="gf"><label>Tipo</label>
+        <select id="gTipo">
+          <option value="Proveedor">🚚 Proveedor / Factura</option>
+          <option value="Nómina">👤 Nómina / Personal</option>
+          <option value="Suministros">💡 Luz, agua, internet</option>
+          <option value="Alquiler">🏠 Alquiler</option>
+          <option value="Impuestos">🏛️ Impuestos / Seguros</option>
+          <option value="Otros">📦 Otros</option>
+        </select>
+      </div>
+      <div class="gf"><label>Concepto</label>
+        <input type="text" id="gConcepto" placeholder="Ej: Mahou, nómina Ana, factura luz...">
+      </div>
+      <div class="gf"><label>Importe €</label>
+        <input type="number" step="0.01" inputmode="decimal" id="gImporte" placeholder="0.00">
+      </div>
+      <div class="gf"><label>Fecha</label>
+        <input type="date" id="gFecha">
+      </div>
+      <div class="gf"><label>Nota (opcional)</label>
+        <input type="text" id="gNota" placeholder="Nº factura, forma de pago...">
+      </div>
+    </div>
+    <div class="modal-acts">
+      <button class="m-cancel" onclick="closeGasto()">Cancelar</button>
+      <button class="m-ok" onclick="saveGasto()">✓ GUARDAR</button>
+    </div>
   </div>
 </div>
 
@@ -554,7 +729,7 @@ function modsFor(p){
 }
 
 const STATE={user:null,table:null,cat:null,zone:'terraza',tables:[],orders:[],pendingMod:null,
- repPeriod:'dia',repOffset:0,edCat:null,edDraft:[],edDeleted:[],lastTicket:null,viewTicket:null,
+ repPeriod:'dia',repOffset:0,ctPeriod:'mes',ctOffset:0,cjOffset:0,cjSis:0,cjGastos:0,cjRecau:0,cjDesc:0,edCat:null,edDraft:[],edDeleted:[],lastTicket:null,viewTicket:null,
  users:[{email:'camarero@alinas.bar',password:'demo123',role:'camarero'},{email:'cocina@alinas.bar',password:'demo123',role:'cocina'}]};
 
 async function loadTables(){
@@ -603,7 +778,7 @@ let kPoll=null;
 function logout(){STATE.user=null;STATE.table=null;if(kPoll){clearInterval(kPoll);kPoll=null}
  cancelPin();
  document.getElementById('loginScreen').style.display='flex';
- ['screenHome','screenComanda','screenKitchen','screenReport','screenEditor','screenTicket'].forEach(i=>document.getElementById(i).classList.add('hidden'));}
+ ['screenHome','screenComanda','screenKitchen','screenReport','screenEditor','screenTicket','screenConta','screenCaja'].forEach(i=>document.getElementById(i).classList.add('hidden'));}
 
 async function showHome(){
  document.getElementById('loginScreen').style.display='none';
@@ -660,6 +835,270 @@ function addProd(pid){
  pushItem(p,[],p.p);
 }
 
+
+
+
+// ===== CIERRE DE CAJA =====
+function showCaja(){
+ if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
+ STATE.cjOffset=0;
+ document.getElementById('screenHome').classList.add('hidden');
+ document.getElementById('screenCaja').classList.remove('hidden');
+ loadCaja();
+}
+function cjMove(d){STATE.cjOffset=(STATE.cjOffset||0)+d;loadCaja()}
+function cjDate(){
+ const d=new Date();d.setDate(d.getDate()+(STATE.cjOffset||0));d.setHours(0,0,0,0);return d;
+}
+async function loadCaja(){
+ const ini=cjDate(),fin=new Date(ini);fin.setDate(fin.getDate()+1);
+ const o=STATE.cjOffset||0;
+ document.getElementById('cjNav').innerHTML=
+  `<button onclick="cjMove(-1)">◀</button><span>${o===0?'HOY · ':''}${ini.toLocaleDateString('es-ES',{weekday:'short',day:'2-digit',month:'2-digit'})}</span><button onclick="cjMove(1)" ${o>=0?'style="opacity:.3"':''}>▶</button>`;
+
+ // Ventas del día según el sistema
+ const{data:ven}=await sb.from('sales_history').select('total')
+   .gte('closed_at',ini.toISOString()).lt('closed_at',fin.toISOString());
+ const sis=(ven||[]).reduce((s,v)=>s+parseFloat(v.total),0);
+ document.getElementById('cjSys').textContent=sis.toFixed(2)+'€';
+ STATE.cjSis=sis;
+
+ // Gastos pagados ese día (desde Contabilidad)
+ let gas=0;
+ try{
+  const{data:g}=await sb.from('expenses').select('importe').eq('fecha',ymd(ini));
+  gas=(g||[]).reduce((s,x)=>s+parseFloat(x.importe),0);
+ }catch(e){}
+ document.getElementById('cjGastos').textContent=gas.toFixed(2)+'€';
+ STATE.cjGastos=gas;
+
+ // Si ya hay un cierre guardado de ese día, se carga para poder corregirlo
+ let prev=null;
+ try{
+  const{data:cc}=await sb.from('cash_closes').select('*').eq('fecha',ymd(ini)).limit(1);
+  prev=cc&&cc[0];
+ }catch(e){
+  document.getElementById('cjHist').innerHTML='<div class="order-empty">❌ Falta crear la tabla.<br>Ejecuta caja.sql en Supabase.</div>';
+ }
+ const v=(x,d)=>document.getElementById(x).value=(prev?parseFloat(prev[d]):0).toFixed(2);
+ v('cjFondo','fondo_inicial');v('cjEfe','efectivo');v('cjTar','tarjeta');
+ v('cjA','caja_a');v('cjB','caja_b');
+ document.getElementById('cjNota').value=prev&&prev.nota?prev.nota:'';
+ cjCalc();
+ loadCajaHist();
+}
+function num(id){return parseFloat(document.getElementById(id).value)||0}
+function cjCalc(){
+ const fondo=num('cjFondo'),efe=num('cjEfe'),tar=num('cjTar');
+ // Lo recaudado de verdad = efectivo contado - fondo con el que se empezó + tarjeta
+ const recau=(efe-fondo)+tar;
+ document.getElementById('cjRecau').textContent=recau.toFixed(2)+'€';
+ document.getElementById('cjRep').textContent=(num('cjA')+num('cjB')).toFixed(2)+'€';
+ const desc=recau-(STATE.cjSis||0);
+ document.getElementById('cjDesc').textContent=(desc>0?'+':'')+desc.toFixed(2)+'€';
+ const box=document.getElementById('cjDescBox');
+ box.className='cj-desc '+(Math.abs(desc)<0.01?'ok':'bad');
+ STATE.cjRecau=recau;STATE.cjDesc=desc;
+}
+async function saveCaja(){
+ const ini=cjDate();
+ const row={
+  fecha:ymd(ini),ventas_sistema:STATE.cjSis||0,
+  efectivo:num('cjEfe'),tarjeta:num('cjTar'),
+  caja_a:num('cjA'),caja_b:num('cjB'),
+  gastos_dia:STATE.cjGastos||0,fondo_inicial:num('cjFondo'),
+  descuadre:STATE.cjDesc||0,
+  nota:document.getElementById('cjNota').value.trim()||null
+ };
+ try{
+  const{data:ex}=await sb.from('cash_closes').select('id').eq('fecha',row.fecha).limit(1);
+  if(ex&&ex[0]){await sb.from('cash_closes').update(row).eq('id',ex[0].id)}
+  else{await sb.from('cash_closes').insert(row)}
+  toast('✓ Cierre guardado');loadCajaHist();
+ }catch(e){console.error(e);toast('❌ Error al guardar','error')}
+}
+async function loadCajaHist(){
+ try{
+  const{data}=await sb.from('cash_closes').select('*').order('fecha',{ascending:false}).limit(10);
+  if(!data||!data.length){document.getElementById('cjHist').innerHTML='';return}
+  document.getElementById('cjHist').innerHTML=
+   '<h3 style="font-size:.7rem;color:#eab308;margin:.6rem 0 .3rem;font-weight:800">📅 ÚLTIMOS CIERRES</h3>'+
+   data.map(c=>`<div class="cj-hist">
+     <span class="d">${new Date(c.fecha+'T12:00:00').toLocaleDateString('es-ES')}</span>
+     · Sistema ${parseFloat(c.ventas_sistema).toFixed(2)}€
+     <div class="m">Efectivo ${parseFloat(c.efectivo).toFixed(2)}€ · Tarjeta ${parseFloat(c.tarjeta).toFixed(2)}€ · Gastos ${parseFloat(c.gastos_dia).toFixed(2)}€<br>
+     Caja A ${parseFloat(c.caja_a).toFixed(2)}€ · Caja B ${parseFloat(c.caja_b).toFixed(2)}€ · Descuadre ${parseFloat(c.descuadre).toFixed(2)}€</div>
+    </div>`).join('');
+ }catch(e){}
+}
+
+// ===== CAMBIAR EL TOTAL DE TODA LA CUENTA =====
+function openTotalEdit(){
+ const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
+ if(!c.length){toast('❌ La mesa está vacía','error');return}
+ const actual=parseFloat(STATE.table.total)||0;
+ const uds=c.reduce((s,i)=>s+i.quantity,0);
+ document.getElementById('totInfo').innerHTML=
+  `Mesa <b>${STATE.table.name}</b><br>${uds} artículo(s) · Total actual: <b>${actual.toFixed(2)}€</b>`;
+ document.getElementById('totInput').value=actual.toFixed(2);
+ document.getElementById('totalModal').classList.remove('hidden');
+ setTimeout(()=>{const i=document.getElementById('totInput');i.focus();i.select()},100);
+}
+function closeTotalEdit(){document.getElementById('totalModal').classList.add('hidden')}
+async function applyTotalEdit(){
+ const nuevo=parseFloat(document.getElementById('totInput').value);
+ if(isNaN(nuevo)||nuevo<0){toast('❌ Importe no válido','error');return}
+ const c=(STATE.table.consumed||[]).filter(i=>!i.isNota);
+ closeTotalEdit();
+ repartirTotal(c,nuevo);
+ recalc();renderOrder();await persist();
+ toast('✓ Total ajustado a '+nuevo.toFixed(2)+'€');
+}
+// Reparte un importe total entre las líneas cuadrando al céntimo exacto.
+// Trabaja en céntimos por UNIDAD, y si sobran céntimos separa unidades
+// en su propia línea (ej: 7 cañas a 15€ → 6 a 2,14 + 1 a 2,16).
+function repartirTotal(c,nuevo){
+ const objetivo=Math.round(nuevo*100);
+ const uds=c.reduce((s,i)=>s+i.quantity,0);
+ if(!uds)return;
+ const actual=c.reduce((s,i)=>s+Math.round(i.price*100)*i.quantity,0);
+
+ // Precio en céntimos de cada UNIDAD, expandiendo las cantidades
+ let unidades=[];
+ c.forEach(it=>{
+  const pu=actual>0?Math.round(it.price*100):1;
+  for(let k=0;k<it.quantity;k++)unidades.push({ref:it,peso:pu});
+ });
+ const totPeso=unidades.reduce((a,u)=>a+u.peso,0)||unidades.length;
+
+ // Reparto base + los céntimos sobrantes a las unidades de mayor resto
+ const exactos=unidades.map(u=>objetivo*u.peso/totPeso);
+ let cent=exactos.map(v=>Math.floor(v));
+ let resto=objetivo-cent.reduce((a,b)=>a+b,0);
+ const orden=exactos.map((v,i)=>({i,frac:v%1})).sort((a,b)=>b.frac-a.frac);
+ for(let k=0;resto>0;k++,resto--)cent[orden[k%cent.length].i]++;
+
+ // Reagrupar: unidades con el mismo precio van juntas en una línea
+ const nuevas=[];
+ c.forEach(it=>{
+  const mios=[];
+  unidades.forEach((u,i)=>{if(u.ref===it)mios.push(cent[i])});
+  const grupos={};
+  mios.forEach(p=>{grupos[p]=(grupos[p]||0)+1});
+  Object.keys(grupos).sort((a,b)=>b-a).forEach(p=>{
+   nuevas.push({...it,price:+(p/100).toFixed(2),quantity:grupos[p],manual:true});
+  });
+ });
+
+ // Sustituir las líneas antiguas por las nuevas en la comanda
+ const notas=(STATE.table.consumed||[]).filter(i=>i.isNota);
+ STATE.table.consumed=nuevas.concat(notas);
+}
+
+// ===== CONTABILIDAD =====
+const TIPO_CLS={'Nómina':'nomina','Proveedor':'prov'};
+function showConta(){
+ if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
+ STATE.ctPeriod=STATE.ctPeriod||'mes';STATE.ctOffset=STATE.ctOffset||0;
+ document.getElementById('screenHome').classList.add('hidden');
+ document.getElementById('screenConta').classList.remove('hidden');
+ loadConta();
+}
+// Igual que repRange pero para contabilidad
+function ctRange(){
+ const p=STATE.ctPeriod||'mes',o=STATE.ctOffset||0,now=new Date();
+ let ini,fin,lbl;
+ if(p==='dia'){
+  ini=new Date(now);ini.setDate(ini.getDate()+o);ini.setHours(0,0,0,0);
+  fin=new Date(ini);fin.setDate(fin.getDate()+1);
+  lbl=o===0?'HOY · '+ini.toLocaleDateString('es-ES'):ini.toLocaleDateString('es-ES');
+ }else if(p==='semana'){
+  ini=new Date(now);const d=(ini.getDay()+6)%7;
+  ini.setDate(ini.getDate()-d+o*7);ini.setHours(0,0,0,0);
+  fin=new Date(ini);fin.setDate(fin.getDate()+7);
+  const f2=new Date(fin);f2.setDate(f2.getDate()-1);
+  lbl=(o===0?'ESTA SEMANA · ':'')+ini.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'})+' – '+f2.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'});
+ }else if(p==='mes'){
+  ini=new Date(now.getFullYear(),now.getMonth()+o,1);
+  fin=new Date(now.getFullYear(),now.getMonth()+o+1,1);
+  lbl=(o===0?'ESTE MES · ':'')+ini.toLocaleDateString('es-ES',{month:'long',year:'numeric'}).toUpperCase();
+ }else{ini=new Date(2000,0,1);fin=new Date(2100,0,1);lbl='TODO'}
+ return{ini,fin,lbl,p,o};
+}
+function ctSetPeriod(p){STATE.ctPeriod=p;STATE.ctOffset=0;loadConta()}
+function ctMove(d){STATE.ctOffset=(STATE.ctOffset||0)+d;loadConta()}
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+
+async function loadConta(){
+ const r=ctRange();
+ document.getElementById('ctPeriods').innerHTML=
+  [['dia','DÍA'],['semana','SEMANA'],['mes','MES'],['todo','TODO']].map(([k,n])=>
+   `<button class="rep-per ${r.p===k?'active':''}" onclick="ctSetPeriod('${k}')">${n}</button>`).join('');
+ document.getElementById('ctNav').innerHTML = r.p==='todo'
+  ? `<span style="margin:auto">${r.lbl}</span>`
+  : `<button onclick="ctMove(-1)">◀</button><span>${r.lbl}</span><button onclick="ctMove(1)" ${r.o>=0?'style="opacity:.3"':''}>▶</button>`;
+
+ // Ingresos del periodo
+ const{data:ven}=await sb.from('sales_history').select('total')
+   .gte('closed_at',r.ini.toISOString()).lt('closed_at',r.fin.toISOString());
+ const ing=(ven||[]).reduce((s,v)=>s+parseFloat(v.total),0);
+
+ // Gastos del periodo
+ const{data:gas,error}=await sb.from('expenses').select('*')
+   .gte('fecha',ymd(r.ini)).lt('fecha',ymd(r.fin)).order('fecha',{ascending:false});
+ if(error){
+  document.getElementById('ctList').innerHTML='<div class="order-empty">❌ Falta crear la tabla de gastos.<br>Ejecuta gastos.sql en Supabase.</div>';
+  return;
+ }
+ const tot=(gas||[]).reduce((s,g)=>s+parseFloat(g.importe),0);
+
+ document.getElementById('ctIng').textContent=ing.toFixed(2)+'€';
+ document.getElementById('ctGas').textContent=tot.toFixed(2)+'€';
+ const ben=ing-tot;
+ const be=document.getElementById('ctBen');
+ be.textContent=(ben>=0?'':'')+ben.toFixed(2)+'€';
+ be.style.color=ben>=0?'#f97316':'#ef4444';
+
+ document.getElementById('ctList').innerHTML=(gas&&gas.length)?gas.map(g=>
+  `<div class="ct-row ${TIPO_CLS[g.tipo]||''}">
+    <div class="ct-info">
+      <div class="ct-con">${g.concepto}</div>
+      <div class="ct-meta">${g.tipo} · ${new Date(g.fecha+'T12:00:00').toLocaleDateString('es-ES')}${g.nota?' · '+g.nota:''}</div>
+    </div>
+    <span class="ct-imp">-${parseFloat(g.importe).toFixed(2)}€</span>
+    <button class="ct-del" onclick="delGasto(${g.id})">✕</button>
+   </div>`).join(''):'<div class="order-empty">Sin gastos en este periodo</div>';
+}
+function openGasto(){
+ document.getElementById('gTipo').value='Proveedor';
+ document.getElementById('gConcepto').value='';
+ document.getElementById('gImporte').value='';
+ document.getElementById('gNota').value='';
+ document.getElementById('gFecha').value=ymd(new Date());
+ document.getElementById('gastoModal').classList.remove('hidden');
+ setTimeout(()=>document.getElementById('gConcepto').focus(),100);
+}
+function closeGasto(){document.getElementById('gastoModal').classList.add('hidden')}
+async function saveGasto(){
+ const con=document.getElementById('gConcepto').value.trim();
+ const imp=parseFloat(document.getElementById('gImporte').value);
+ if(!con){toast('❌ Falta el concepto','error');return}
+ if(isNaN(imp)||imp<=0){toast('❌ Importe no válido','error');return}
+ const{error}=await sb.from('expenses').insert({
+  fecha:document.getElementById('gFecha').value||ymd(new Date()),
+  tipo:document.getElementById('gTipo').value,
+  concepto:con,importe:imp,pagado:true,
+  nota:document.getElementById('gNota').value.trim()||null
+ });
+ if(error){toast('❌ Error al guardar','error');console.error(error);return}
+ closeGasto();toast('✓ Gasto guardado');loadConta();
+}
+async function delGasto(id){
+ if(!confirm('¿Borrar este gasto?'))return;
+ await sb.from('expenses').delete().eq('id',id);
+ toast('✓ Borrado');loadConta();
+}
+
 // ===== ENVIAR INFORME =====
 const EMAIL_INFORME='dealinasbar@gmail.com';
 function reportText(){
@@ -708,16 +1147,29 @@ function openExtras(){
 // Abre el panel de opciones de una línea concreta de la comanda
 function editExtras(idx){
  const it=STATE.table.consumed[idx];
- if(!it||it.sent||it.isNota){toast('❌ Ya enviado a cocina','error');return}
+ if(!it||it.isNota)return;
  const prod=PRODS.find(p=>p.id===it.product_id);
  if(!prod){toast('❌ Producto no encontrado','error');return}
- STATE.pendingMod={prod:prod,sel:(it.mods||[]).slice(),editIdx:idx,manual:it.manual?it.price:null};
+ // Si ya se envió a cocina solo se puede tocar el precio (los ingredientes ya los tienen)
+ STATE.pendingMod={prod:prod,sel:(it.mods||[]).slice(),editIdx:idx,
+                   manual:it.manual?it.price:null,soloPrecio:!!it.sent};
  paintMod();
 }
 // Pinta el modal (sirve tanto para añadir nuevo como para editar)
 function paintMod(){
  const s=STATE.pendingMod,p=s.prod,list=modsFor(p)||[];
- document.getElementById('modTitle').textContent=p.n;
+ document.getElementById('modTitle').textContent=p.n+(s.soloPrecio?'  ·  (ya en cocina)':'');
+ if(s.soloPrecio){
+  document.getElementById('modBody').innerHTML=
+   '<div style="text-align:center;color:#9ca3af;font-size:.75rem;padding:1rem">'+
+   'Este producto ya está en cocina.<br>Puedes cambiarle el precio abajo.'+
+   (s.sel.length?'<br><br><b style="color:#f97316">'+s.sel.join(', ')+'</b>':'')+'</div>';
+  document.getElementById('modManual').value=s.manual!==null&&s.manual!==undefined?s.manual.toFixed(2):p.p.toFixed(2);
+  document.getElementById('modOkBtn').textContent='✓ CAMBIAR PRECIO';
+  updModPrice();
+  document.getElementById('modModal').classList.remove('hidden');
+  return;
+ }
  document.getElementById('modBody').innerHTML=list.length?list.map((m,i)=>
   `<div class="mod-chip ${s.sel.includes(m.n)?'on':''}" onclick="togMod(${i})">${m.n}${m.e>0?`<span class="mod-extra">+${m.e.toFixed(2)}€</span>`:''}</div>`
  ).join(''):'<div style="text-align:center;color:#666;font-size:.75rem;padding:1rem">Este producto no tiene extras.<br>Puedes ajustar el precio abajo.</div>';
@@ -760,8 +1212,9 @@ async function confirmMod(){
  closeMod();
  if(idx!==undefined&&idx!==null){
   const it=STATE.table.consumed[idx];
-  it.mods=sel;it.price=price;it.manual=esManual;
-  it.key=prod.id+'|'+sel.join(',')+(esManual?'|m'+price:'');
+  if(!s.soloPrecio)it.mods=sel;
+  it.price=price;it.manual=esManual;
+  it.key=prod.id+'|'+(it.mods||[]).join(',')+(esManual?'|m'+price:'');
   recalc();renderOrder();await persist();
   toast('✓ Aplicado');
  }else{
@@ -1164,6 +1617,7 @@ function toast(m,t){const d=document.createElement('div');d.className='toast '+(
 
 document.addEventListener('DOMContentLoaded',async()=>{
  const mm=document.getElementById('modManual');if(mm)mm.addEventListener('input',updModPrice);
+ ['cjFondo','cjEfe','cjTar','cjA','cjB'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',cjCalc)});
  const pi=document.getElementById('pinInput');if(pi)pi.addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
  if(initSb()){
   try{await loadProducts();await loadTables();const s=document.getElementById('connStatus');s.textContent='✓ Conectado';s.className='connection-status online'}
