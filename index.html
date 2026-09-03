@@ -1436,7 +1436,7 @@ async function doPrintTicket(){
   const ok=await printRawTicket(d.mesa,d.items,d.total,d.fecha,d.num);
   if(ok){toast('🖨️ Impreso y cortado');return}
  }
- // Vía 2 (respaldo): iframe oculto por el driver de Windows
+ // Vía 2 (respaldo): iframe oculto por el driver de Windows - IMPRIME AUTOMÁTICAMENTE
  const old=document.getElementById('printFrame');
  if(old)old.remove();
  const f=document.createElement('iframe');
@@ -1447,16 +1447,14 @@ async function doPrintTicket(){
  doc.open();
  doc.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
  doc.close();
- setTimeout(()=>{
-  try{f.contentWindow.focus();f.contentWindow.print()}
-  catch(e){
-   // Si el navegador lo bloquea, se abre en una pestaña normal
-   const w=window.open('','_blank');
-   if(w){w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));w.document.close();setTimeout(()=>w.print(),300)}
-   else toast('⚠️ Permite ventanas emergentes','error');
-  }
-  setTimeout(()=>{const x=document.getElementById('printFrame');if(x)x.remove()},2000);
- },250);
+ // Imprime automáticamente cuando esté listo
+ f.contentWindow.onload=()=>{
+  setTimeout(()=>{
+   try{f.contentWindow.print();toast('🖨️ Imprimiendo...')}
+   catch(e){console.error(e)}
+   setTimeout(()=>{if(document.getElementById('printFrame'))f.remove()},1500);
+  },100);
+ };
 }
 async function doShareTicket(){
  const d=STATE.viewTicket;if(!d)return;
@@ -1782,14 +1780,14 @@ function ticketTexto(mesa,items,total,fecha,num){
 
 function buildTicket(mesa,items,total,fecha,num){
  const esc=(t)=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
- let t=ticketTexto(mesa,items,total,fecha,num)+'\n\n\n\n';
+ let t=ticketTexto(mesa,items,total,fecha,num)+'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n';
  return `<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
  @page{size:72mm auto;margin:0}
  @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
  html,body{margin:0;padding:0;background:#fff}
  pre{font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.25;
   margin:0;padding:0 0 0 1mm;white-space:pre;color:#000;font-weight:bold;letter-spacing:0}
- </style></head><body><pre>${esc(t)}</pre></body></html>`;
+ </style></head><body><pre>${esc(t)}</pre><script>window.print();</script></body></html>`;
 }
 
 
