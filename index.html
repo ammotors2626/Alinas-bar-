@@ -112,7 +112,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .or-del{background:#ef4444;color:#fff;border:none;width:1.3rem;height:1.3rem;border-radius:50%;font-size:.6rem;font-weight:800;flex-shrink:0}
 
 /* Acciones */
-.actions{display:grid;grid-template-columns:repeat(6,1fr);gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
+.actions{display:grid;grid-template-columns:repeat(7,1fr);gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
 .act{padding:.55rem .2rem;border:none;border-radius:.3rem;font-weight:800;font-size:.65rem}
 .a-print{background:#3b82f6;color:#fff}
 .a-cobrar{background:#dc2626;color:#fff}
@@ -120,6 +120,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .a-nota{background:#8b5cf6;color:#fff}
 .a-extra{background:#f97316;color:#000}
 .a-print2{background:#0ea5e9;color:#fff}
+.a-cajon{background:#84cc16;color:#000}
 .cj-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
 .cj-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #eab308;margin-bottom:.4rem;flex-shrink:0}
 .cj-head h1{font-size:.9rem;color:#eab308}
@@ -359,6 +360,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <button class="act a-ticket" onclick="showTicket()">🧾 VER</button>
     <button class="act a-cobrar" onclick="closeAccount()">💰 COBRAR</button>
     <button class="act a-extra" onclick="openExtras()">➕ EXTRA</button>
+    <button class="act a-cajon" onclick="openDrawer()">💵 CAJÓN</button>
     <button class="act a-nota" onclick="openNota()">📝 NOTA</button>
     <button class="act a-send" onclick="sendOrder()">📤 ENVIAR COCINA</button>
   </div>
@@ -1353,6 +1355,32 @@ function ticketHTML(d){
  return h;
 }
 
+
+// Abre el cajón portamonedas.
+// El cajón va enchufado a la impresora por RJ11 y salta con cada impresión.
+function openDrawer(){
+ const old=document.getElementById('drawerFrame');
+ if(old)old.remove();
+ const f=document.createElement('iframe');
+ f.id='drawerFrame';
+ f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+ document.body.appendChild(f);
+ const doc=f.contentWindow.document;
+ doc.open();
+ doc.write(`<html><head><meta charset="utf-8"><title>Cajon</title><style>
+  @page{size:72mm auto;margin:0}
+  @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
+  html,body{margin:0;padding:0}
+  pre{font-family:'Courier New',monospace;font-size:1px;margin:0;padding:0;color:#fff}
+  </style></head><body><pre> </pre></body></html>`);
+ doc.close();
+ setTimeout(()=>{
+  try{f.contentWindow.focus();f.contentWindow.print()}catch(e){}
+  setTimeout(()=>{const x=document.getElementById('drawerFrame');if(x)x.remove()},2000);
+ },200);
+ toast('💵 Abriendo cajón...');
+}
+
 // Imprime el ticket al momento, sin abrir la pantalla intermedia
 function printNow(){
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
@@ -1735,4 +1763,3 @@ document.addEventListener('DOMContentLoaded',async()=>{
 </script>
 </body>
 </html>
-
