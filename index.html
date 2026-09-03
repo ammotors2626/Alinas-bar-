@@ -150,9 +150,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .tot-info{background:#2a2a2a;border-radius:.35rem;padding:.6rem;font-size:.75rem;margin-bottom:.7rem;line-height:1.5}
 .tot-info b{color:#f97316}
 .tot-big{width:100%;padding:.8rem;background:#1a1a1a;border:2px solid #10b981;border-radius:.4rem;color:#10b981;font-size:1.5rem;font-weight:800;text-align:center}
-.mod-manual{display:flex;align-items:center;gap:.4rem;padding:.5rem;border-top:1px solid #333;flex-shrink:0}
-.mod-manual label{font-size:.7rem;font-weight:700;color:#9ca3af;flex:1}
-.mod-manual input{width:5rem;background:#1a1a1a;border:1.5px solid #f97316;color:#f97316;padding:.4rem;border-radius:.3rem;font-size:.85rem;font-weight:800;text-align:right}
+.mod-manual{display:flex;align-items:center;gap:.4rem;padding:.6rem;border-top:2px solid #f97316;background:#241a10;flex-shrink:0}
+.mod-manual label{font-size:.75rem;font-weight:800;color:#f97316;flex:1;line-height:1.2}
+.mod-manual input{width:6rem;background:#1a1a1a;border:2px solid #f97316;color:#f97316;padding:.55rem;border-radius:.35rem;font-size:1.1rem;font-weight:800;text-align:right}
 .mod-manual button{background:#444;color:#fff;border:none;padding:.4rem .6rem;border-radius:.3rem;font-size:.8rem}
 .ed-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
 .ed-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #10b981;margin-bottom:.4rem;flex-shrink:0}
@@ -539,9 +539,9 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     </div>
     <div class="modal-body" id="modBody"></div>
     <div class="mod-manual">
-      <label>💶 Precio manual</label>
+      <label>💶 PONER PRECIO<br><span style="font-size:.58rem;font-weight:600">Escribe el importe que quieras</span></label>
       <input type="number" step="0.05" inputmode="decimal" id="modManual" placeholder="auto">
-      <button onclick="clearManual()">↺</button>
+      <button onclick="clearManual()" title="Volver al precio normal">↺</button>
     </div>
     <div class="modal-acts">
       <button class="m-cancel" onclick="closeMod()">Cancelar</button>
@@ -1352,10 +1352,27 @@ function ticketHTML(d){
 }
 function doPrintTicket(){
  const d=STATE.viewTicket;if(!d)return;
- const w=window.open('','_blank');
- if(!w){toast('⚠️ Permite ventanas emergentes','error');return}
- w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
- w.document.close();setTimeout(()=>w.print(),300);
+ // Se imprime desde un iframe oculto: no abre pestañas y se cierra solo
+ const old=document.getElementById('printFrame');
+ if(old)old.remove();
+ const f=document.createElement('iframe');
+ f.id='printFrame';
+ f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+ document.body.appendChild(f);
+ const doc=f.contentWindow.document;
+ doc.open();
+ doc.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
+ doc.close();
+ setTimeout(()=>{
+  try{f.contentWindow.focus();f.contentWindow.print()}
+  catch(e){
+   // Si el navegador lo bloquea, se abre en una pestaña normal
+   const w=window.open('','_blank');
+   if(w){w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));w.document.close();setTimeout(()=>w.print(),300)}
+   else toast('⚠️ Permite ventanas emergentes','error');
+  }
+  setTimeout(()=>{const x=document.getElementById('printFrame');if(x)x.remove()},2000);
+ },250);
 }
 async function doShareTicket(){
  const d=STATE.viewTicket;if(!d)return;
@@ -1601,16 +1618,22 @@ function checkNewOrders(){
 // ===== TICKET =====
 const BAR={nombre:"ALINA'S BAR",titular:"Alexei Martin Alvarez",dni:"60542811A"};
 function buildTicket(mesa,items,total,fecha,num){
- let h=`<html><head><meta charset="utf-8"><style>
- body{font-family:monospace;width:80mm;padding:8px;margin:0;font-size:12px}
+ let h=`<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
+ /* Papel térmico de 80mm, sin márgenes */
+ @page{size:80mm auto;margin:0}
+ @media print{html,body{width:80mm;margin:0;padding:0}}
+ html,body{width:80mm;margin:0;padding:3mm 2mm;
+  font-family:'Courier New',monospace;font-size:12px;line-height:1.35;
+  color:#000;background:#fff;-webkit-print-color-adjust:exact}
  .c{text-align:center}.b{font-weight:bold}
- h1{font-size:16px;margin:0}
- .l{border-top:1px dashed #000;margin:6px 0}
+ h1{font-size:17px;margin:0 0 1px;letter-spacing:1px}
+ .l{border-top:1px dashed #000;margin:5px 0}
  table{width:100%;font-size:12px;border-collapse:collapse}
- td{padding:2px 0;vertical-align:top}
- .r{text-align:right}
+ td{padding:1px 0;vertical-align:top;word-break:break-word}
+ .r{text-align:right;white-space:nowrap}
  .tot{font-size:15px;font-weight:bold}
  .sm{font-size:10px}
+ .feed{height:12mm}
  </style></head><body>`;
  h+=`<div class="c"><h1>${BAR.nombre}</h1>`;
  h+=`<div class="sm">${BAR.titular}</div>`;
@@ -1629,7 +1652,8 @@ function buildTicket(mesa,items,total,fecha,num){
  h+=`<table><tr><td>Base imponible</td><td class="r">${base.toFixed(2)}</td></tr>`;
  h+=`<tr><td>IVA 21%</td><td class="r">${iva.toFixed(2)}</td></tr>`;
  h+=`<tr class="tot"><td>TOTAL</td><td class="r">${total.toFixed(2)} EUR</td></tr></table>`;
- h+=`<div class="l"></div><div class="c sm">Gracias por su visita</div></body></html>`;
+ h+=`<div class="l"></div><div class="c sm">Gracias por su visita</div>`;
+ h+=`<div class="feed"></div></body></html>`;
  return h;
 }
 
