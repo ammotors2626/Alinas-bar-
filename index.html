@@ -1618,43 +1618,62 @@ function checkNewOrders(){
 // ===== TICKET =====
 const BAR={nombre:"ALINA'S BAR",titular:"Alexei Martin Alvarez",dni:"60542811A"};
 function buildTicket(mesa,items,total,fecha,num){
- let h=`<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
- /* Papel térmico de 80mm, sin márgenes */
+ // La impresora térmica no maneja bien las tablas HTML.
+ // Se monta el ticket como texto plano en columnas fijas (42 caracteres).
+ const W=42;
+ const linea=(c)=>c.repeat(W);
+ const centro=(t)=>{const s=Math.max(0,Math.floor((W-t.length)/2));return ' '.repeat(s)+t};
+ // Texto a la izquierda + importe pegado a la derecha
+ const fila=(izq,der)=>{
+  der=String(der);
+  let max=W-der.length-1;
+  if(izq.length>max)izq=izq.slice(0,max);
+  return izq+' '.repeat(Math.max(1,W-izq.length-der.length))+der;
+ };
+ const esc=(t)=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+ let t='';
+ t+=centro(BAR.nombre)+'\n';
+ t+=centro(BAR.titular)+'\n';
+ t+=centro('DNI: '+BAR.dni)+'\n';
+ t+=linea('=')+'\n';
+ t+=fila('Ticket:',num)+'\n';
+ t+=fila('Mesa:',mesa)+'\n';
+ t+=fila('Fecha:',fecha)+'\n';
+ t+=linea('-')+'\n';
+ items.forEach(i=>{
+  t+=fila(i.quantity+' x '+i.name,(i.price*i.quantity).toFixed(2))+'\n';
+  if(i.mods&&i.mods.length){
+   // Los extras van debajo, indentados y partidos si no caben
+   let m='   '+i.mods.join(', ');
+   while(m.length>W){
+    let corte=m.lastIndexOf(' ',W);
+    if(corte<4)corte=W;
+    t+=m.slice(0,corte)+'\n';
+    m='   '+m.slice(corte).trim();
+   }
+   t+=m+'\n';
+  }
+ });
+ t+=linea('-')+'\n';
+ const base=total/1.21;
+ t+=fila('Base imponible',base.toFixed(2))+'\n';
+ t+=fila('IVA 21%',(total-base).toFixed(2))+'\n';
+ t+=linea('=')+'\n';
+ t+=fila('TOTAL',total.toFixed(2)+' EUR')+'\n';
+ t+=linea('=')+'\n';
+ t+='\n'+centro('Gracias por su visita')+'\n';
+ // Avance extra para que el texto pase la cuchilla y se pueda cortar limpio
+ t+='\n\n\n\n\n';
+
+ return `<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
  @page{size:80mm auto;margin:0}
  @media print{html,body{width:80mm;margin:0;padding:0}}
- html,body{width:80mm;margin:0;padding:3mm 2mm;
-  font-family:'Courier New',monospace;font-size:12px;line-height:1.35;
-  color:#000;background:#fff;-webkit-print-color-adjust:exact}
- .c{text-align:center}.b{font-weight:bold}
- h1{font-size:17px;margin:0 0 1px;letter-spacing:1px}
- .l{border-top:1px dashed #000;margin:5px 0}
- table{width:100%;font-size:12px;border-collapse:collapse}
- td{padding:1px 0;vertical-align:top;word-break:break-word}
- .r{text-align:right;white-space:nowrap}
- .tot{font-size:15px;font-weight:bold}
- .sm{font-size:10px}
- .feed{height:12mm}
- </style></head><body>`;
- h+=`<div class="c"><h1>${BAR.nombre}</h1>`;
- h+=`<div class="sm">${BAR.titular}</div>`;
- h+=`<div class="sm">DNI: ${BAR.dni}</div></div>`;
- h+=`<div class="l"></div>`;
- h+=`<table><tr><td>Ticket:</td><td class="r b">${num}</td></tr>`;
- h+=`<tr><td>Mesa:</td><td class="r b">${mesa}</td></tr>`;
- h+=`<tr><td>Fecha:</td><td class="r">${fecha}</td></tr></table>`;
- h+=`<div class="l"></div><table>`;
- items.filter(i=>!i.isNota).forEach(i=>{
-  h+=`<tr><td>${i.quantity} x ${i.name}</td><td class="r">${(i.price*i.quantity).toFixed(2)}</td></tr>`;
-  if(i.mods&&i.mods.length)h+=`<tr><td colspan="2" class="sm">&nbsp;&nbsp;${i.mods.join(', ')}</td></tr>`;
- });
- h+=`</table><div class="l"></div>`;
- const base=total/1.21,iva=total-base;
- h+=`<table><tr><td>Base imponible</td><td class="r">${base.toFixed(2)}</td></tr>`;
- h+=`<tr><td>IVA 21%</td><td class="r">${iva.toFixed(2)}</td></tr>`;
- h+=`<tr class="tot"><td>TOTAL</td><td class="r">${total.toFixed(2)} EUR</td></tr></table>`;
- h+=`<div class="l"></div><div class="c sm">Gracias por su visita</div>`;
- h+=`<div class="feed"></div></body></html>`;
- return h;
+ html,body{margin:0;padding:2mm 1mm;background:#fff}
+ pre{font-family:'Courier New',Courier,monospace;font-size:11.5px;line-height:1.3;
+  margin:0;padding:0;white-space:pre;color:#000;font-weight:bold}
+ .big{font-size:13px}
+ </style></head><body><pre>${esc(t)}</pre><br><br><br></body></html>`;
 }
 
 function toast(m,t){const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
