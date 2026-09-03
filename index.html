@@ -112,13 +112,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .or-del{background:#ef4444;color:#fff;border:none;width:1.3rem;height:1.3rem;border-radius:50%;font-size:.6rem;font-weight:800;flex-shrink:0}
 
 /* Acciones */
-.actions{display:grid;grid-template-columns:repeat(5,1fr);gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
+.actions{display:grid;grid-template-columns:repeat(6,1fr);gap:.25rem;padding:.3rem;background:#0d0d0d;border-top:1px solid #333;flex-shrink:0}
 .act{padding:.55rem .2rem;border:none;border-radius:.3rem;font-weight:800;font-size:.65rem}
 .a-print{background:#3b82f6;color:#fff}
 .a-cobrar{background:#dc2626;color:#fff}
 .a-send{background:#10b981;color:#fff}
 .a-nota{background:#8b5cf6;color:#fff}
 .a-extra{background:#f97316;color:#000}
+.a-print2{background:#0ea5e9;color:#fff}
 .cj-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
 .cj-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #eab308;margin-bottom:.4rem;flex-shrink:0}
 .cj-head h1{font-size:.9rem;color:#eab308}
@@ -354,7 +355,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="prods" id="prods"></div>
   <div class="order-list" id="orderList"></div>
   <div class="actions">
-    <button class="act a-ticket" onclick="showTicket()">🧾 TICKET</button>
+    <button class="act a-print2" onclick="printNow()">🖨️ IMPRIMIR</button>
+    <button class="act a-ticket" onclick="showTicket()">🧾 VER</button>
     <button class="act a-cobrar" onclick="closeAccount()">💰 COBRAR</button>
     <button class="act a-extra" onclick="openExtras()">➕ EXTRA</button>
     <button class="act a-nota" onclick="openNota()">📝 NOTA</button>
@@ -1350,6 +1352,17 @@ function ticketHTML(d){
  h+=`<div class="tk-l"></div><div class="tk-c tk-sm">Gracias por su visita</div>`;
  return h;
 }
+
+// Imprime el ticket al momento, sin abrir la pantalla intermedia
+function printNow(){
+ const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
+ if(!c.length){toast('❌ Mesa vacía','error');return}
+ STATE.viewTicket={mesa:STATE.table.name,items:c,total:parseFloat(STATE.table.total)||0,
+                   fecha:new Date().toISOString(),num:'PREVIO'};
+ doPrintTicket();
+ toast('🖨️ Imprimiendo...');
+}
+
 function doPrintTicket(){
  const d=STATE.viewTicket;if(!d)return;
  // Se imprime desde un iframe oculto: no abre pestañas y se cierra solo
@@ -1616,64 +1629,93 @@ function checkNewOrders(){
 }
 
 // ===== TICKET =====
-const BAR={nombre:"ALINA'S BAR",titular:"Alexei Martin Alvarez",dni:"60542811A"};
+const BAR={
+ nombre:"ALINA'S BAR",
+ titular:"ALEXEI MARTIN ALVAREZ",
+ dni:"60542811A",
+ dir1:"PASEO MARITIMO ZONA ESTACION, 22",
+ dir2:"30380 SAN JAVIER - MURCIA",
+ tel:"722689789",
+ iva:10   // IVA de hostelería
+};
 function buildTicket(mesa,items,total,fecha,num){
- // La impresora térmica no maneja bien las tablas HTML.
- // Se monta el ticket como texto plano en columnas fijas (42 caracteres).
  const W=42;
  const linea=(c)=>c.repeat(W);
  const centro=(t)=>{const s=Math.max(0,Math.floor((W-t.length)/2));return ' '.repeat(s)+t};
- // Texto a la izquierda + importe pegado a la derecha
  const fila=(izq,der)=>{
   der=String(der);
   let max=W-der.length-1;
   if(izq.length>max)izq=izq.slice(0,max);
   return izq+' '.repeat(Math.max(1,W-izq.length-der.length))+der;
  };
+ // Columnas: UD(3) DESCRIPCION(23) P.U.(7) IMP(8)
+ const art=(ud,desc,pu,imp)=>{
+  ud=String(ud).padStart(3);
+  desc=String(desc);
+  if(desc.length>22)desc=desc.slice(0,22);
+  desc=desc.padEnd(23);
+  return ud+' '+desc+String(pu).padStart(6)+String(imp).padStart(9);
+ };
  const esc=(t)=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+ const f=new Date(fecha);
+ const fOK=isNaN(f)?new Date():f;
+ const dd=String(fOK.getDate()).padStart(2,'0')+'/'+String(fOK.getMonth()+1).padStart(2,'0')+'/'+fOK.getFullYear();
+ const hh=String(fOK.getHours()).padStart(2,'0')+':'+String(fOK.getMinutes()).padStart(2,'0');
 
  let t='';
  t+=centro(BAR.nombre)+'\n';
  t+=centro(BAR.titular)+'\n';
- t+=centro('DNI: '+BAR.dni)+'\n';
- t+=linea('=')+'\n';
- t+=fila('Ticket:',num)+'\n';
- t+=fila('Mesa:',mesa)+'\n';
- t+=fila('Fecha:',fecha)+'\n';
+ t+=centro('NIF/CIF: '+BAR.dni)+'\n';
+ t+=centro(BAR.dir1)+'\n';
+ t+=centro(BAR.dir2)+'\n';
+ t+=centro('TEL: '+BAR.tel)+'\n';
+ t+='\n';
+ t+=centro('NOTA INFORMATIVA')+'\n';
+ t+='\n';
+ t+=fila('FECHA: '+dd,'HORA: '+hh)+'\n';
+ t+=fila('MESA: '+mesa,'Nº '+num)+'\n';
+ t+=linea('-')+'\n';
+ t+=art('UD','DESCRIPCION','P.U.','IMP')+'\n';
  t+=linea('-')+'\n';
  items.forEach(i=>{
-  t+=fila(i.quantity+' x '+i.name,(i.price*i.quantity).toFixed(2))+'\n';
+  t+=art(i.quantity,i.name.toUpperCase(),i.price.toFixed(2),(i.price*i.quantity).toFixed(2))+'\n';
   if(i.mods&&i.mods.length){
-   // Los extras van debajo, indentados y partidos si no caben
-   let m='   '+i.mods.join(', ');
+   let m='    '+i.mods.join(', ');
    while(m.length>W){
-    let corte=m.lastIndexOf(' ',W);
-    if(corte<4)corte=W;
-    t+=m.slice(0,corte)+'\n';
-    m='   '+m.slice(corte).trim();
+    let c=m.lastIndexOf(' ',W); if(c<5)c=W;
+    t+=m.slice(0,c)+'\n';
+    m='    '+m.slice(c).trim();
    }
    t+=m+'\n';
   }
  });
  t+=linea('-')+'\n';
- const base=total/1.21;
- t+=fila('Base imponible',base.toFixed(2))+'\n';
- t+=fila('IVA 21%',(total-base).toFixed(2))+'\n';
- t+=linea('=')+'\n';
- t+=fila('TOTAL',total.toFixed(2)+' EUR')+'\n';
- t+=linea('=')+'\n';
- t+='\n'+centro('Gracias por su visita')+'\n';
- // Avance extra para que el texto pase la cuchilla y se pueda cortar limpio
- t+='\n\n\n\n\n';
+ t+=centro('NO VALIDA COMO FACTURA')+'\n';
+ t+=linea('-')+'\n';
+ const tipo=BAR.iva;
+ const base=total/(1+tipo/100);
+ // Columnas: IVA%(6) BASE(10) IVA(9) TOTAL(resto, a la derecha)
+ t+='IVA%'.padEnd(6)+'BASE'.padStart(8)+'IVA'.padStart(9)+'TOTAL'.padStart(W-23)+'\n';
+ t+=(tipo+'%').padEnd(6)+base.toFixed(2).padStart(8)+(total-base).toFixed(2).padStart(9)
+   +total.toFixed(2).padStart(W-23)+'\n';
+ t+=linea('-')+'\n';
+ t+=fila('TOTAL',total.toFixed(2))+'\n';
+ t+=linea('-')+'\n';
+ t+='SERVICIOS: '+items.reduce((s,i)=>s+i.quantity,0)+'\n';
+ t+='LE ATENDIO: '+((STATE.user&&STATE.user.role)||'CAJA').toUpperCase()+'\n';
+ t+='\n';
+ t+=centro('---- DOCUMENTO NO FISCAL ----')+'\n';
+ t+=centro('Gracias por su visita')+'\n';
+ t+='\n\n\n\n';
 
  return `<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
- @page{size:80mm auto;margin:0}
- @media print{html,body{width:80mm;margin:0;padding:0}}
- html,body{margin:0;padding:2mm 1mm;background:#fff}
- pre{font-family:'Courier New',Courier,monospace;font-size:11.5px;line-height:1.3;
-  margin:0;padding:0;white-space:pre;color:#000;font-weight:bold}
- .big{font-size:13px}
- </style></head><body><pre>${esc(t)}</pre><br><br><br></body></html>`;
+ @page{size:72mm auto;margin:0}
+ @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
+ html,body{margin:0;padding:0;background:#fff}
+ pre{font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.25;
+  margin:0;padding:0 0 0 1mm;white-space:pre;color:#000;font-weight:bold;letter-spacing:0}
+ </style></head><body><pre>${esc(t)}</pre></body></html>`;
 }
 
 function toast(m,t){const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
