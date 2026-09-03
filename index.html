@@ -125,6 +125,19 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
  padding:.25rem .5rem;border-radius:.3rem;background:#444;color:#9ca3af}
 .printer-status.on{background:#10b981;color:#fff}
 .printer-status.off{background:#6b7280;color:#fff}
+.prn-panel{position:fixed;top:2.2rem;left:.4rem;z-index:601;background:#1a1a1a;
+ border:2px solid #f97316;border-radius:.5rem;padding:.6rem;width:15rem;
+ box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.prn-panel h4{font-size:.75rem;color:#f97316;margin-bottom:.4rem;font-weight:800}
+.prn-bauds{display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-bottom:.5rem}
+.prn-baud{background:#2a2a2a;border:1.5px solid #444;color:#fff;padding:.4rem;
+ border-radius:.3rem;font-size:.7rem;font-weight:700}
+.prn-baud.active{background:#f97316;color:#000;border-color:#f97316}
+.prn-btn{width:100%;padding:.5rem;border:none;border-radius:.3rem;font-weight:800;
+ font-size:.72rem;margin-bottom:.3rem;background:#10b981;color:#fff}
+.prn-btn.secondary{background:#3b82f6}
+.prn-close{width:100%;padding:.4rem;border:none;border-radius:.3rem;font-weight:700;
+ font-size:.7rem;background:#6b7280;color:#fff}
 .cj-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
 .cj-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #eab308;margin-bottom:.4rem;flex-shrink:0}
 .cj-head h1{font-size:.9rem;color:#eab308}
@@ -301,7 +314,14 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 </head>
 <body>
 
-<div id="printerBadge" class="printer-status off" onclick="connectPrinter()">🔌 Impresora: pulsa para conectar</div>
+<div id="printerBadge" class="printer-status off" onclick="togglePrnPanel()">🔌 Impresora: pulsa para conectar</div>
+<div id="prnPanel" class="prn-panel hidden">
+  <h4>🔧 Configurar impresora</h4>
+  <div class="prn-bauds" id="prnBauds"></div>
+  <button class="prn-btn" onclick="testCut()">✂️ Probar corte</button>
+  <button class="prn-btn secondary" onclick="testDrawer()">💵 Probar cajón</button>
+  <button class="prn-close" onclick="togglePrnPanel()">Cerrar</button>
+</div>
 
 <div id="loginScreen" class="login-screen">
   <div class="login-box">
@@ -1779,6 +1799,39 @@ function buildTicket(mesa,items,total,fecha,num){
 // Solo funciona en Chrome/Edge de escritorio (no en móvil, no en Safari).
 // ============================================
 let serialPort = null;
+const BAUDS=[9600,19200,38400,115200];
+function getBaud(){return parseInt(localStorage.getItem('printerBaud'))||9600}
+function setBaud(b){localStorage.setItem('printerBaud',b)}
+
+function togglePrnPanel(){
+ const p=document.getElementById('prnPanel');
+ p.classList.toggle('hidden');
+ if(!p.classList.contains('hidden'))renderBauds();
+}
+function renderBauds(){
+ const cur=getBaud();
+ document.getElementById('prnBauds').innerHTML=BAUDS.map(b=>
+  `<button class="prn-baud ${b===cur?'active':''}" onclick="pickBaud(${b})">${b}</button>`).join('');
+}
+async function pickBaud(b){
+ setBaud(b);
+ renderBauds();
+ if(serialPort){try{await serialPort.close()}catch(e){} serialPort=null}
+ await connectPrinter(true);
+ toast('Velocidad: '+b+' baudios. Prueba el corte.');
+}
+async function testCut(){
+ if(!serialPort){toast('❌ Conecta la impresora primero','error');return}
+ const GS=0x1D;
+ try{
+  await serialWrite([0x0A,0x0A,0x0A,GS,0x56,0x42,0x00]);
+  toast('✂️ Comando de corte enviado');
+ }catch(e){toast('❌ Error al enviar','error')}
+}
+async function testDrawer(){
+ const ok=await drawerRaw();
+ toast(ok?'💵 Comando de cajón enviado':'❌ Error al enviar');
+}
 
 function updPrinterBadge(){
  const b=document.getElementById('printerBadge');
@@ -1794,22 +1847,28 @@ async function autoReconnectPrinter(){
   const ports=await navigator.serial.getPorts();
   if(ports.length){
    serialPort=ports[0];
-   await serialPort.open({baudRate:9600});
+   await serialPort.open({baudRate:getBaud()});
   }
  }catch(e){serialPort=null}
  updPrinterBadge();
 }
 
-// El usuario pulsa el indicador una vez: elige el puerto y queda guardado
-async function connectPrinter(){
+// El usuario pulsa el indicador una vez: elige el puerto y queda guardado.
+// reuse=true intenta reutilizar el puerto ya autorizado (usado al cambiar de velocidad)
+async function connectPrinter(reuse){
  if(!('serial' in navigator)){
   toast('❌ Usa Chrome o Edge en el ordenador para esto','error');
   return;
  }
  try{
-  serialPort=await navigator.serial.requestPort();
-  await serialPort.open({baudRate:9600});
-  toast('✓ Impresora conectada por cable');
+  if(reuse){
+   const ports=await navigator.serial.getPorts();
+   serialPort=ports[0]||await navigator.serial.requestPort();
+  }else{
+   serialPort=await navigator.serial.requestPort();
+  }
+  await serialPort.open({baudRate:getBaud()});
+  toast('✓ Impresora conectada ('+getBaud()+' baudios)');
  }catch(e){
   console.error(e);
   if(e.name!=='NotFoundError')toast('❌ No se pudo conectar','error');
