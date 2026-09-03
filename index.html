@@ -1822,11 +1822,25 @@ async function pickBaud(b){
 }
 async function testCut(){
  if(!serialPort){toast('❌ Conecta la impresora primero','error');return}
- const GS=0x1D;
+ const GS=0x1D,ESC=0x1B;
+ // Varios comandos de corte distintos, uno detrás de otro. Si la impresora
+ // entiende alguno, cortará ahí; los que no entienda los ignora sin más.
+ const variantes=[
+  [GS,0x56,0x00],        // GS V 0  - corte total (m=0)
+  [GS,0x56,0x01],        // GS V 1  - corte parcial (m=1)
+  [GS,0x56,0x41,0x00],   // GS V 65 0 - corte total con avance
+  [GS,0x56,0x42,0x00],   // GS V 66 0 - corte parcial con avance
+  [ESC,0x69],            // ESC i  - comando antiguo de corte total
+  [ESC,0x6D],            // ESC m  - comando antiguo de corte parcial
+ ];
  try{
-  await serialWrite([0x0A,0x0A,0x0A,GS,0x56,0x42,0x00]);
-  toast('✂️ Comando de corte enviado');
- }catch(e){toast('❌ Error al enviar','error')}
+  for(const v of variantes){
+   await serialWrite([0x0A,0x0A]);
+   await serialWrite(v);
+   await new Promise(r=>setTimeout(r,400));
+  }
+  toast('✂️ 6 comandos de corte probados');
+ }catch(e){console.error(e);toast('❌ Error al enviar','error')}
 }
 async function testDrawer(){
  const ok=await drawerRaw();
@@ -1847,7 +1861,7 @@ async function autoReconnectPrinter(){
   const ports=await navigator.serial.getPorts();
   if(ports.length){
    serialPort=ports[0];
-   await serialPort.open({baudRate:getBaud()});
+   await serialPort.open({baudRate:getBaud(),dataBits:8,stopBits:1,parity:'none'});
   }
  }catch(e){serialPort=null}
  updPrinterBadge();
@@ -1867,7 +1881,7 @@ async function connectPrinter(reuse){
   }else{
    serialPort=await navigator.serial.requestPort();
   }
-  await serialPort.open({baudRate:getBaud()});
+  await serialPort.open({baudRate:getBaud(),dataBits:8,stopBits:1,parity:'none'});
   toast('✓ Impresora conectada ('+getBaud()+' baudios)');
  }catch(e){
   console.error(e);
@@ -1897,7 +1911,7 @@ async function printRawTicket(mesa,items,total,fecha,num){
  const bytes=[
   ESC,0x40,          // inicializar impresora
   ...enc.encode(texto),
-  0x0A,0x0A,0x0A,0x0A,0x0A,
+  0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,
   GS,0x56,0x42,0x00  // GS V 66 0 -> corte con avance (funciona en la mayoría ESC/POS)
  ];
  try{
@@ -1915,8 +1929,18 @@ async function printRawTicket(mesa,items,total,fecha,num){
 async function drawerRaw(){
  if(!serialPort){await connectPrinter();if(!serialPort)return false}
  const ESC=0x1B;
+ // Varios comandos: pin 0 y pin 1, con distintos tiempos de pulso
+ const variantes=[
+  [ESC,0x70,0x00,0x19,0xFA],
+  [ESC,0x70,0x00,0x32,0xFA],
+  [ESC,0x70,0x01,0x19,0xFA],
+  [ESC,0x70,0x01,0x32,0xFA],
+ ];
  try{
-  await serialWrite([ESC,0x70,0x00,0x19,0xFA]); // ESC p 0 25 250
+  for(const v of variantes){
+   await serialWrite(v);
+   await new Promise(r=>setTimeout(r,300));
+  }
   return true;
  }catch(e){
   console.error(e);
