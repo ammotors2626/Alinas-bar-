@@ -314,6 +314,15 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 </head>
 <body>
 
+<div id="printerBadge" class="printer-status off" onclick="togglePrnPanel()">🔌 Impresora: pulsa para conectar</div>
+<div id="prnPanel" class="prn-panel hidden">
+  <h4>🔧 Configurar impresora</h4>
+  <div class="prn-bauds" id="prnBauds"></div>
+  <button class="prn-btn" onclick="testCut()">✂️ Probar corte</button>
+  <button class="prn-btn secondary" onclick="testDrawer()">💵 Probar cajón</button>
+  <button class="prn-close" onclick="togglePrnPanel()">Cerrar</button>
+</div>
+
 <div id="loginScreen" class="login-screen">
   <div class="login-box">
     <h1>🍷 Alina's Bar</h1>
@@ -373,7 +382,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="prods" id="prods"></div>
   <div class="order-list" id="orderList"></div>
   <div class="actions">
-    <button class="act a-print2" onclick="smartPrint()">🖨️ IMPRIMIR</button>
+    <button class="act a-print2" onclick="printNow()">🖨️ IMPRIMIR</button>
     <button class="act a-ticket" onclick="showTicket()">🧾 VER</button>
     <button class="act a-cobrar" onclick="closeAccount()">💰 COBRAR</button>
     <button class="act a-extra" onclick="openExtras()">➕ EXTRA</button>
@@ -1405,39 +1414,30 @@ async function openDrawer(){
 }
 
 // Imprime el ticket al momento, sin abrir la pantalla intermedia
-// Detecta móvil o ordenador e imprime
-async function smartPrint(){
+async function printNow(){
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Mesa vacía','error');return}
  const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
  
+ // DETECTAR SI ES MÓVIL
  const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
  
- // MÓVIL: solo envía a Supabase
+ // SI ES MÓVIL: ENVIAR A SUPABASE
  if(isMobile){
   try{
    await sb.from('print_jobs').insert({mesa,items:JSON.stringify(c),total,fecha,num:'PREVIO',status:'pending'});
-   toast('📱 Orden enviada');
+   toast('📱 Orden enviada al ordenador');
   }catch(e){
    toast('Error al enviar','error');
   }
   return;
  }
  
- // ORDENADOR: imprime como antes
- await printNow();
-}
-
-async function printNow(){
- const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
- if(!c.length){toast('❌ Mesa vacía','error');return}
- const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
- // Vía 1: cable directo -> imprime Y corta de verdad, sin driver
+ // RESTO DEL CÓDIGO IGUAL QUE ANTES (para ordenador)
  if('serial' in navigator){
   const ok=await printRawTicket(mesa,c,total,fecha,'PREVIO');
   if(ok){toast('🖨️ Impreso y cortado');return}
  }
- // Vía 2 (respaldo): a través del driver de Windows (como hasta ahora)
  STATE.viewTicket={mesa,items:c,total,fecha,num:'PREVIO'};
  doPrintTicket();
  toast('🖨️ Imprimiendo...');
@@ -1975,26 +1975,6 @@ document.addEventListener('DOMContentLoaded',async()=>{
   catch(e){}
   sb.channel('t-ch').on('postgres_changes',{event:'*',schema:'public',table:'tables'},()=>{loadTables().then(()=>{if(!document.getElementById('screenHome').classList.contains('hidden'))renderMesas()})}).subscribe();
   sb.channel('o-ch').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{loadOrders().then(()=>{if(!document.getElementById('screenKitchen').classList.contains('hidden'))renderKitchen()})}).subscribe();
-  // Escuchar órdenes de impresión desde móvil cada 3 segundos
-  setInterval(async()=>{
-   try{
-    const {data}=await sb.from('print_jobs').select('*').eq('status','pending').limit(1);
-    if(data&&data.length>0){
-     const job=data[0];
-     const items=JSON.parse(job.items||'[]');
-     let ok=false;
-     if('serial' in navigator){
-      if(!serialPort)await connectPrinter();
-      if(serialPort)ok=await printRawTicket(job.mesa,items,job.total,job.fecha,job.num);
-     }
-     if(!ok){
-      const w=window.open('','print_'+job.id);
-      if(w){w.document.write(buildTicket(job.mesa,items,job.total,job.fecha,job.num));w.document.close();setTimeout(()=>{w.print();setTimeout(()=>{try{w.close()}catch(e){}},800)},200);ok=true;}
-     }
-     if(ok)await sb.from('print_jobs').update({status:'done'}).eq('id',job.id);
-    }
-   }catch(e){console.error(e)}
-  },3000);
  }
  if(new URLSearchParams(location.search).get('kitchen')==='true'){STATE.user={role:'cocina'};showKitchen()}
 });
