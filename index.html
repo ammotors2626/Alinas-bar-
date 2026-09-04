@@ -1453,9 +1453,46 @@ function startListeningForMobilePrintJobs(){
  if(!sb)return;
  console.log('🔴 Iniciando polling de órdenes remotas cada 2 segundos...');
  
- let lastCheck=0;
+ // PRIMERO: Verificar si hay órdenes pendientes AL INICIAR
+ (async()=>{
+  try{
+   console.log('🔍 Buscando órdenes pendientes al iniciar...');
+   const {data:pending}=await sb.from('print_jobs').select('*').eq('status','pending');
+   if(pending&&pending.length>0){
+    console.log('📋 Encontradas '+pending.length+' órdenes pendientes');
+    for(const job of pending){
+     console.log('📱 Imprimiendo orden pendiente:', job);
+     
+     if('serial' in navigator&&!serialPort){
+      await connectPrinter();
+     }
+     
+     const items=JSON.parse(job.items||'[]');
+     let ok=false;
+     
+     if('serial' in navigator&&serialPort){
+      ok=await printRawTicket(job.mesa,items,job.total,job.fecha,job.num);
+     }
+     
+     if(!ok&&serialPort){
+      const w=window.open('','print_'+Date.now());
+      if(w){
+       w.document.write(buildTicket(job.mesa,items,job.total,job.fecha,job.num));
+       w.document.close();
+       setTimeout(()=>{w.print();setTimeout(()=>{try{w.close()}catch(e){}},800)},200);
+       ok=true;
+      }
+     }
+     
+     await sb.from('print_jobs').update({status:ok?'done':'error'}).eq('id',job.id);
+     if(ok)toast('📱 ✅ Impreso orden pendiente');
+    }
+   }
+  }catch(e){console.error('Error verificando pendientes:',e)}
+ })();
  
- // Polling cada 2 segundos
+ // DESPUÉS: Polling continuo
+ let lastCheck=0;
  setInterval(async()=>{
   try{
    const {data,error}=await sb
@@ -1473,13 +1510,11 @@ function startListeningForMobilePrintJobs(){
     
     lastCheck=new Date(job.created_at).getTime();
     
-    // Intentar conectar USB si no está
     if('serial' in navigator&&!serialPort){
      console.log('🔌 Conectando USB...');
      await connectPrinter();
     }
     
-    // Imprimir
     const items=JSON.parse(job.items||'[]');
     let ok=false;
     
@@ -1487,7 +1522,6 @@ function startListeningForMobilePrintJobs(){
      ok=await printRawTicket(job.mesa,items,job.total,job.fecha,job.num);
     }
     
-    // Fallback Windows
     if(!ok&&serialPort){
      console.log('Usando fallback Windows...');
      const w=window.open('','print_'+Date.now());
@@ -1499,7 +1533,6 @@ function startListeningForMobilePrintJobs(){
      }
     }
     
-    // Marcar como done
     await sb.from('print_jobs').update({status:ok?'done':'error'}).eq('id',job.id);
     
     if(ok)toast('📱 ✅ Impreso desde móvil');
