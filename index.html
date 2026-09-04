@@ -121,23 +121,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .a-extra{background:#f97316;color:#000}
 .a-print2{background:#0ea5e9;color:#fff}
 .a-cajon{background:#84cc16;color:#000}
-.printer-status{position:fixed;top:.4rem;left:.4rem;z-index:600;font-size:.6rem;font-weight:800;
- padding:.25rem .5rem;border-radius:.3rem;background:#444;color:#9ca3af}
-.printer-status.on{background:#10b981;color:#fff}
-.printer-status.off{background:#6b7280;color:#fff}
-.prn-panel{position:fixed;top:2.2rem;left:.4rem;z-index:601;background:#1a1a1a;
- border:2px solid #f97316;border-radius:.5rem;padding:.6rem;width:15rem;
- box-shadow:0 4px 12px rgba(0,0,0,.5)}
-.prn-panel h4{font-size:.75rem;color:#f97316;margin-bottom:.4rem;font-weight:800}
-.prn-bauds{display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-bottom:.5rem}
-.prn-baud{background:#2a2a2a;border:1.5px solid #444;color:#fff;padding:.4rem;
- border-radius:.3rem;font-size:.7rem;font-weight:700}
-.prn-baud.active{background:#f97316;color:#000;border-color:#f97316}
-.prn-btn{width:100%;padding:.5rem;border:none;border-radius:.3rem;font-weight:800;
- font-size:.72rem;margin-bottom:.3rem;background:#10b981;color:#fff}
-.prn-btn.secondary{background:#3b82f6}
-.prn-close{width:100%;padding:.4rem;border:none;border-radius:.3rem;font-weight:700;
- font-size:.7rem;background:#6b7280;color:#fff}
 .cj-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
 .cj-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #eab308;margin-bottom:.4rem;flex-shrink:0}
 .cj-head h1{font-size:.9rem;color:#eab308}
@@ -314,6 +297,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 </head>
 <body>
 
+
 <div id="loginScreen" class="login-screen">
   <div class="login-box">
     <h1>🍷 Alina's Bar</h1>
@@ -462,6 +446,25 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <div class="cj-desc ok" id="cjDescBox">
       <div class="v" id="cjDesc">0,00€</div>
       <div class="l">DESCUADRE (recaudado − sistema)</div>
+    </div>
+
+    <div class="cj-grp">
+      <h3>📊 GASTOS MENSUALES FIJOS</h3>
+      <div class="cj-f"><label>Alquiler</label><input type="number" step="0.01" inputmode="decimal" id="cgAlquiler" value="950"></div>
+      <div class="cj-f"><label>Luz</label><input type="number" step="0.01" inputmode="decimal" id="cgLuz" value="300"></div>
+      <div class="cj-f"><label>Agua</label><input type="number" step="0.01" inputmode="decimal" id="cgAgua" value="30"></div>
+      <div class="cj-f"><label>Autónomos</label><input type="number" step="0.01" inputmode="decimal" id="cgAutonomos" value="89"></div>
+      <div class="cj-f"><label>Asesor</label><input type="number" step="0.01" inputmode="decimal" id="cgAsesor" value="100"></div>
+      <div class="cj-f"><label>Limpieza/Basura</label><input type="number" step="0.01" inputmode="decimal" id="cgLimpieza" value="30"></div>
+      <div class="cj-f"><label>Gastos Varios</label><input type="number" step="0.01" inputmode="decimal" id="cgVarios" value="100"></div>
+      <div class="cj-f tot"><label>TOTAL MENSUAL</label><span class="val" id="cgTotal">1599,00€</span></div>
+      <div class="cj-f tot"><label>GASTOS DIARIOS (÷30)</label><span class="val" id="cgDiario">53,30€</span></div>
+      <button style="width:100%;padding:.5rem;background:#3b82f6;color:#fff;border:none;border-radius:.3rem;font-weight:700;margin-top:.5rem;cursor:pointer" onclick="guardarGastos()">💾 Guardar Gastos</button>
+    </div>
+
+    <div class="cj-desc ok" id="cjGananciaBox">
+      <div class="v" id="cjGanancia">0,00€</div>
+      <div class="l">GANANCIA LIMPIA DEL DÍA</div>
     </div>
 
     <div class="cj-grp">
@@ -728,6 +731,60 @@ const ZONES=[
 
 const TABLE_ORDER=['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','b1','b2','b3','b4','b5','b6','b7','b8','s1','s2','s3','s4','s5','s6','s7'];
 
+// TABLA DE COSTES DE TOSTADAS Y CAFÉS (para auto-llenar en editor)
+const COSTES_PRODUCTOS = {
+  'Mantequilla y mermelada': 0.50,
+  'Aceite': 0.27,
+  'Tomate y aceite': 0.36,
+  'Tomate y atún': 0.57,
+  'Tomate y queso': 0.55,
+  'Tomate y aguacate': 0.52,
+  'Tomate y serrano': 0.62,
+  'Tomate, q.fresco y aguacate': 0.64,
+  'Tomate, atún y aguacate': 0.62,
+  'Tomate, atún y q.fresco': 0.69,
+  'Tomate, atún, queso, aguac.': 0.84,
+  'Sobrasada': 0.52,
+  'Jamón york y queso': 0.71,
+  'Tomate, york y queso': 0.81,
+  'Tomate, serrano y queso': 0.74,
+  'Salmón + queso crema': 1.12,
+  'Salmón + tomate': 1.07,
+  '1 huevo + 2 bacon': 0.94,
+  '2 huevos + 2 bacon': 1.18,
+  '3 huevos + 2 bacon': 1.42,
+  'Solo': 0.22,
+  'Cortado': 0.27,
+  'Bombón': 0.32,
+  'Americano': 0.22,
+  'Americano con leche': 0.36,
+  'Americano con Baileys': 0.47,
+  'Café con leche': 0.36,
+  'Café con leche desnatada/vegetal': 0.37,
+  'Café con leche grande': 0.40,
+  'Carajillo': 0.35,
+  'Belmonte': 0.38,
+  'Canario': 0.35,
+  'Canario con Baileys': 0.48,
+  'Capuchino': 0.40,
+  'Asiático': 0.50,
+  'Irlandés': 1.00,
+  'Cola Cao': 0.30,
+  'Chocolate a la taza': 0.45,
+  'Vaso de leche': 0.14,
+};
+
+// Auto-llenar costes de productos
+function autoLlenarCostes(){
+ STATE.edDraft.forEach(p=>{
+  if(!p.cost || p.cost===0){
+   if(COSTES_PRODUCTOS[p.n]){
+    p.cost=COSTES_PRODUCTOS[p.n];
+   }
+  }
+ });
+}
+
 // ===== MODIFICADORES =====
 const MODS_CAFE=[
  {n:'Leche fría',e:0},{n:'Leche templada',e:0},{n:'En vaso',e:0},{n:'En taza',e:0},
@@ -756,6 +813,8 @@ function modsFor(p){
 
 const STATE={user:null,table:null,cat:null,zone:'terraza',tables:[],orders:[],pendingMod:null,
  repPeriod:'dia',repOffset:0,ctPeriod:'mes',ctOffset:0,cjOffset:0,cjSis:0,cjGastos:0,cjRecau:0,cjDesc:0,edCat:null,edDraft:[],edDeleted:[],lastTicket:null,viewTicket:null,
+ // Gastos mensuales fijos
+ gastos:{alquiler:950,luz:300,agua:30,autonomos:89,asesor:100,limpieza:30,varios:100},
  users:[{email:'camarero@alinas.bar',password:'demo123',role:'camarero'},{email:'cocina@alinas.bar',password:'demo123',role:'cocina'}]};
 
 async function loadTables(){
@@ -864,6 +923,16 @@ function addProd(pid){
 
 
 
+// Calcula total gastos mensuales
+function totalGastosMensuales(){
+ return STATE.gastos.alquiler+STATE.gastos.luz+STATE.gastos.agua+STATE.gastos.autonomos+STATE.gastos.asesor+STATE.gastos.limpieza+STATE.gastos.varios;
+}
+
+// Gastos diarios = total mensual ÷ 30
+function gastosDiarios(){
+ return totalGastosMensuales()/30;
+}
+
 // ===== CIERRE DE CAJA =====
 function showCaja(){
  if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
@@ -911,6 +980,7 @@ async function loadCaja(){
  v('cjA','caja_a');v('cjB','caja_b');
  document.getElementById('cjNota').value=prev&&prev.nota?prev.nota:'';
  cjCalc();
+ mostrarGananciaNeta();
  loadCajaHist();
 }
 function num(id){return parseFloat(document.getElementById(id).value)||0}
@@ -926,6 +996,37 @@ function cjCalc(){
  box.className='cj-desc '+(Math.abs(desc)<0.01?'ok':'bad');
  STATE.cjRecau=recau;STATE.cjDesc=desc;
 }
+
+// Guardar gastos mensuales
+function guardarGastos(){
+ STATE.gastos.alquiler=parseFloat(document.getElementById('cgAlquiler').value)||0;
+ STATE.gastos.luz=parseFloat(document.getElementById('cgLuz').value)||0;
+ STATE.gastos.agua=parseFloat(document.getElementById('cgAgua').value)||0;
+ STATE.gastos.autonomos=parseFloat(document.getElementById('cgAutonomos').value)||0;
+ STATE.gastos.asesor=parseFloat(document.getElementById('cgAsesor').value)||0;
+ STATE.gastos.limpieza=parseFloat(document.getElementById('cgLimpieza').value)||0;
+ STATE.gastos.varios=parseFloat(document.getElementById('cgVarios').value)||0;
+ const total=totalGastosMensuales();
+ const diario=gastosDiarios();
+ document.getElementById('cgTotal').textContent=total.toFixed(2)+'€';
+ document.getElementById('cgDiario').textContent=diario.toFixed(2)+'€';
+ toast('💾 Gastos guardados','ok');
+ loadCaja();
+}
+
+// Calcula y muestra ganancia limpia
+function mostrarGananciaNeta(){
+ const ventas=STATE.cjSis||0;
+ const gastosDia=gastosDiarios();
+ let costes=0;
+ // Sumar costes de ingredientes (aproximado desde lo que se vendió)
+ // Nota: esto es un cálculo estimado; idealmente iría de la BD
+ const ganancia=ventas-gastosDia;
+ const box=document.getElementById('cjGananciaBox');
+ document.getElementById('cjGanancia').textContent=ganancia.toFixed(2)+'€';
+ box.className='cj-desc '+(ganancia>=0?'ok':'bad');
+}
+
 async function saveCaja(){
  const ini=cjDate();
  const row={
@@ -1580,6 +1681,7 @@ function showEditor(){
  if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
  STATE.edCat=STATE.edCat||CATS[0].id;
  STATE.edDraft=PRODS.map(p=>({...p}));
+ autoLlenarCostes();
  STATE.edDeleted=[];
  document.getElementById('screenHome').classList.add('hidden');
  document.getElementById('screenReport').classList.add('hidden');
@@ -1839,7 +1941,10 @@ async function testDrawer(){
 }
 
 function updPrinterBadge(){
- // Desactivado - sin panel de impresora
+ const b=document.getElementById('printerBadge');
+ if(!b)return;
+ if(serialPort){b.textContent='🔌 Impresora conectada';b.className='printer-status on'}
+ else{b.textContent='🔌 Impresora: pulsa para conectar';b.className='printer-status off'}
 }
 
 // Intenta reconectar sola a un puerto ya autorizado antes (sin preguntar nada)
