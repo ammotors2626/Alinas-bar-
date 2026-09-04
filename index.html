@@ -1405,37 +1405,47 @@ async function openDrawer(){
 }
 
 // Imprime el ticket al momento, sin abrir la pantalla intermedia
-// Detecta si es móvil u ordenador e imprime de forma inteligente
 async function smartPrint(){
- const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
- const hasSerial='serial'in navigator;
- 
- if(isMobile&&!hasSerial){
-  // Es móvil sin USB -> envía a Supabase
-  await printFromMobileViaSupa();
- }else{
-  // Es ordenador o móvil con USB -> imprime directo
-  await printNow();
- }
-}
-
-// Envía orden de impresión desde móvil a Supabase
-async function printFromMobileViaSupa(){
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Mesa vacía','error');return}
  const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
  
- try{
-  // Guardar en Supabase
-  const {error}=await sb.from('print_jobs').insert({
-   mesa,items:JSON.stringify(c),total,fecha,num:'PREVIO',status:'pending',created_at:new Date()
-  });
-  if(error)throw error;
-  toast('📱 ✓ Orden enviada');
- }catch(e){
-  console.error(e);
-  toast('❌ Error al enviar','error');
+ // Detectar dispositivo
+ const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+ 
+ console.log('smartPrint: isMobile='+isMobile+', hasSerial='+('serial' in navigator));
+ 
+ // ===== MÓVIL: envía a Supabase =====
+ if(isMobile){
+  try{
+   const {error}=await sb.from('print_jobs').insert({
+    mesa,items:JSON.stringify(c),total,fecha,num:'PREVIO',status:'pending',created_at:new Date()
+   });
+   if(error)throw error;
+   toast('📱 ✓ Orden enviada al ordenador');
+  }catch(e){
+   console.error('Error Supabase:',e);
+   toast('❌ Error al enviar','error');
+  }
+  return;
  }
+ 
+ // ===== ORDENADOR: intenta USB directo =====
+ if('serial' in navigator){
+  const ok=await printRawTicket(mesa,c,total,fecha,'PREVIO');
+  if(ok){toast('🖨️ Impreso');return}
+ }
+ 
+ // ===== ORDENADOR FALLBACK: ventana invisible + print =====
+ const w=window.open('','print_window');
+ if(!w){toast('⚠️ Permite ventanas emergentes','error');return}
+ w.document.write(buildTicket(mesa,c,total,fecha,'PREVIO'));
+ w.document.close();
+ setTimeout(()=>{
+  w.print();
+  setTimeout(()=>{try{w.close()}catch(e){}},800);
+ },200);
+ toast('🖨️ Imprimiendo...');
 }
 
 // El ordenador escucha órdenes de impresión desde el móvil
