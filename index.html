@@ -1409,7 +1409,12 @@ async function printNow(){
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Mesa vacía','error');return}
  const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
- // Imprimir directo por driver de Windows
+ // Vía 1: USB directo (RP80USE)
+ if('serial' in navigator){
+  const ok=await printRawTicket(mesa,c,total,fecha,'PREVIO');
+  if(ok){toast('🖨️ Impreso y cortado');return}
+ }
+ // Vía 2 (respaldo): driver de Windows
  STATE.viewTicket={mesa,items:c,total,fecha,num:'PREVIO'};
  doPrintTicket();
 }
