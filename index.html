@@ -314,15 +314,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 </head>
 <body>
 
-<div id="printerBadge" class="printer-status off" onclick="togglePrnPanel()">🔌 Impresora: pulsa para conectar</div>
-<div id="prnPanel" class="prn-panel hidden">
-  <h4>🔧 Configurar impresora</h4>
-  <div class="prn-bauds" id="prnBauds"></div>
-  <button class="prn-btn" onclick="testCut()">✂️ Probar corte</button>
-  <button class="prn-btn secondary" onclick="testDrawer()">💵 Probar cajón</button>
-  <button class="prn-close" onclick="togglePrnPanel()">Cerrar</button>
-</div>
-
 <div id="loginScreen" class="login-screen">
   <div class="login-box">
     <h1>🍷 Alina's Bar</h1>
@@ -1418,26 +1409,12 @@ async function printNow(){
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Mesa vacía','error');return}
  const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
- 
- // DETECTAR SI ES MÓVIL
- const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
- 
- // SI ES MÓVIL: ENVIAR A SUPABASE
- if(isMobile){
-  try{
-   await sb.from('print_jobs').insert({mesa,items:JSON.stringify(c),total,fecha,num:'PREVIO',status:'pending'});
-   toast('📱 Orden enviada al ordenador');
-  }catch(e){
-   toast('Error al enviar','error');
-  }
-  return;
- }
- 
- // RESTO DEL CÓDIGO IGUAL QUE ANTES (para ordenador)
+ // Vía 1: cable directo -> imprime Y corta de verdad, sin driver
  if('serial' in navigator){
   const ok=await printRawTicket(mesa,c,total,fecha,'PREVIO');
   if(ok){toast('🖨️ Impreso y cortado');return}
  }
+ // Vía 2 (respaldo): a través del driver de Windows (como hasta ahora)
  STATE.viewTicket={mesa,items:c,total,fecha,num:'PREVIO'};
  doPrintTicket();
  toast('🖨️ Imprimiendo...');
@@ -1796,13 +1773,13 @@ function ticketTexto(mesa,items,total,fecha,num){
 
 function buildTicket(mesa,items,total,fecha,num){
  const esc=(t)=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
- let t=ticketTexto(mesa,items,total,fecha,num)+'\n\n\n\n\n\n\n\n\n\n';
+ let t=ticketTexto(mesa,items,total,fecha,num)+'\n\n\n\n';
  return `<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
  @page{size:72mm auto;margin:0}
  @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
  html,body{margin:0;padding:0;background:#fff}
  pre{font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.25;
-  margin:0;padding:2mm 0 0 1mm;white-space:pre;color:#000;font-weight:bold;letter-spacing:0}
+  margin:0;padding:0 0 0 1mm;white-space:pre;color:#000;font-weight:bold;letter-spacing:0}
  </style></head><body><pre>${esc(t)}</pre></body></html>`;
 }
 
@@ -1862,10 +1839,7 @@ async function testDrawer(){
 }
 
 function updPrinterBadge(){
- const b=document.getElementById('printerBadge');
- if(!b)return;
- if(serialPort){b.textContent='🔌 Impresora conectada';b.className='printer-status on'}
- else{b.textContent='🔌 Impresora: pulsa para conectar';b.className='printer-status off'}
+ // Desactivado - sin panel de impresora
 }
 
 // Intenta reconectar sola a un puerto ya autorizado antes (sin preguntar nada)
