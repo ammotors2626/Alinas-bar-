@@ -1409,45 +1409,23 @@ async function printNow(){
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Mesa vacía','error');return}
  const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
- // Vía 1: cable directo -> imprime Y corta de verdad, sin driver
- if('serial' in navigator){
-  const ok=await printRawTicket(mesa,c,total,fecha,'PREVIO');
-  if(ok){toast('🖨️ Impreso y cortado');return}
- }
- // Vía 2 (respaldo): a través del driver de Windows (como hasta ahora)
+ // Imprimir directo por driver de Windows
  STATE.viewTicket={mesa,items:c,total,fecha,num:'PREVIO'};
  doPrintTicket();
- toast('🖨️ Imprimiendo...');
 }
 
 async function doPrintTicket(){
  const d=STATE.viewTicket;if(!d)return;
- // Vía 1: cable directo
- if('serial' in navigator){
-  const ok=await printRawTicket(d.mesa,d.items,d.total,d.fecha,d.num);
-  if(ok){toast('🖨️ Impreso y cortado');return}
+ // Abrir en ventana nueva para imprimir
+ const w=window.open('','printWindow','width=300,height=400');
+ if(!w){
+  toast('⚠️ Permite ventanas emergentes','error');
+  return;
  }
- // Vía 2 (respaldo): iframe oculto por el driver de Windows
- const old=document.getElementById('printFrame');
- if(old)old.remove();
- const f=document.createElement('iframe');
- f.id='printFrame';
- f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
- document.body.appendChild(f);
- const doc=f.contentWindow.document;
- doc.open();
- doc.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
- doc.close();
- setTimeout(()=>{
-  try{f.contentWindow.focus();f.contentWindow.print()}
-  catch(e){
-   // Si el navegador lo bloquea, se abre en una pestaña normal
-   const w=window.open('','_blank');
-   if(w){w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));w.document.close();setTimeout(()=>w.print(),300)}
-   else toast('⚠️ Permite ventanas emergentes','error');
-  }
-  setTimeout(()=>{const x=document.getElementById('printFrame');if(x)x.remove()},2000);
- },250);
+ w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
+ w.document.close();
+ // Imprime cuando esté listo
+ setTimeout(()=>{w.print();toast('🖨️ Imprimiendo...')},300);
 }
 async function doShareTicket(){
  const d=STATE.viewTicket;if(!d)return;
