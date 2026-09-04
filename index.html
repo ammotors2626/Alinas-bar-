@@ -587,6 +587,26 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <div class="rep-card"><div class="rep-card-lbl">Mesas</div><div class="rep-card-val" id="repMesas">0</div></div>
     <div class="rep-card"><div class="rep-card-lbl">Artículos</div><div class="rep-card-val" id="repArts">0</div></div>
   </div>
+
+  <div class="rep-desglose" style="background:#1a2a3a;border:1.5px solid #3b82f6;border-radius:.4rem;padding:.6rem;margin:.6rem 0;color:#e0e7ff">
+    <h3 style="color:#60a5fa;margin-top:0;font-size:.9rem">💰 DESGLOSE LIMPIO</h3>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.75rem;line-height:1.8">
+      <div><span style="color:#9ca3af">Ventas totales:</span></div>
+      <div style="text-align:right"><strong id="repVentas" style="color:#fff">0,00€</strong></div>
+      
+      <div><span style="color:#9ca3af">Costes ingredientes:</span></div>
+      <div style="text-align:right"><strong id="repCostes" style="color:#fca5a5">0,00€</strong></div>
+      
+      <div style="border-top:1px solid #334155;padding-top:.4rem"><span style="color:#9ca3af">Beneficio bruto:</span></div>
+      <div style="border-top:1px solid #334155;padding-top:.4rem;text-align:right"><strong id="repBruto" style="color:#86efac">0,00€</strong></div>
+      
+      <div><span style="color:#9ca3af">Gastos diarios:</span></div>
+      <div style="text-align:right"><strong id="repGastos" style="color:#fbbf24">0,00€</strong></div>
+      
+      <div style="border-top:2px solid #60a5fa;padding-top:.4rem;font-weight:800"><span style="color:#60a5fa">GANANCIA LIMPIA:</span></div>
+      <div style="border-top:2px solid #60a5fa;padding-top:.4rem;text-align:right"><strong id="repLimpia" style="color:#60a5fa;font-size:.85rem">0,00€</strong></div>
+    </div>
+  </div>
   <div class="rep-list" id="repList"></div>
   <div class="rep-send">
     <button class="rs-mail" onclick="mailReport()">📧 Correo</button>
@@ -1622,15 +1642,30 @@ async function loadReport(){
 
  const ventas=data||[];
  const total=ventas.reduce((s,v)=>s+parseFloat(v.total),0);
- const cont={};let arts=0;
+ const cont={};let arts=0;let costosTotales=0;
  ventas.forEach(v=>(v.items||[]).forEach(i=>{
   const k=i.name+(i.mods&&i.mods.length?' ('+i.mods.join(', ')+')':'');
   if(!cont[k])cont[k]={q:0,e:0};
   cont[k].q+=i.quantity;cont[k].e+=i.price*i.quantity;arts+=i.quantity;
+  // Calcular coste de ingredientes
+  const costeUnitario=COSTES_PRODUCTOS[i.name]||0;
+  costosTotales+=costeUnitario*i.quantity;
  }));
  document.getElementById('repTotal').textContent=total.toFixed(2)+'€';
  document.getElementById('repMesas').textContent=ventas.length;
  document.getElementById('repArts').textContent=arts;
+ 
+ // Calcular desglose limpio
+ const beneficioBruto=total-costosTotales;
+ const gastosDia=gastosDiarios();
+ const gananciaLimpia=beneficioBruto-gastosDia;
+ document.getElementById('repVentas').textContent=total.toFixed(2)+'€';
+ document.getElementById('repCostes').textContent=costosTotales.toFixed(2)+'€';
+ document.getElementById('repBruto').textContent=beneficioBruto.toFixed(2)+'€';
+ document.getElementById('repGastos').textContent=gastosDia.toFixed(2)+'€';
+ document.getElementById('repLimpia').textContent=gananciaLimpia.toFixed(2)+'€';
+ document.getElementById('repLimpia').style.color=gananciaLimpia>=0?'#60a5fa':'#f87171';
+ 
  const rows=Object.entries(cont).sort((a,b)=>b[1].q-a[1].q);
  document.getElementById('repList').innerHTML=rows.length?rows.map(([n,d])=>
   `<div class="rep-row"><span class="rep-name">${n}</span><span class="rep-qty">${d.q}</span><span class="rep-eur">${d.e.toFixed(2)}€</span></div>`
@@ -1897,14 +1932,10 @@ function getBaud(){return parseInt(localStorage.getItem('printerBaud'))||9600}
 function setBaud(b){localStorage.setItem('printerBaud',b)}
 
 function togglePrnPanel(){
- const p=document.getElementById('prnPanel');
- p.classList.toggle('hidden');
- if(!p.classList.contains('hidden'))renderBauds();
+ // Desactivado - sin panel de impresora
 }
 function renderBauds(){
- const cur=getBaud();
- document.getElementById('prnBauds').innerHTML=BAUDS.map(b=>
-  `<button class="prn-baud ${b===cur?'active':''}" onclick="pickBaud(${b})">${b}</button>`).join('');
+ // Desactivado - sin panel de impresora
 }
 async function pickBaud(b){
  setBaud(b);
@@ -1941,10 +1972,7 @@ async function testDrawer(){
 }
 
 function updPrinterBadge(){
- const b=document.getElementById('printerBadge');
- if(!b)return;
- if(serialPort){b.textContent='🔌 Impresora conectada';b.className='printer-status on'}
- else{b.textContent='🔌 Impresora: pulsa para conectar';b.className='printer-status off'}
+ // Desactivado - sin panel de impresora visible
 }
 
 // Intenta reconectar sola a un puerto ya autorizado antes (sin preguntar nada)
