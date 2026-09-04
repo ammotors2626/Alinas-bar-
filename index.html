@@ -89,8 +89,8 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .btn-trash{background:#ef4444;color:#fff;border:none;padding:.4rem .55rem;border-radius:.35rem;font-size:.8rem}
 
 /* Categorías fijas: rejilla compacta 4 columnas */
-.cats{background:#0d0d0d;padding:.5rem .3rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.3rem;flex-shrink:0;border-bottom:1px solid #333}
-.cat-btn{background:#3b4a5f;border:1px solid #4a5a70;border-radius:.3rem;padding:.5rem .2rem;text-align:center;font-size:.55rem;font-weight:700;color:#fff;line-height:1.2;display:flex;align-items:center;justify-content:center;min-height:auto}
+.cats{background:#0d0d0d;padding:.3rem;display:grid;grid-template-columns:repeat(4,1fr);gap:.25rem;flex-shrink:0;border-bottom:1px solid #333}
+.cat-btn{background:#3b4a5f;border:1px solid #4a5a70;border-radius:.3rem;padding:.35rem .1rem;text-align:center;font-size:.55rem;font-weight:700;color:#fff;line-height:1.1;display:flex;align-items:center;justify-content:center;min-height:2.1rem}
 .cat-btn.active{background:#f97316;color:#000;border-color:#fff}
 
 /* Productos: rejilla que ocupa espacio fijo con scroll interno solo si hace falta */
@@ -373,7 +373,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="prods" id="prods"></div>
   <div class="order-list" id="orderList"></div>
   <div class="actions">
-    <button class="act a-print2" onclick="printNow()">🖨️ IMPRIMIR</button>
+    <button class="act a-print2" onclick="smartPrint()">🖨️ IMPRIMIR</button>
     <button class="act a-ticket" onclick="showTicket()">🧾 VER</button>
     <button class="act a-cobrar" onclick="closeAccount()">💰 COBRAR</button>
     <button class="act a-extra" onclick="openExtras()">➕ EXTRA</button>
@@ -1405,32 +1405,102 @@ async function openDrawer(){
 }
 
 // Imprime el ticket al momento, sin abrir la pantalla intermedia
+// Detecta si es móvil u ordenador e imprime de forma inteligente
+async function smartPrint(){
+ const isMobile=/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+ const hasSerial='serial'in navigator;
+ 
+ if(isMobile&&!hasSerial){
+  // Es móvil sin USB -> envía a Supabase
+  await printFromMobileViaSupa();
+ }else{
+  // Es ordenador o móvil con USB -> imprime directo
+  await printNow();
+ }
+}
+
+// Envía orden de impresión desde móvil a Supabase
+async function printFromMobileViaSupa(){
+ const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
+ if(!c.length){toast('❌ Mesa vacía','error');return}
+ const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
+ 
+ try{
+  // Guardar en Supabase
+  const {error}=await sb.from('print_jobs').insert({
+   mesa,items:JSON.stringify(c),total,fecha,num:'PREVIO',status:'pending',created_at:new Date()
+  });
+  if(error)throw error;
+  toast('📱 ✓ Orden enviada');
+ }catch(e){
+  console.error(e);
+  toast('❌ Error al enviar','error');
+ }
+}
+
+// El ordenador escucha órdenes de impresión desde el móvil
+function startListeningForMobilePrintJobs(){
+ if(!sb)return;
+ try{
+  sb.channel('print-jobs-channel').on('postgres_changes',{
+   event:'INSERT',schema:'public',table:'print_jobs'
+  },async(payload)=>{
+   const job=payload.new;
+   if(job&&job.status==='pending'){
+    // Imprimir automáticamente
+    const items=JSON.parse(job.items||'[]');
+    const ok=await printRawTicket(job.mesa,items,job.total,job.fecha,job.num);
+    // Marcar como completado
+    await sb.from('print_jobs').update({status:ok?'done':'error'}).eq('id',job.id);
+    if(ok)toast('📱 Impreso desde móvil');
+   }
+  }).subscribe();
+ }catch(e){console.error('Error escuchando órdenes:',e)}
+}
+
 async function printNow(){
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Mesa vacía','error');return}
  const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
- // Vía 1: USB directo (RP80USE)
+ // Vía 1: cable directo -> imprime Y corta de verdad, sin driver
  if('serial' in navigator){
   const ok=await printRawTicket(mesa,c,total,fecha,'PREVIO');
   if(ok){toast('🖨️ Impreso y cortado');return}
  }
- // Vía 2 (respaldo): driver de Windows
+ // Vía 2 (respaldo): a través del driver de Windows (como hasta ahora)
  STATE.viewTicket={mesa,items:c,total,fecha,num:'PREVIO'};
  doPrintTicket();
+ toast('🖨️ Imprimiendo...');
 }
 
 async function doPrintTicket(){
  const d=STATE.viewTicket;if(!d)return;
- // Abrir en ventana nueva para imprimir
- const w=window.open('','printWindow','width=300,height=400');
- if(!w){
-  toast('⚠️ Permite ventanas emergentes','error');
-  return;
+ // Vía 1: cable directo
+ if('serial' in navigator){
+  const ok=await printRawTicket(d.mesa,d.items,d.total,d.fecha,d.num);
+  if(ok){toast('🖨️ Impreso y cortado');return}
  }
- w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
- w.document.close();
- // Imprime cuando esté listo
- setTimeout(()=>{w.print();toast('🖨️ Imprimiendo...')},300);
+ // Vía 2 (respaldo): iframe oculto por el driver de Windows
+ const old=document.getElementById('printFrame');
+ if(old)old.remove();
+ const f=document.createElement('iframe');
+ f.id='printFrame';
+ f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+ document.body.appendChild(f);
+ const doc=f.contentWindow.document;
+ doc.open();
+ doc.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
+ doc.close();
+ setTimeout(()=>{
+  try{f.contentWindow.focus();f.contentWindow.print()}
+  catch(e){
+   // Si el navegador lo bloquea, se abre en una pestaña normal
+   const w=window.open('','_blank');
+   if(w){w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));w.document.close();setTimeout(()=>w.print(),300)}
+   else toast('⚠️ Permite ventanas emergentes','error');
+  }
+  setTimeout(()=>{const x=document.getElementById('printFrame');if(x)x.remove()},2000);
+ },250);
 }
 async function doShareTicket(){
  const d=STATE.viewTicket;if(!d)return;
@@ -1756,13 +1826,13 @@ function ticketTexto(mesa,items,total,fecha,num){
 
 function buildTicket(mesa,items,total,fecha,num){
  const esc=(t)=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
- let t=ticketTexto(mesa,items,total,fecha,num)+'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n';
+ let t=ticketTexto(mesa,items,total,fecha,num)+'\n\n\n\n\n\n\n\n\n\n';
  return `<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
- @page{size:72mm auto;margin:0}
+ @page{size:72mm auto;margin:0;padding:0}
  @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
  html,body{margin:0;padding:0;background:#fff}
  pre{font-family:'Courier New',Courier,monospace;font-size:11px;line-height:1.25;
-  margin:0;padding:0 0 0 1mm;white-space:pre;color:#000;font-weight:bold;letter-spacing:0}
+  margin:0;padding:2mm 0 0 1mm;white-space:pre;color:#000;font-weight:bold;letter-spacing:0}
  </style></head><body><pre>${esc(t)}</pre></body></html>`;
 }
 
@@ -1883,10 +1953,10 @@ async function printRawTicket(mesa,items,total,fecha,num){
  const enc=new TextEncoder();
  const ESC=0x1B,GS=0x1D;
  const bytes=[
-  ESC,0x40,          // inicializar impresora
+  ESC,0x40,
   ...enc.encode(texto),
-  0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,
-  GS,0x56,0x42,0x00  // GS V 66 0 -> corte con avance (funciona en la mayoría ESC/POS)
+  0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,0x0A,
+  GS,0x56,0x42,0x00
  ];
  try{
   await serialWrite(bytes);
@@ -1935,6 +2005,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
   catch(e){}
   sb.channel('t-ch').on('postgres_changes',{event:'*',schema:'public',table:'tables'},()=>{loadTables().then(()=>{if(!document.getElementById('screenHome').classList.contains('hidden'))renderMesas()})}).subscribe();
   sb.channel('o-ch').on('postgres_changes',{event:'*',schema:'public',table:'orders'},()=>{loadOrders().then(()=>{if(!document.getElementById('screenKitchen').classList.contains('hidden'))renderKitchen()})}).subscribe();
+  // Escuchar órdenes de impresión desde móvil
+  startListeningForMobilePrintJobs();
  }
  if(new URLSearchParams(location.search).get('kitchen')==='true'){STATE.user={role:'cocina'};showKitchen()}
 });
