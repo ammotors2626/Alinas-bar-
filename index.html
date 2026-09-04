@@ -1451,21 +1451,57 @@ async function smartPrint(){
 // El ordenador escucha órdenes de impresión desde el móvil
 function startListeningForMobilePrintJobs(){
  if(!sb)return;
+ console.log('🔴 Inicializando escucha de órdenes remotas...');
  try{
   sb.channel('print-jobs-channel').on('postgres_changes',{
    event:'INSERT',schema:'public',table:'print_jobs'
   },async(payload)=>{
+   console.log('📱 Nueva orden recibida:', payload.new);
    const job=payload.new;
    if(job&&job.status==='pending'){
+    // Intentar conectar USB si no está
+    if('serial' in navigator&&!serialPort){
+     console.log('🔌 Intentando conectar USB...');
+     await connectPrinter();
+    }
     // Imprimir automáticamente
+    console.log('🖨️ Ejecutando impresión remota...');
     const items=JSON.parse(job.items||'[]');
-    const ok=await printRawTicket(job.mesa,items,job.total,job.fecha,job.num);
+    let ok=false;
+    
+    // Vía 1: USB
+    if('serial' in navigator&&serialPort){
+     ok=await printRawTicket(job.mesa,items,job.total,job.fecha,job.num);
+    }
+    
+    // Vía 2: Si USB falla, usar Windows
+    if(!ok){
+     console.log('📄 Fallando a Windows driver...');
+     const w=window.open('','print_mobile_'+Date.now());
+     if(w){
+      w.document.write(buildTicket(job.mesa,items,job.total,job.fecha,job.num));
+      w.document.close();
+      setTimeout(()=>{
+       w.print();
+       setTimeout(()=>{try{w.close()}catch(e){}},800);
+      },200);
+      ok=true;
+      toast('🖨️ Imprimiendo desde móvil...');
+     }
+    }
+    
     // Marcar como completado
     await sb.from('print_jobs').update({status:ok?'done':'error'}).eq('id',job.id);
-    if(ok)toast('📱 Impreso desde móvil');
+    console.log('✅ Resultado:', ok?'Impreso exitosamente':'Error al imprimir');
+    if(ok)toast('📱 ✅ Impreso desde móvil');
+    else toast('❌ Error imprimiendo orden del móvil','error');
    }
   }).subscribe();
- }catch(e){console.error('Error escuchando órdenes:',e)}
+  console.log('✅ Escucha activada correctamente');
+ }catch(e){
+  console.error('❌ Error escuchando órdenes:',e);
+  toast('❌ Error en sistema de impresión remota','error');
+ }
 }
 
 async function printNow(){
@@ -1958,7 +1994,14 @@ async function serialWrite(bytes){
 
 // Manda el ticket en crudo: inicializa, texto, avance y CORTE automático
 async function printRawTicket(mesa,items,total,fecha,num){
- if(!serialPort){await connectPrinter();if(!serialPort)return false}
+ if(!serialPort){
+  console.log('🔌 Puerto serial no conectado, intentando conectar...');
+  await connectPrinter();
+  if(!serialPort){
+   console.log('❌ No se pudo conectar al puerto serie');
+   return false;
+  }
+ }
  const texto=sinAcentos(ticketTexto(mesa,items,total,fecha,num));
  const enc=new TextEncoder();
  const ESC=0x1B,GS=0x1D;
@@ -1969,12 +2012,15 @@ async function printRawTicket(mesa,items,total,fecha,num){
   GS,0x56,0x42,0x00
  ];
  try{
+  console.log('📤 Enviando '+bytes.length+' bytes a impresora...');
   await serialWrite(bytes);
+  console.log('✅ Enviado correctamente');
   return true;
  }catch(e){
-  console.error(e);
-  toast('❌ Error al mandar a la impresora','error');
-  serialPort=null;updPrinterBadge();
+  console.error('❌ Error al enviar:',e);
+  toast('❌ Error USB, usando Windows','error');
+  serialPort=null;
+  // Fallback a Windows
   return false;
  }
 }
