@@ -121,6 +121,23 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .a-extra{background:#f97316;color:#000}
 .a-print2{background:#0ea5e9;color:#fff}
 .a-cajon{background:#84cc16;color:#000}
+.printer-status{position:fixed;top:.4rem;left:.4rem;z-index:600;font-size:.6rem;font-weight:800;
+ padding:.25rem .5rem;border-radius:.3rem;background:#444;color:#9ca3af}
+.printer-status.on{background:#10b981;color:#fff}
+.printer-status.off{background:#6b7280;color:#fff}
+.prn-panel{position:fixed;top:2.2rem;left:.4rem;z-index:601;background:#1a1a1a;
+ border:2px solid #f97316;border-radius:.5rem;padding:.6rem;width:15rem;
+ box-shadow:0 4px 12px rgba(0,0,0,.5)}
+.prn-panel h4{font-size:.75rem;color:#f97316;margin-bottom:.4rem;font-weight:800}
+.prn-bauds{display:grid;grid-template-columns:1fr 1fr;gap:.3rem;margin-bottom:.5rem}
+.prn-baud{background:#2a2a2a;border:1.5px solid #444;color:#fff;padding:.4rem;
+ border-radius:.3rem;font-size:.7rem;font-weight:700}
+.prn-baud.active{background:#f97316;color:#000;border-color:#f97316}
+.prn-btn{width:100%;padding:.5rem;border:none;border-radius:.3rem;font-weight:800;
+ font-size:.72rem;margin-bottom:.3rem;background:#10b981;color:#fff}
+.prn-btn.secondary{background:#3b82f6}
+.prn-close{width:100%;padding:.4rem;border:none;border-radius:.3rem;font-weight:700;
+ font-size:.7rem;background:#6b7280;color:#fff}
 .cj-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
 .cj-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;border-bottom:2px solid #eab308;margin-bottom:.4rem;flex-shrink:0}
 .cj-head h1{font-size:.9rem;color:#eab308}
@@ -449,25 +466,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     </div>
 
     <div class="cj-grp">
-      <h3>📊 GASTOS MENSUALES FIJOS</h3>
-      <div class="cj-f"><label>Alquiler</label><input type="number" step="0.01" inputmode="decimal" id="cgAlquiler" value="950"></div>
-      <div class="cj-f"><label>Luz</label><input type="number" step="0.01" inputmode="decimal" id="cgLuz" value="300"></div>
-      <div class="cj-f"><label>Agua</label><input type="number" step="0.01" inputmode="decimal" id="cgAgua" value="30"></div>
-      <div class="cj-f"><label>Autónomos</label><input type="number" step="0.01" inputmode="decimal" id="cgAutonomos" value="89"></div>
-      <div class="cj-f"><label>Asesor</label><input type="number" step="0.01" inputmode="decimal" id="cgAsesor" value="100"></div>
-      <div class="cj-f"><label>Limpieza/Basura</label><input type="number" step="0.01" inputmode="decimal" id="cgLimpieza" value="30"></div>
-      <div class="cj-f"><label>Gastos Varios</label><input type="number" step="0.01" inputmode="decimal" id="cgVarios" value="100"></div>
-      <div class="cj-f tot"><label>TOTAL MENSUAL</label><span class="val" id="cgTotal">1599,00€</span></div>
-      <div class="cj-f tot"><label>GASTOS DIARIOS (÷30)</label><span class="val" id="cgDiario">53,30€</span></div>
-      <button style="width:100%;padding:.5rem;background:#3b82f6;color:#fff;border:none;border-radius:.3rem;font-weight:700;margin-top:.5rem;cursor:pointer" onclick="guardarGastos()">💾 Guardar Gastos</button>
-    </div>
-
-    <div class="cj-desc ok" id="cjGananciaBox">
-      <div class="v" id="cjGanancia">0,00€</div>
-      <div class="l">GANANCIA LIMPIA DEL DÍA</div>
-    </div>
-
-    <div class="cj-grp">
       <h3>📝 OBSERVACIONES</h3>
       <textarea class="cj-note" id="cjNota" rows="2" placeholder="Incidencias, invitaciones, propinas..."></textarea>
     </div>
@@ -586,26 +584,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <div class="rep-card"><div class="rep-card-lbl">Facturado</div><div class="rep-card-val" id="repTotal">0€</div></div>
     <div class="rep-card"><div class="rep-card-lbl">Mesas</div><div class="rep-card-val" id="repMesas">0</div></div>
     <div class="rep-card"><div class="rep-card-lbl">Artículos</div><div class="rep-card-val" id="repArts">0</div></div>
-  </div>
-
-  <div class="rep-desglose" style="background:#1a2a3a;border:1.5px solid #3b82f6;border-radius:.4rem;padding:.6rem;margin:.6rem 0;color:#e0e7ff">
-    <h3 style="color:#60a5fa;margin-top:0;font-size:.9rem">💰 DESGLOSE LIMPIO</h3>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;font-size:.75rem;line-height:1.8">
-      <div><span style="color:#9ca3af">Ventas totales:</span></div>
-      <div style="text-align:right"><strong id="repVentas" style="color:#fff">0,00€</strong></div>
-      
-      <div><span style="color:#9ca3af">Costes ingredientes:</span></div>
-      <div style="text-align:right"><strong id="repCostes" style="color:#fca5a5">0,00€</strong></div>
-      
-      <div style="border-top:1px solid #334155;padding-top:.4rem"><span style="color:#9ca3af">Beneficio bruto:</span></div>
-      <div style="border-top:1px solid #334155;padding-top:.4rem;text-align:right"><strong id="repBruto" style="color:#86efac">0,00€</strong></div>
-      
-      <div><span style="color:#9ca3af">Gastos diarios:</span></div>
-      <div style="text-align:right"><strong id="repGastos" style="color:#fbbf24">0,00€</strong></div>
-      
-      <div style="border-top:2px solid #60a5fa;padding-top:.4rem;font-weight:800"><span style="color:#60a5fa">GANANCIA LIMPIA:</span></div>
-      <div style="border-top:2px solid #60a5fa;padding-top:.4rem;text-align:right"><strong id="repLimpia" style="color:#60a5fa;font-size:.85rem">0,00€</strong></div>
-    </div>
   </div>
   <div class="rep-list" id="repList"></div>
   <div class="rep-send">
@@ -751,60 +729,6 @@ const ZONES=[
 
 const TABLE_ORDER=['t1','t2','t3','t4','t5','t6','t7','t8','t9','t10','t11','t12','t13','b1','b2','b3','b4','b5','b6','b7','b8','s1','s2','s3','s4','s5','s6','s7'];
 
-// TABLA DE COSTES DE TOSTADAS Y CAFÉS (para auto-llenar en editor)
-const COSTES_PRODUCTOS = {
-  'Mantequilla y mermelada': 0.50,
-  'Aceite': 0.27,
-  'Tomate y aceite': 0.36,
-  'Tomate y atún': 0.57,
-  'Tomate y queso': 0.55,
-  'Tomate y aguacate': 0.52,
-  'Tomate y serrano': 0.62,
-  'Tomate, q.fresco y aguacate': 0.64,
-  'Tomate, atún y aguacate': 0.62,
-  'Tomate, atún y q.fresco': 0.69,
-  'Tomate, atún, queso, aguac.': 0.84,
-  'Sobrasada': 0.52,
-  'Jamón york y queso': 0.71,
-  'Tomate, york y queso': 0.81,
-  'Tomate, serrano y queso': 0.74,
-  'Salmón + queso crema': 1.12,
-  'Salmón + tomate': 1.07,
-  '1 huevo + 2 bacon': 0.94,
-  '2 huevos + 2 bacon': 1.18,
-  '3 huevos + 2 bacon': 1.42,
-  'Solo': 0.22,
-  'Cortado': 0.27,
-  'Bombón': 0.32,
-  'Americano': 0.22,
-  'Americano con leche': 0.36,
-  'Americano con Baileys': 0.47,
-  'Café con leche': 0.36,
-  'Café con leche desnatada/vegetal': 0.37,
-  'Café con leche grande': 0.40,
-  'Carajillo': 0.35,
-  'Belmonte': 0.38,
-  'Canario': 0.35,
-  'Canario con Baileys': 0.48,
-  'Capuchino': 0.40,
-  'Asiático': 0.50,
-  'Irlandés': 1.00,
-  'Cola Cao': 0.30,
-  'Chocolate a la taza': 0.45,
-  'Vaso de leche': 0.14,
-};
-
-// Auto-llenar costes de productos
-function autoLlenarCostes(){
- STATE.edDraft.forEach(p=>{
-  if(!p.cost || p.cost===0){
-   if(COSTES_PRODUCTOS[p.n]){
-    p.cost=COSTES_PRODUCTOS[p.n];
-   }
-  }
- });
-}
-
 // ===== MODIFICADORES =====
 const MODS_CAFE=[
  {n:'Leche fría',e:0},{n:'Leche templada',e:0},{n:'En vaso',e:0},{n:'En taza',e:0},
@@ -833,8 +757,6 @@ function modsFor(p){
 
 const STATE={user:null,table:null,cat:null,zone:'terraza',tables:[],orders:[],pendingMod:null,
  repPeriod:'dia',repOffset:0,ctPeriod:'mes',ctOffset:0,cjOffset:0,cjSis:0,cjGastos:0,cjRecau:0,cjDesc:0,edCat:null,edDraft:[],edDeleted:[],lastTicket:null,viewTicket:null,
- // Gastos mensuales fijos
- gastos:{alquiler:950,luz:300,agua:30,autonomos:89,asesor:100,limpieza:30,varios:100},
  users:[{email:'camarero@alinas.bar',password:'demo123',role:'camarero'},{email:'cocina@alinas.bar',password:'demo123',role:'cocina'}]};
 
 async function loadTables(){
@@ -943,16 +865,6 @@ function addProd(pid){
 
 
 
-// Calcula total gastos mensuales
-function totalGastosMensuales(){
- return STATE.gastos.alquiler+STATE.gastos.luz+STATE.gastos.agua+STATE.gastos.autonomos+STATE.gastos.asesor+STATE.gastos.limpieza+STATE.gastos.varios;
-}
-
-// Gastos diarios = total mensual ÷ 30
-function gastosDiarios(){
- return totalGastosMensuales()/30;
-}
-
 // ===== CIERRE DE CAJA =====
 function showCaja(){
  if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
@@ -1000,7 +912,6 @@ async function loadCaja(){
  v('cjA','caja_a');v('cjB','caja_b');
  document.getElementById('cjNota').value=prev&&prev.nota?prev.nota:'';
  cjCalc();
- mostrarGananciaNeta();
  loadCajaHist();
 }
 function num(id){return parseFloat(document.getElementById(id).value)||0}
@@ -1016,37 +927,6 @@ function cjCalc(){
  box.className='cj-desc '+(Math.abs(desc)<0.01?'ok':'bad');
  STATE.cjRecau=recau;STATE.cjDesc=desc;
 }
-
-// Guardar gastos mensuales
-function guardarGastos(){
- STATE.gastos.alquiler=parseFloat(document.getElementById('cgAlquiler').value)||0;
- STATE.gastos.luz=parseFloat(document.getElementById('cgLuz').value)||0;
- STATE.gastos.agua=parseFloat(document.getElementById('cgAgua').value)||0;
- STATE.gastos.autonomos=parseFloat(document.getElementById('cgAutonomos').value)||0;
- STATE.gastos.asesor=parseFloat(document.getElementById('cgAsesor').value)||0;
- STATE.gastos.limpieza=parseFloat(document.getElementById('cgLimpieza').value)||0;
- STATE.gastos.varios=parseFloat(document.getElementById('cgVarios').value)||0;
- const total=totalGastosMensuales();
- const diario=gastosDiarios();
- document.getElementById('cgTotal').textContent=total.toFixed(2)+'€';
- document.getElementById('cgDiario').textContent=diario.toFixed(2)+'€';
- toast('💾 Gastos guardados','ok');
- loadCaja();
-}
-
-// Calcula y muestra ganancia limpia
-function mostrarGananciaNeta(){
- const ventas=STATE.cjSis||0;
- const gastosDia=gastosDiarios();
- let costes=0;
- // Sumar costes de ingredientes (aproximado desde lo que se vendió)
- // Nota: esto es un cálculo estimado; idealmente iría de la BD
- const ganancia=ventas-gastosDia;
- const box=document.getElementById('cjGananciaBox');
- document.getElementById('cjGanancia').textContent=ganancia.toFixed(2)+'€';
- box.className='cj-desc '+(ganancia>=0?'ok':'bad');
-}
-
 async function saveCaja(){
  const ini=cjDate();
  const row={
@@ -1496,13 +1376,9 @@ function ticketHTML(d){
 
 // Abre el cajón portamonedas.
 // El cajón va enchufado a la impresora por RJ11 y salta con cada impresión.
-async function openDrawer(){
- // Vía 1: cable directo (sin driver de Windows) - abre de verdad
- if('serial' in navigator){
-  const ok=await drawerRaw();
-  if(ok){toast('💵 Abriendo cajón...');return}
- }
- // Vía 2 (respaldo): impresión en blanco por el driver de Windows
+function openDrawer(){
+ // Comando ESC/POS de apertura de cajón: ESC p 0 25 250
+ const CAJON='\x1B\x70\x00\x19\xFA';
  const old=document.getElementById('drawerFrame');
  if(old)old.remove();
  const f=document.createElement('iframe');
@@ -1511,12 +1387,12 @@ async function openDrawer(){
  document.body.appendChild(f);
  const doc=f.contentWindow.document;
  doc.open();
- doc.write(`<html><head><meta charset="utf-8"><title>Cajon</title><style>
-  @page{size:72mm auto;margin:0}
-  @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
-  html,body{margin:0;padding:0}
-  pre{font-family:'Courier New',monospace;font-size:1px;margin:0;padding:0;color:#fff}
-  </style></head><body><pre> </pre></body></html>`);
+ doc.write('<html><head><meta charset="utf-8"><title>Cajon</title><style>'
+  +'@page{size:72mm auto;margin:0}'
+  +'@media print{html,body{width:72mm;margin:0!important;padding:0!important}}'
+  +'html,body{margin:0;padding:0}'
+  +"pre{font-family:'Courier New',monospace;font-size:11px;margin:0;padding:0;white-space:pre}"
+  +'</style></head><body><pre>'+CAJON+'</pre></body></html>');
  doc.close();
  setTimeout(()=>{
   try{f.contentWindow.focus();f.contentWindow.print()}catch(e){}
@@ -1526,29 +1402,18 @@ async function openDrawer(){
 }
 
 // Imprime el ticket al momento, sin abrir la pantalla intermedia
-async function printNow(){
+function printNow(){
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Mesa vacía','error');return}
- const mesa=STATE.table.name,total=parseFloat(STATE.table.total)||0,fecha=new Date().toISOString();
- // Vía 1: cable directo -> imprime Y corta de verdad, sin driver
- if('serial' in navigator){
-  const ok=await printRawTicket(mesa,c,total,fecha,'PREVIO');
-  if(ok){toast('🖨️ Impreso y cortado');return}
- }
- // Vía 2 (respaldo): a través del driver de Windows (como hasta ahora)
- STATE.viewTicket={mesa,items:c,total,fecha,num:'PREVIO'};
+ STATE.viewTicket={mesa:STATE.table.name,items:c,total:parseFloat(STATE.table.total)||0,
+                   fecha:new Date().toISOString(),num:'PREVIO'};
  doPrintTicket();
  toast('🖨️ Imprimiendo...');
 }
 
-async function doPrintTicket(){
+function doPrintTicket(){
  const d=STATE.viewTicket;if(!d)return;
- // Vía 1: cable directo
- if('serial' in navigator){
-  const ok=await printRawTicket(d.mesa,d.items,d.total,d.fecha,d.num);
-  if(ok){toast('🖨️ Impreso y cortado');return}
- }
- // Vía 2 (respaldo): iframe oculto por el driver de Windows
+ // Se imprime desde un iframe oculto: no abre pestañas y se cierra solo
  const old=document.getElementById('printFrame');
  if(old)old.remove();
  const f=document.createElement('iframe');
@@ -1642,30 +1507,15 @@ async function loadReport(){
 
  const ventas=data||[];
  const total=ventas.reduce((s,v)=>s+parseFloat(v.total),0);
- const cont={};let arts=0;let costosTotales=0;
+ const cont={};let arts=0;
  ventas.forEach(v=>(v.items||[]).forEach(i=>{
   const k=i.name+(i.mods&&i.mods.length?' ('+i.mods.join(', ')+')':'');
   if(!cont[k])cont[k]={q:0,e:0};
   cont[k].q+=i.quantity;cont[k].e+=i.price*i.quantity;arts+=i.quantity;
-  // Calcular coste de ingredientes
-  const costeUnitario=COSTES_PRODUCTOS[i.name]||0;
-  costosTotales+=costeUnitario*i.quantity;
  }));
  document.getElementById('repTotal').textContent=total.toFixed(2)+'€';
  document.getElementById('repMesas').textContent=ventas.length;
  document.getElementById('repArts').textContent=arts;
- 
- // Calcular desglose limpio
- const beneficioBruto=total-costosTotales;
- const gastosDia=gastosDiarios();
- const gananciaLimpia=beneficioBruto-gastosDia;
- document.getElementById('repVentas').textContent=total.toFixed(2)+'€';
- document.getElementById('repCostes').textContent=costosTotales.toFixed(2)+'€';
- document.getElementById('repBruto').textContent=beneficioBruto.toFixed(2)+'€';
- document.getElementById('repGastos').textContent=gastosDia.toFixed(2)+'€';
- document.getElementById('repLimpia').textContent=gananciaLimpia.toFixed(2)+'€';
- document.getElementById('repLimpia').style.color=gananciaLimpia>=0?'#60a5fa':'#f87171';
- 
  const rows=Object.entries(cont).sort((a,b)=>b[1].q-a[1].q);
  document.getElementById('repList').innerHTML=rows.length?rows.map(([n,d])=>
   `<div class="rep-row"><span class="rep-name">${n}</span><span class="rep-qty">${d.q}</span><span class="rep-eur">${d.e.toFixed(2)}€</span></div>`
@@ -1716,7 +1566,6 @@ function showEditor(){
  if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
  STATE.edCat=STATE.edCat||CATS[0].id;
  STATE.edDraft=PRODS.map(p=>({...p}));
- autoLlenarCostes();
  STATE.edDeleted=[];
  document.getElementById('screenHome').classList.add('hidden');
  document.getElementById('screenReport').classList.add('hidden');
@@ -1910,7 +1759,13 @@ function ticketTexto(mesa,items,total,fecha,num){
 
 function buildTicket(mesa,items,total,fecha,num){
  const esc=(t)=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
- let t=ticketTexto(mesa,items,total,fecha,num)+'\n\n\n\n';
+ // Avance de papel + comandos de corte ESC/POS.
+ // Con el driver "Generic / Text Only" estos caracteres de control
+ // llegan tal cual a la impresora y disparan la cuchilla.
+ const AVANCE='\x0A\x0A\x0A\x0A\x0A';
+ const CORTE_TOTAL='\x1D\x56\x00';
+ const CORTE_PARCIAL='\x1D\x56\x01';
+ let t=ticketTexto(mesa,items,total,fecha,num)+AVANCE+CORTE_TOTAL+CORTE_PARCIAL;
  return `<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
  @page{size:72mm auto;margin:0}
  @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
@@ -1921,159 +1776,10 @@ function buildTicket(mesa,items,total,fecha,num){
 }
 
 
-// ============================================
-// IMPRESIÓN DIRECTA POR CABLE (Web Serial)
-// Habla con la impresora sin pasar por ningún driver de Windows.
-// Solo funciona en Chrome/Edge de escritorio (no en móvil, no en Safari).
-// ============================================
-let serialPort = null;
-const BAUDS=[9600,19200,38400,115200];
-function getBaud(){return parseInt(localStorage.getItem('printerBaud'))||9600}
-function setBaud(b){localStorage.setItem('printerBaud',b)}
-
-function togglePrnPanel(){
- // Desactivado - sin panel de impresora
-}
-function renderBauds(){
- // Desactivado - sin panel de impresora
-}
-async function pickBaud(b){
- setBaud(b);
- renderBauds();
- if(serialPort){try{await serialPort.close()}catch(e){} serialPort=null}
- await connectPrinter(true);
- toast('Velocidad: '+b+' baudios. Prueba el corte.');
-}
-async function testCut(){
- if(!serialPort){toast('❌ Conecta la impresora primero','error');return}
- const GS=0x1D,ESC=0x1B;
- // Varios comandos de corte distintos, uno detrás de otro. Si la impresora
- // entiende alguno, cortará ahí; los que no entienda los ignora sin más.
- const variantes=[
-  [GS,0x56,0x00],        // GS V 0  - corte total (m=0)
-  [GS,0x56,0x01],        // GS V 1  - corte parcial (m=1)
-  [GS,0x56,0x41,0x00],   // GS V 65 0 - corte total con avance
-  [GS,0x56,0x42,0x00],   // GS V 66 0 - corte parcial con avance
-  [ESC,0x69],            // ESC i  - comando antiguo de corte total
-  [ESC,0x6D],            // ESC m  - comando antiguo de corte parcial
- ];
- try{
-  for(const v of variantes){
-   await serialWrite([0x0A,0x0A]);
-   await serialWrite(v);
-   await new Promise(r=>setTimeout(r,400));
-  }
-  toast('✂️ 6 comandos de corte probados');
- }catch(e){console.error(e);toast('❌ Error al enviar','error')}
-}
-async function testDrawer(){
- const ok=await drawerRaw();
- toast(ok?'💵 Comando de cajón enviado':'❌ Error al enviar');
-}
-
-function updPrinterBadge(){
- // Desactivado - sin panel de impresora visible
-}
-
-// Intenta reconectar sola a un puerto ya autorizado antes (sin preguntar nada)
-async function autoReconnectPrinter(){
- if(!('serial' in navigator))return;
- try{
-  const ports=await navigator.serial.getPorts();
-  if(ports.length){
-   serialPort=ports[0];
-   await serialPort.open({baudRate:getBaud(),dataBits:8,stopBits:1,parity:'none'});
-  }
- }catch(e){serialPort=null}
- updPrinterBadge();
-}
-
-// El usuario pulsa el indicador una vez: elige el puerto y queda guardado.
-// reuse=true intenta reutilizar el puerto ya autorizado (usado al cambiar de velocidad)
-async function connectPrinter(reuse){
- if(!('serial' in navigator)){
-  toast('❌ Usa Chrome o Edge en el ordenador para esto','error');
-  return;
- }
- try{
-  if(reuse){
-   const ports=await navigator.serial.getPorts();
-   serialPort=ports[0]||await navigator.serial.requestPort();
-  }else{
-   serialPort=await navigator.serial.requestPort();
-  }
-  await serialPort.open({baudRate:getBaud(),dataBits:8,stopBits:1,parity:'none'});
-  toast('✓ Impresora conectada ('+getBaud()+' baudios)');
- }catch(e){
-  console.error(e);
-  if(e.name!=='NotFoundError')toast('❌ No se pudo conectar','error');
- }
- updPrinterBadge();
-}
-
-// Quita acentos: el modo texto plano de la impresora no siempre los tiene
-function sinAcentos(t){
- return String(t).normalize('NFD').replace(/[\u0300-\u036f]/g,'')
-   .replace(/ñ/g,'n').replace(/Ñ/g,'N');
-}
-
-async function serialWrite(bytes){
- const writer=serialPort.writable.getWriter();
- try{await writer.write(new Uint8Array(bytes))}
- finally{writer.releaseLock()}
-}
-
-// Manda el ticket en crudo: inicializa, texto, avance y CORTE automático
-async function printRawTicket(mesa,items,total,fecha,num){
- if(!serialPort){await connectPrinter();if(!serialPort)return false}
- const texto=sinAcentos(ticketTexto(mesa,items,total,fecha,num));
- const enc=new TextEncoder();
- const ESC=0x1B,GS=0x1D;
- const bytes=[
-  ESC,0x40,          // inicializar impresora
-  ...enc.encode(texto),
-  0x0A,0x0A,0x0A,0x0A,0x0A,
-  GS,0x56,0x42,0x00  // GS V 66 0 -> corte con avance (funciona en la mayoría ESC/POS)
- ];
- try{
-  await serialWrite(bytes);
-  return true;
- }catch(e){
-  console.error(e);
-  toast('❌ Error al mandar a la impresora','error');
-  serialPort=null;updPrinterBadge();
-  return false;
- }
-}
-
-// Abre el cajón mandando el comando ESC p directamente
-async function drawerRaw(){
- if(!serialPort){await connectPrinter();if(!serialPort)return false}
- const ESC=0x1B;
- // Varios comandos: pin 0 y pin 1, con distintos tiempos de pulso
- const variantes=[
-  [ESC,0x70,0x00,0x19,0xFA],
-  [ESC,0x70,0x00,0x32,0xFA],
-  [ESC,0x70,0x01,0x19,0xFA],
-  [ESC,0x70,0x01,0x32,0xFA],
- ];
- try{
-  for(const v of variantes){
-   await serialWrite(v);
-   await new Promise(r=>setTimeout(r,300));
-  }
-  return true;
- }catch(e){
-  console.error(e);
-  serialPort=null;updPrinterBadge();
-  return false;
- }
-}
 
 function toast(m,t){const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
 
 document.addEventListener('DOMContentLoaded',async()=>{
- autoReconnectPrinter();
  const mm=document.getElementById('modManual');if(mm)mm.addEventListener('input',updModPrice);
  ['cjFondo','cjEfe','cjTar','cjA','cjB'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',cjCalc)});
  const pi=document.getElementById('pinInput');if(pi)pi.addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
