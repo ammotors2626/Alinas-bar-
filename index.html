@@ -1405,12 +1405,10 @@ function ticketHTML(d){
 // Abre el cajón portamonedas.
 // El cajón va enchufado a la impresora por RJ11 y salta con cada impresión.
 function openDrawer(){
- // Comando ESC/POS de apertura de cajón: 1B 70 00 19 FA (ESC p 0 25 250)
- // Se repite y se combina con variantes por si el navegador filtra algún byte.
- const CAJON='\x1B\x70\x00\x19\xFA'
-            +'\x1B\x70\x00\x19\xFA'
-            +'\x1B\x70\x01\x19\xFA'
-            +'\x1B\x70\x00\x32\xFA';
+ // Apertura de cajón: ESC p 0 25 250  ->  1B 70 00 19 FA
+ // IMPORTANTE: el documento va en windows-1252 (Latin-1), no en UTF-8.
+ // En UTF-8 el byte FA se partiría en C3 BA y la impresora descartaría el comando.
+ const CAJON='\x1B\x70\x00\x19\xFA';
  const old=document.getElementById('drawerFrame');
  if(old)old.remove();
  const f=document.createElement('iframe');
@@ -1419,7 +1417,7 @@ function openDrawer(){
  document.body.appendChild(f);
  const doc=f.contentWindow.document;
  doc.open();
- doc.write('<html><head><meta charset="utf-8"><title>Cajon</title><style>'
+ doc.write('<html><head><meta charset="windows-1252"><style>'
   +'@page{size:72mm auto;margin:0}'
   +'@media print{html,body{width:72mm;margin:0!important;padding:0!important}}'
   +'html,body{margin:0;padding:0}'
@@ -1702,7 +1700,7 @@ function runTest(i){
  document.body.appendChild(f);
  const doc=f.contentWindow.document;
  doc.open();
- doc.write('<html><head><meta charset="utf-8"><style>'
+ doc.write('<html><head><meta charset="windows-1252"><style>'
   +'@page{size:72mm auto;margin:0}'
   +'@media print{html,body{width:72mm;margin:0!important;padding:0!important}}'
   +'html,body{margin:0;padding:0}'
@@ -1846,14 +1844,14 @@ function buildTicket(mesa,items,total,fecha,num,abreCajon){
  // Avance de papel + comandos de corte ESC/POS.
  // Con el driver "Generic / Text Only" estos caracteres de control
  // llegan tal cual a la impresora y disparan la cuchilla.
- const CAJON='\x1B\x70\x00\x19\xFA'+'\x1B\x70\x01\x19\xFA';
+ const CAJON='\x1B\x70\x00\x19\xFA';
  const AVANCE='\x0A\x0A\x0A\x0A\x0A';
  const CORTE_TOTAL='\x1D\x56\x00';
  const CORTE_PARCIAL='\x1D\x56\x01';
  // abreCajon=true -> el cajón salta al imprimir el ticket (al cobrar)
  const pre=abreCajon?CAJON:'';
  let t=pre+ticketTexto(mesa,items,total,fecha,num)+AVANCE+CORTE_TOTAL+CORTE_PARCIAL;
- return `<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
+ return `<html><head><meta charset="windows-1252"><title>Ticket ${num}</title><style>
  @page{size:72mm auto;margin:0}
  @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
  html,body{margin:0;padding:0;background:#fff}
