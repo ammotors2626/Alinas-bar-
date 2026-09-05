@@ -1324,10 +1324,14 @@ async function closeAccount(){
  await sb.from('tables').update({total:0,consumed:[],current_order:[],updated_at:new Date().toISOString()}).eq('id',t.id);
  t.total=0;t.consumed=[];
 
- // 3) Guardar el último ticket por si se quiere imprimir después
+ // 3) Guardar el último ticket por si se quiere reimprimir después
  STATE.lastTicket={mesa:t.name,items:cobrables,total:tot,fecha:fecha,num:num};
 
- toast('✓ Cobrado · Mesa libre');
+ // 4) Imprimir el ticket definitivo y ABRIR EL CAJÓN a la vez
+ STATE.viewTicket=STATE.lastTicket;
+ doPrintTicket(true);
+
+ toast('✓ Cobrado · Cajón abierto');
  renderOrder();
 }
 // ===== PANTALLA DE TICKET =====
@@ -1411,7 +1415,7 @@ function printNow(){
  toast('🖨️ Imprimiendo...');
 }
 
-function doPrintTicket(){
+function doPrintTicket(abreCajon){
  const d=STATE.viewTicket;if(!d)return;
  // Se imprime desde un iframe oculto: no abre pestañas y se cierra solo
  const old=document.getElementById('printFrame');
@@ -1422,14 +1426,14 @@ function doPrintTicket(){
  document.body.appendChild(f);
  const doc=f.contentWindow.document;
  doc.open();
- doc.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));
+ doc.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num,abreCajon));
  doc.close();
  setTimeout(()=>{
   try{f.contentWindow.focus();f.contentWindow.print()}
   catch(e){
    // Si el navegador lo bloquea, se abre en una pestaña normal
    const w=window.open('','_blank');
-   if(w){w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num));w.document.close();setTimeout(()=>w.print(),300)}
+   if(w){w.document.write(buildTicket(d.mesa,d.items,d.total,d.fecha,d.num,abreCajon));w.document.close();setTimeout(()=>w.print(),300)}
    else toast('⚠️ Permite ventanas emergentes','error');
   }
   setTimeout(()=>{const x=document.getElementById('printFrame');if(x)x.remove()},2000);
@@ -1757,15 +1761,18 @@ function ticketTexto(mesa,items,total,fecha,num){
  return t;
 }
 
-function buildTicket(mesa,items,total,fecha,num){
+function buildTicket(mesa,items,total,fecha,num,abreCajon){
  const esc=(t)=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
  // Avance de papel + comandos de corte ESC/POS.
  // Con el driver "Generic / Text Only" estos caracteres de control
  // llegan tal cual a la impresora y disparan la cuchilla.
+ const CAJON='\x1B\x70\x00\x19\xFA';
  const AVANCE='\x0A\x0A\x0A\x0A\x0A';
  const CORTE_TOTAL='\x1D\x56\x00';
  const CORTE_PARCIAL='\x1D\x56\x01';
- let t=ticketTexto(mesa,items,total,fecha,num)+AVANCE+CORTE_TOTAL+CORTE_PARCIAL;
+ // abreCajon=true -> el cajón salta al imprimir el ticket (al cobrar)
+ const pre=abreCajon?CAJON:'';
+ let t=pre+ticketTexto(mesa,items,total,fecha,num)+AVANCE+CORTE_TOTAL+CORTE_PARCIAL;
  return `<html><head><meta charset="utf-8"><title>Ticket ${num}</title><style>
  @page{size:72mm auto;margin:0}
  @media print{html,body{width:72mm;margin:0!important;padding:0!important}}
