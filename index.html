@@ -1381,8 +1381,12 @@ function ticketHTML(d){
 // Abre el cajón portamonedas.
 // El cajón va enchufado a la impresora por RJ11 y salta con cada impresión.
 function openDrawer(){
- // Comando ESC/POS de apertura de cajón: ESC p 0 25 250
- const CAJON='\x1B\x70\x00\x19\xFA';
+ // Comando ESC/POS de apertura de cajón: 1B 70 00 19 FA (ESC p 0 25 250)
+ // Se repite y se combina con variantes por si el navegador filtra algún byte.
+ const CAJON='\x1B\x70\x00\x19\xFA'
+            +'\x1B\x70\x00\x19\xFA'
+            +'\x1B\x70\x01\x19\xFA'
+            +'\x1B\x70\x00\x32\xFA';
  const old=document.getElementById('drawerFrame');
  if(old)old.remove();
  const f=document.createElement('iframe');
@@ -1766,7 +1770,7 @@ function buildTicket(mesa,items,total,fecha,num,abreCajon){
  // Avance de papel + comandos de corte ESC/POS.
  // Con el driver "Generic / Text Only" estos caracteres de control
  // llegan tal cual a la impresora y disparan la cuchilla.
- const CAJON='\x1B\x70\x00\x19\xFA';
+ const CAJON='\x1B\x70\x00\x19\xFA'+'\x1B\x70\x01\x19\xFA';
  const AVANCE='\x0A\x0A\x0A\x0A\x0A';
  const CORTE_TOTAL='\x1D\x56\x00';
  const CORTE_PARCIAL='\x1D\x56\x01';
@@ -1801,4 +1805,3 @@ document.addEventListener('DOMContentLoaded',async()=>{
 </script>
 </body>
 </html>
-
