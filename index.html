@@ -157,19 +157,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .fecha-acts button{padding:.7rem;border:none;border-radius:.35rem;font-weight:800;font-size:.78rem}
 .fa-cancel{background:#6b7280;color:#fff}
 .fa-ok{background:#10b981;color:#fff}
-.test-panel{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:900;display:flex;
- align-items:center;justify-content:center;padding:1rem}
-.test-box{background:#1a1a1a;border:2px solid #f97316;border-radius:.6rem;padding:.8rem;
- width:100%;max-width:420px;max-height:92vh;overflow-y:auto}
-.test-box h3{color:#f97316;font-size:.9rem;margin-bottom:.3rem}
-.test-box p{color:#9ca3af;font-size:.68rem;margin-bottom:.6rem;line-height:1.4}
-.test-item{display:flex;align-items:center;gap:.4rem;margin-bottom:.35rem}
-.test-item button{flex:1;background:#2a2a2a;border:1.5px solid #444;color:#fff;
- padding:.5rem;border-radius:.3rem;font-size:.68rem;font-weight:700;text-align:left;font-family:monospace}
-.test-item button:active{background:#f97316;color:#000}
-.test-item .lbl{font-size:.6rem;color:#9ca3af;width:4.5rem;flex-shrink:0}
-.test-close{width:100%;padding:.6rem;border:none;border-radius:.35rem;font-weight:800;
- font-size:.75rem;background:#6b7280;color:#fff;margin-top:.5rem}
 .printer-status{position:fixed;top:.4rem;left:.4rem;z-index:600;font-size:.6rem;font-weight:800;
  padding:.25rem .5rem;border-radius:.3rem;background:#444;color:#9ca3af}
 .printer-status.on{background:#10b981;color:#fff}
@@ -405,7 +392,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
       <button class="gear-btn gerente-only hidden" onclick="showCaja()">💰</button>
       <button class="gear-btn gerente-only hidden" onclick="showVentas()">🧾</button>
       <button class="gear-btn gerente-only hidden" onclick="cerrarDia()">🌙</button>
-      <button class="gear-btn gerente-only hidden" onclick="openTestPanel()">🔧</button>
       <button class="logout-btn" onclick="logout()">SALIR</button>
     </div>
   </div>
@@ -615,16 +601,6 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
       <button class="fa-cancel" onclick="cancelFecha()">Cancelar</button>
       <button class="fa-ok" onclick="okFecha()">✓ CONFIRMAR</button>
     </div>
-  </div>
-</div>
-
-<div id="testPanel" class="test-panel hidden">
-  <div class="test-box">
-    <h3>🔧 Probar comandos de impresora</h3>
-    <p>Pulsa uno a uno y mira si la impresora reacciona.<br>
-    Apunta cuál funciona y dímelo.</p>
-    <div id="testList"></div>
-    <button class="test-close" onclick="closeTestPanel()">Cerrar</button>
   </div>
 </div>
 
@@ -1903,56 +1879,6 @@ async function cerrarDia(){
  toast('✓ '+ok+' mesa(s) cerradas · '+total.toFixed(2)+'€');
 }
 
-// ===== PANEL DE PRUEBAS DE COMANDOS =====
-const TESTS=[
- {l:'CAJÓN 1', d:'1B 70 00 19 FA', b:'\x1B\x70\x00\x19\xFA'},
- {l:'CAJÓN 2', d:'1B 70 01 19 FA', b:'\x1B\x70\x01\x19\xFA'},
- {l:'CAJÓN 3', d:'1B 70 00 32 FA', b:'\x1B\x70\x00\x32\xFA'},
- {l:'CAJÓN 4', d:'1B 70 00 40 50', b:'\x1B\x70\x00\x40\x50'},
- {l:'CAJÓN 5', d:'10 14 01 00 05', b:'\x10\x14\x01\x00\x05'},
- {l:'CORTE 1', d:'1D 56 00', b:'\x1D\x56\x00'},
- {l:'CORTE 2', d:'1D 56 01', b:'\x1D\x56\x01'},
- {l:'CORTE 3', d:'1D 56 41 00', b:'\x1D\x56\x41\x00'},
- {l:'CORTE 4', d:'1D 56 42 00', b:'\x1D\x56\x42\x00'},
- {l:'CORTE 5', d:'1B 69 (antiguo)', b:'\x1B\x69'},
- {l:'CORTE 6', d:'1B 6D (antiguo)', b:'\x1B\x6D'},
- {l:'TEXTO', d:'Prueba de texto suelto', b:'PRUEBA OK\n\n\n'},
-];
-
-function openTestPanel(){
- document.getElementById('testList').innerHTML=TESTS.map((t,i)=>
-  `<div class="test-item">
-    <span class="lbl">${t.l}</span>
-    <button onclick="runTest(${i})">${t.d}</button>
-   </div>`).join('');
- document.getElementById('testPanel').classList.remove('hidden');
-}
-function closeTestPanel(){document.getElementById('testPanel').classList.add('hidden')}
-
-// Manda un comando suelto a la impresora, sin nada más
-function runTest(i){
- const t=TESTS[i];
- const old=document.getElementById('testFrame');
- if(old)old.remove();
- const f=document.createElement('iframe');
- f.id='testFrame';
- f.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
- document.body.appendChild(f);
- const doc=f.contentWindow.document;
- doc.open();
- doc.write('<html><head><meta charset="windows-1252"><style>'
-  +'@page{size:72mm auto;margin:0}'
-  +'@media print{html,body{width:72mm;margin:0!important;padding:0!important}}'
-  +'html,body{margin:0;padding:0}'
-  +"pre{font-family:'Courier New',monospace;font-size:11px;margin:0;padding:0;white-space:pre}"
-  +'</style></head><body><pre>'+t.b+'</pre></body></html>');
- doc.close();
- setTimeout(()=>{
-  try{f.contentWindow.focus();f.contentWindow.print()}catch(e){}
-  setTimeout(()=>{const x=document.getElementById('testFrame');if(x)x.remove()},1500);
- },200);
- toast('Enviado: '+t.d);
-}
 
 // ===== NOTAS =====
 function openNota(){
