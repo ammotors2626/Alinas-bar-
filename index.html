@@ -1502,10 +1502,18 @@ function esMovil(){
 
 function openDrawer(){
  if(esMovil()){toast('📱 El cajón se abre desde el ordenador','error');return}
- // Apertura de cajón: ESC p 0 25 250  ->  1B 70 00 19 FA
- // IMPORTANTE: el documento va en windows-1252 (Latin-1), no en UTF-8.
- // En UTF-8 el byte FA se partiría en C3 BA y la impresora descartaría el comando.
- const CAJON='\x1B\x70\x00\x19\xFA';
+ // Apertura de cajón: ESC p m t1 t2
+ //
+ // El comando oficial es 1B 70 00 19 FA, pero el byte 00 (NUL) en mitad de la
+ // secuencia corta la cadena en Windows y la impresora solo recibe "1B 70".
+ // Por eso se mandan también las formas equivalentes SIN NUL:
+ // en ESC/POS m=48 equivale a m=0, y m=49 equivale a m=1.
+ const CAJON=
+    '\x1B\x70\x00\x19\xFA'   // 1B 70 00 19 FA  (oficial)
+   +'\x1B\x70\x30\x19\xFA'   // 1B 70 30 19 FA  (m=48, sin NUL)
+   +'\x1B\x70\x30\x40\x50'   // 1B 70 30 40 50  (sin NUL ni bytes altos)
+   +'\x1B\x70\x31\x40\x50';  // 1B 70 31 40 50  (m=49, pin 2)
+
  const old=document.getElementById('drawerFrame');
  if(old)old.remove();
  const f=document.createElement('iframe');
@@ -2027,7 +2035,9 @@ function buildTicket(mesa,items,total,fecha,num,abreCajon){
  // Avance de papel + comandos de corte ESC/POS.
  // Con el driver "Generic / Text Only" estos caracteres de control
  // llegan tal cual a la impresora y disparan la cuchilla.
- const CAJON='\x1B\x70\x00\x19\xFA';
+ const CAJON='\x1B\x70\x00\x19\xFA'
+            +'\x1B\x70\x30\x19\xFA'
+            +'\x1B\x70\x30\x40\x50';
  const AVANCE='\x0A\x0A\x0A\x0A\x0A';
  const CORTE_TOTAL='\x1D\x56\x00';
  const CORTE_PARCIAL='\x1D\x56\x01';
