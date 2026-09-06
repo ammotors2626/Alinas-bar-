@@ -412,11 +412,11 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="prods" id="prods"></div>
   <div class="order-list" id="orderList"></div>
   <div class="actions">
-    <button class="act a-print2" onclick="printNow()">🖨️ IMPRIMIR</button>
+    <button class="act a-print2 solo-pc" onclick="printNow()">🖨️ IMPRIMIR</button>
     <button class="act a-ticket" onclick="showTicket()">🧾 VER</button>
     <button class="act a-cobrar" onclick="closeAccount()">💰 COBRAR</button>
     <button class="act a-extra" onclick="openExtras()">➕ EXTRA</button>
-    <button class="act a-cajon" onclick="openDrawer()">💵 CAJÓN</button>
+    <button class="act a-cajon solo-pc" onclick="openDrawer()">💵 CAJÓN</button>
     <button class="act a-nota" onclick="openNota()">📝 NOTA</button>
     <button class="act a-send" onclick="sendOrder()">📤 ENVIAR COCINA</button>
   </div>
@@ -1492,7 +1492,16 @@ function ticketHTML(d){
 
 // Abre el cajón portamonedas.
 // El cajón va enchufado a la impresora por RJ11 y salta con cada impresión.
+
+// ¿Estamos en un móvil o tablet? En ese caso no se manda nada a la impresora,
+// porque la impresora está enchufada al ordenador de la barra.
+function esMovil(){
+ return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+   || (navigator.maxTouchPoints>1 && !window.matchMedia('(pointer:fine)').matches);
+}
+
 function openDrawer(){
+ if(esMovil()){toast('📱 El cajón se abre desde el ordenador','error');return}
  // Apertura de cajón: ESC p 0 25 250  ->  1B 70 00 19 FA
  // IMPORTANTE: el documento va en windows-1252 (Latin-1), no en UTF-8.
  // En UTF-8 el byte FA se partiría en C3 BA y la impresora descartaría el comando.
@@ -1521,6 +1530,7 @@ function openDrawer(){
 
 // Imprime el ticket al momento, sin abrir la pantalla intermedia
 function printNow(){
+ if(esMovil()){toast('📱 Imprime desde el ordenador de la barra','error');return}
  const c=(STATE.table&&STATE.table.consumed||[]).filter(i=>!i.isNota);
  if(!c.length){toast('❌ Mesa vacía','error');return}
  STATE.viewTicket={mesa:STATE.table.name,items:c,total:parseFloat(STATE.table.total)||0,
@@ -1531,6 +1541,7 @@ function printNow(){
 
 function doPrintTicket(abreCajon){
  const d=STATE.viewTicket;if(!d)return;
+ if(esMovil())return;   // en móvil no se imprime: la impresora está en la barra
  // Se imprime desde un iframe oculto: no abre pestañas y se cierra solo
  const old=document.getElementById('printFrame');
  if(old)old.remove();
@@ -2037,6 +2048,12 @@ function buildTicket(mesa,items,total,fecha,num,abreCajon){
 function toast(m,t){const d=document.createElement('div');d.className='toast '+(t||'');d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2000)}
 
 document.addEventListener('DOMContentLoaded',async()=>{
+ // En móvil se ocultan los botones de impresora (está en el ordenador de la barra)
+ if(esMovil()){
+  document.querySelectorAll('.solo-pc').forEach(b=>b.classList.add('hidden'));
+  const a=document.querySelector('.actions');
+  if(a)a.style.gridTemplateColumns='repeat(5,1fr)';
+ }
  const mm=document.getElementById('modManual');if(mm)mm.addEventListener('input',updModPrice);
  ['cjFondo','cjEfe','cjTar','cjA','cjB'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',cjCalc)});
  const pi=document.getElementById('pinInput');if(pi)pi.addEventListener('keydown',e=>{if(e.key==='Enter')checkPin()});
