@@ -121,6 +121,23 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .a-extra{background:#f97316;color:#000}
 .a-print2{background:#0ea5e9;color:#fff}
 .a-cajon{background:#84cc16;color:#000}
+.fecha-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:950;display:flex;
+ align-items:center;justify-content:center;padding:1rem}
+.fecha-box{background:#1a1a1a;border:2px solid #f97316;border-radius:.6rem;padding:1rem;
+ width:100%;max-width:360px}
+.fecha-box h3{color:#f97316;font-size:.95rem;margin-bottom:.3rem}
+.fecha-box .sub{color:#9ca3af;font-size:.7rem;margin-bottom:.8rem;line-height:1.4}
+.fecha-quick{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.6rem}
+.fecha-quick button{background:#2a2a2a;border:1.5px solid #444;color:#fff;padding:.6rem;
+ border-radius:.35rem;font-size:.75rem;font-weight:800}
+.fecha-quick button.active{background:#f97316;color:#000;border-color:#f97316}
+.fecha-box label{display:block;font-size:.68rem;color:#9ca3af;font-weight:700;margin-bottom:.25rem}
+.fecha-box input[type=date]{width:100%;padding:.6rem;background:#1a1a1a;border:1.5px solid #f97316;
+ border-radius:.35rem;color:#fff;font-size:.9rem;font-family:inherit;margin-bottom:.7rem}
+.fecha-acts{display:grid;grid-template-columns:1fr 1.3fr;gap:.4rem}
+.fecha-acts button{padding:.7rem;border:none;border-radius:.35rem;font-weight:800;font-size:.78rem}
+.fa-cancel{background:#6b7280;color:#fff}
+.fa-ok{background:#10b981;color:#fff}
 .test-panel{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:900;display:flex;
  align-items:center;justify-content:center;padding:1rem}
 .test-box{background:#1a1a1a;border:2px solid #f97316;border-radius:.6rem;padding:.8rem;
@@ -552,6 +569,20 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
   <div class="tk-foot">
     <button class="tk-btn tk-print" onclick="doPrintTicket()">🖨️ Imprimir</button>
     <button class="tk-btn tk-share" onclick="doShareTicket()">📤 Enviar</button>
+  </div>
+</div>
+
+<div id="fechaModal" class="fecha-modal hidden">
+  <div class="fecha-box">
+    <h3 id="fechaTitulo">📅 ¿A qué día lo apunto?</h3>
+    <div class="sub" id="fechaSub"></div>
+    <div class="fecha-quick" id="fechaQuick"></div>
+    <label>Otra fecha</label>
+    <input type="date" id="fechaInput">
+    <div class="fecha-acts">
+      <button class="fa-cancel" onclick="cancelFecha()">Cancelar</button>
+      <button class="fa-ok" onclick="okFecha()">✓ CONFIRMAR</button>
+    </div>
   </div>
 </div>
 
@@ -1329,20 +1360,43 @@ async function sendOrder(){
  STATE.table.consumed.forEach(i=>i.sent=true);
  await persist();toast('✓ Enviado a cocina');renderOrder();
 }
-// Devuelve la fecha a la que apuntar la venta.
-// De madrugada (antes de las 6) pregunta si es del día anterior.
-function fechaVenta(){
- const ahora=new Date();
- if(ahora.getHours()<6){
-  const ayer=new Date(ahora);ayer.setDate(ayer.getDate()-1);
-  if(confirm('Son las '+ahora.getHours()+':'+String(ahora.getMinutes()).padStart(2,'0')+'.\n\n'
-   +'¿Contar esta venta en el día de AYER ('+ayer.toLocaleDateString('es-ES')+')?\n\n'
-   +'Aceptar = ayer   ·   Cancelar = hoy')){
-   ayer.setHours(23,30,0,0);
-   return ayer;
-  }
- }
- return ahora;
+// Pide al usuario a qué día apuntar la venta (hoy, ayer o una fecha concreta).
+// Devuelve una promesa con la fecha elegida, o null si cancela.
+let fechaResolve=null;
+function pedirFecha(titulo,sub){
+ return new Promise(res=>{
+  fechaResolve=res;
+  document.getElementById('fechaTitulo').textContent=titulo||'📅 ¿A qué día lo apunto?';
+  document.getElementById('fechaSub').textContent=sub||'';
+  const hoy=new Date();
+  const ayer=new Date(hoy);ayer.setDate(ayer.getDate()-1);
+  STATE.fechaSel=ymd(hoy);
+  document.getElementById('fechaQuick').innerHTML=
+   `<button class="active" onclick="quickFecha('${ymd(hoy)}')">HOY<br><small>${hoy.toLocaleDateString('es-ES')}</small></button>
+    <button onclick="quickFecha('${ymd(ayer)}')">AYER<br><small>${ayer.toLocaleDateString('es-ES')}</small></button>`;
+  document.getElementById('fechaInput').value=ymd(hoy);
+  document.getElementById('fechaModal').classList.remove('hidden');
+ });
+}
+function quickFecha(f){
+ STATE.fechaSel=f;
+ document.getElementById('fechaInput').value=f;
+ document.querySelectorAll('#fechaQuick button').forEach((b,i)=>
+  b.classList.toggle('active',(i===0)===(f===ymd(new Date()))));
+}
+function cancelFecha(){
+ document.getElementById('fechaModal').classList.add('hidden');
+ if(fechaResolve){fechaResolve(null);fechaResolve=null}
+}
+function okFecha(){
+ const v=document.getElementById('fechaInput').value||STATE.fechaSel;
+ document.getElementById('fechaModal').classList.add('hidden');
+ // Se apunta a las 23:30 del día elegido si no es hoy; si es hoy, la hora actual
+ const hoy=ymd(new Date());
+ let d;
+ if(v===hoy){d=new Date()}
+ else{const[a,m,dd]=v.split('-').map(Number);d=new Date(a,m-1,dd,23,30,0,0)}
+ if(fechaResolve){fechaResolve(d);fechaResolve=null}
 }
 
 async function closeAccount(){
@@ -1352,7 +1406,9 @@ async function closeAccount(){
  if(c.some(i=>!i.sent&&!i.isNota)){toast('❌ Envía o borra lo pendiente','error');return}
  if(!confirm(`¿Cobrar ${t.name} por ${tot.toFixed(2)}€?\n\nLa mesa quedará libre.`))return;
 
- const cuando=fechaVenta();
+ const cuando=await pedirFecha('📅 ¿A qué día apunto esta venta?',
+   'Mesa '+t.name+' · '+tot.toFixed(2)+'€');
+ if(!cuando)return;
  const fecha=cuando.toLocaleString('es-ES');
  const num='T'+Date.now().toString().slice(-8);
 
@@ -1710,7 +1766,9 @@ async function cerrarDia(){
  msg+='\n¿Continuar?';
  if(!confirm(msg))return;
 
- const cuando=fechaVenta();
+ const cuando=await pedirFecha('📅 ¿A qué día apunto el cierre?',
+   aCobrar.length+' mesa(s) · '+total.toFixed(2)+'€');
+ if(!cuando)return;
  let ok=0;
  for(const t of aCobrar){
   const items=(t.consumed||[]).filter(i=>!i.isNota);
