@@ -367,6 +367,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
       <button class="gear-btn gerente-only hidden" onclick="showEditor()">✏️</button>
       <button class="gear-btn gerente-only hidden" onclick="showConta()">📒</button>
       <button class="gear-btn gerente-only hidden" onclick="showCaja()">💰</button>
+      <button class="gear-btn gerente-only hidden" onclick="cerrarDia()">🌙</button>
       <button class="gear-btn gerente-only hidden" onclick="openTestPanel()">🔧</button>
       <button class="logout-btn" onclick="logout()">SALIR</button>
     </div>
@@ -1328,6 +1329,22 @@ async function sendOrder(){
  STATE.table.consumed.forEach(i=>i.sent=true);
  await persist();toast('✓ Enviado a cocina');renderOrder();
 }
+// Devuelve la fecha a la que apuntar la venta.
+// De madrugada (antes de las 6) pregunta si es del día anterior.
+function fechaVenta(){
+ const ahora=new Date();
+ if(ahora.getHours()<6){
+  const ayer=new Date(ahora);ayer.setDate(ayer.getDate()-1);
+  if(confirm('Son las '+ahora.getHours()+':'+String(ahora.getMinutes()).padStart(2,'0')+'.\n\n'
+   +'¿Contar esta venta en el día de AYER ('+ayer.toLocaleDateString('es-ES')+')?\n\n'
+   +'Aceptar = ayer   ·   Cancelar = hoy')){
+   ayer.setHours(23,30,0,0);
+   return ayer;
+  }
+ }
+ return ahora;
+}
+
 async function closeAccount(){
  const t=STATE.table,c=(t.consumed||[]).slice(),tot=parseFloat(t.total)||0;
  const cobrables=c.filter(i=>!i.isNota);
@@ -1335,12 +1352,13 @@ async function closeAccount(){
  if(c.some(i=>!i.sent&&!i.isNota)){toast('❌ Envía o borra lo pendiente','error');return}
  if(!confirm(`¿Cobrar ${t.name} por ${tot.toFixed(2)}€?\n\nLa mesa quedará libre.`))return;
 
- const fecha=new Date().toLocaleString('es-ES');
+ const cuando=fechaVenta();
+ const fecha=cuando.toLocaleString('es-ES');
  const num='T'+Date.now().toString().slice(-8);
 
  // 1) Guardar la venta en el historial (contabilidad)
  const{error}=await sb.from('sales_history').insert({
-  table_id:t.id,table_name:t.name,items:cobrables,total:tot
+  table_id:t.id,table_name:t.name,items:cobrables,total:tot,closed_at:cuando.toISOString()
  });
  if(error){toast('❌ Error al guardar la venta','error');console.error(error);return}
 
@@ -1663,6 +1681,53 @@ async function edSave(){
 // Abre las opciones de una línea concreta (también al tocarla en la lista)
 
 
+
+// ===== CIERRE DEL DÍA =====
+// Cobra automáticamente todas las mesas con consumo EXCEPTO las de BARRA,
+// que se dejan abiertas para los clientes que siguen.
+async function cerrarDia(){
+ if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
+ await loadTables();
+
+ const idsBarra=ZONES.find(z=>z.id==='barra').ids;
+ const pendientes=STATE.tables.filter(t=>parseFloat(t.total)>0);
+ const aCobrar=pendientes.filter(t=>!idsBarra.includes(t.id));
+ const enBarra=pendientes.filter(t=>idsBarra.includes(t.id));
+
+ if(!aCobrar.length){
+  toast(enBarra.length?'✓ Solo quedan mesas de barra abiertas':'✓ No hay mesas abiertas');
+  return;
+ }
+
+ const total=aCobrar.reduce((s,t)=>s+parseFloat(t.total),0);
+ let msg='CIERRE DEL DÍA\n\n';
+ msg+='Se van a cobrar '+aCobrar.length+' mesa(s):\n';
+ aCobrar.forEach(t=>{msg+='  · '+t.name+'  '+parseFloat(t.total).toFixed(2)+'€\n'});
+ msg+='\nTOTAL: '+total.toFixed(2)+'€\n';
+ if(enBarra.length){
+  msg+='\nSe dejan ABIERTAS (barra): '+enBarra.map(t=>t.name).join(', ')+'\n';
+ }
+ msg+='\n¿Continuar?';
+ if(!confirm(msg))return;
+
+ const cuando=fechaVenta();
+ let ok=0;
+ for(const t of aCobrar){
+  const items=(t.consumed||[]).filter(i=>!i.isNota);
+  const{error}=await sb.from('sales_history').insert({
+   table_id:t.id,table_name:t.name,items:items,total:parseFloat(t.total),
+   closed_at:cuando.toISOString()
+  });
+  if(error){console.error(error);continue}
+  await sb.from('tables').update({total:0,consumed:[],current_order:[],
+   updated_at:new Date().toISOString()}).eq('id',t.id);
+  ok++;
+ }
+
+ await loadTables();renderMesas();
+ toast('✓ '+ok+' mesa(s) cerradas · '+total.toFixed(2)+'€');
+}
+
 // ===== PANEL DE PRUEBAS DE COMANDOS =====
 const TESTS=[
  {l:'CAJÓN 1', d:'1B 70 00 19 FA', b:'\x1B\x70\x00\x19\xFA'},
@@ -1879,4 +1944,3 @@ document.addEventListener('DOMContentLoaded',async()=>{
 </script>
 </body>
 </html>
-
