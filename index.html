@@ -1414,9 +1414,15 @@ async function closeAccount(){
  if(c.some(i=>!i.sent&&!i.isNota)){toast('❌ Envía o borra lo pendiente','error');return}
  if(!confirm(`¿Cobrar ${t.name} por ${tot.toFixed(2)}€?\n\nLa mesa quedará libre.`))return;
 
- const cuando=await pedirFecha('📅 ¿A qué día apunto esta venta?',
+ // El camarero cobra directo (fecha de hoy). Solo el gerente elige el día.
+ let cuando;
+ if(STATE.user&&STATE.user.role==='gerente'){
+  cuando=await pedirFecha('📅 ¿A qué día apunto esta venta?',
    'Mesa '+t.name+' · '+tot.toFixed(2)+'€');
- if(!cuando)return;
+  if(!cuando)return;
+ }else{
+  cuando=new Date();
+ }
  const fecha=cuando.toLocaleString('es-ES');
  const num='T'+Date.now().toString().slice(-8);
 
