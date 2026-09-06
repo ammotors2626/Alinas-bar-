@@ -121,6 +121,25 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
 .a-extra{background:#f97316;color:#000}
 .a-print2{background:#0ea5e9;color:#fff}
 .a-cajon{background:#84cc16;color:#000}
+.vt-wrap{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;padding:.5rem}
+.vt-head{display:flex;justify-content:space-between;align-items:center;padding-bottom:.4rem;
+ border-bottom:2px solid #06b6d4;margin-bottom:.4rem;flex-shrink:0}
+.vt-head h1{font-size:.9rem;color:#06b6d4}
+.vt-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:.3rem}
+.vt-row{background:#2a2a2a;border-left:3px solid #06b6d4;border-radius:.35rem;padding:.5rem;
+ display:flex;align-items:center;gap:.5rem}
+.vt-info{flex:1;min-width:0}
+.vt-mesa{font-weight:800;font-size:.8rem}
+.vt-meta{font-size:.62rem;color:#9ca3af;margin-top:.15rem}
+.vt-eur{color:#10b981;font-weight:800;font-size:.85rem}
+.vt-acts{display:flex;flex-direction:column;gap:.2rem}
+.vt-btn{border:none;border-radius:.25rem;padding:.3rem .45rem;font-size:.6rem;font-weight:800}
+.vt-move{background:#f59e0b;color:#000}
+.vt-del{background:#ef4444;color:#fff}
+.vt-sum{background:#1a3a2a;border:1.5px solid #10b981;border-radius:.4rem;padding:.5rem;
+ text-align:center;margin-bottom:.4rem;flex-shrink:0}
+.vt-sum .v{font-size:1.2rem;font-weight:800;color:#10b981}
+.vt-sum .l{font-size:.6rem;color:#9ca3af}
 .fecha-modal{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:950;display:flex;
  align-items:center;justify-content:center;padding:1rem}
 .fecha-box{background:#1a1a1a;border:2px solid #f97316;border-radius:.6rem;padding:1rem;
@@ -384,6 +403,7 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
       <button class="gear-btn gerente-only hidden" onclick="showEditor()">✏️</button>
       <button class="gear-btn gerente-only hidden" onclick="showConta()">📒</button>
       <button class="gear-btn gerente-only hidden" onclick="showCaja()">💰</button>
+      <button class="gear-btn gerente-only hidden" onclick="showVentas()">🧾</button>
       <button class="gear-btn gerente-only hidden" onclick="cerrarDia()">🌙</button>
       <button class="gear-btn gerente-only hidden" onclick="openTestPanel()">🔧</button>
       <button class="logout-btn" onclick="logout()">SALIR</button>
@@ -570,6 +590,18 @@ html,body{width:100%;height:100%;overflow:hidden;font-family:-apple-system,Blink
     <button class="tk-btn tk-print" onclick="doPrintTicket()">🖨️ Imprimir</button>
     <button class="tk-btn tk-share" onclick="doShareTicket()">📤 Enviar</button>
   </div>
+</div>
+
+<div id="screenVentas" class="vt-wrap hidden">
+  <div class="vt-head">
+    <button class="back-btn" onclick="goHome()">←</button>
+    <h1>🧾 EDITAR VENTAS</h1>
+    <button class="gear-btn" onclick="loadVentas()">🔄</button>
+  </div>
+  <div class="rep-periods" id="vtPeriods"></div>
+  <div class="rep-nav" id="vtNav"></div>
+  <div class="vt-sum"><div class="v" id="vtTotal">0,00€</div><div class="l" id="vtCount">0 ventas</div></div>
+  <div class="vt-list" id="vtList"></div>
 </div>
 
 <div id="fechaModal" class="fecha-modal hidden">
@@ -812,7 +844,7 @@ function modsFor(p){
 }
 
 const STATE={user:null,table:null,cat:null,zone:'terraza',tables:[],orders:[],pendingMod:null,
- repPeriod:'dia',repOffset:0,ctPeriod:'mes',ctOffset:0,cjOffset:0,cjSis:0,cjGastos:0,cjRecau:0,cjDesc:0,edCat:null,edDraft:[],edDeleted:[],lastTicket:null,viewTicket:null,
+ repPeriod:'dia',repOffset:0,ctPeriod:'mes',ctOffset:0,cjOffset:0,vtPeriod:'dia',vtOffset:0,cjSis:0,cjGastos:0,cjRecau:0,cjDesc:0,edCat:null,edDraft:[],edDeleted:[],lastTicket:null,viewTicket:null,
  users:[{email:'camarero@alinas.bar',password:'demo123',role:'camarero'},{email:'cocina@alinas.bar',password:'demo123',role:'cocina'}]};
 
 async function loadTables(){
@@ -861,7 +893,7 @@ let kPoll=null;
 function logout(){STATE.user=null;STATE.table=null;if(kPoll){clearInterval(kPoll);kPoll=null}
  cancelPin();
  document.getElementById('loginScreen').style.display='flex';
- ['screenHome','screenComanda','screenKitchen','screenReport','screenEditor','screenTicket','screenConta','screenCaja'].forEach(i=>document.getElementById(i).classList.add('hidden'));}
+ ['screenHome','screenComanda','screenKitchen','screenReport','screenEditor','screenTicket','screenConta','screenCaja','screenVentas'].forEach(i=>document.getElementById(i).classList.add('hidden'));}
 
 async function showHome(){
  document.getElementById('loginScreen').style.display='none';
@@ -1737,6 +1769,91 @@ async function edSave(){
 // Abre las opciones de una línea concreta (también al tocarla en la lista)
 
 
+
+
+// ===== EDITAR VENTAS (mover de día o borrar) =====
+function showVentas(){
+ if(!STATE.user||STATE.user.role!=='gerente'){toast('❌ Solo el gerente','error');return}
+ STATE.vtPeriod=STATE.vtPeriod||'dia';STATE.vtOffset=STATE.vtOffset||0;
+ document.getElementById('screenHome').classList.add('hidden');
+ document.getElementById('screenVentas').classList.remove('hidden');
+ loadVentas();
+}
+function vtRange(){
+ const p=STATE.vtPeriod||'dia',o=STATE.vtOffset||0,now=new Date();
+ let ini,fin,lbl;
+ if(p==='dia'){
+  ini=new Date(now);ini.setDate(ini.getDate()+o);ini.setHours(0,0,0,0);
+  fin=new Date(ini);fin.setDate(fin.getDate()+1);
+  lbl=(o===0?'HOY · ':o===-1?'AYER · ':'')+ini.toLocaleDateString('es-ES');
+ }else if(p==='semana'){
+  ini=new Date(now);const d=(ini.getDay()+6)%7;
+  ini.setDate(ini.getDate()-d+o*7);ini.setHours(0,0,0,0);
+  fin=new Date(ini);fin.setDate(fin.getDate()+7);
+  const f2=new Date(fin);f2.setDate(f2.getDate()-1);
+  lbl=ini.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'})+' – '+f2.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'});
+ }else if(p==='mes'){
+  ini=new Date(now.getFullYear(),now.getMonth()+o,1);
+  fin=new Date(now.getFullYear(),now.getMonth()+o+1,1);
+  lbl=ini.toLocaleDateString('es-ES',{month:'long',year:'numeric'}).toUpperCase();
+ }else{ini=new Date(2000,0,1);fin=new Date(2100,0,1);lbl='TODO'}
+ return{ini,fin,lbl,p,o};
+}
+function vtSetPeriod(p){STATE.vtPeriod=p;STATE.vtOffset=0;loadVentas()}
+function vtMove(d){STATE.vtOffset=(STATE.vtOffset||0)+d;loadVentas()}
+
+async function loadVentas(){
+ const r=vtRange();
+ document.getElementById('vtPeriods').innerHTML=
+  [['dia','DÍA'],['semana','SEMANA'],['mes','MES'],['todo','TODO']].map(([k,n])=>
+   `<button class="rep-per ${r.p===k?'active':''}" onclick="vtSetPeriod('${k}')">${n}</button>`).join('');
+ document.getElementById('vtNav').innerHTML = r.p==='todo'
+  ? `<span style="margin:auto">${r.lbl}</span>`
+  : `<button onclick="vtMove(-1)">◀</button><span>${r.lbl}</span><button onclick="vtMove(1)" ${r.o>=0?'style="opacity:.3"':''}>▶</button>`;
+
+ const{data,error}=await sb.from('sales_history').select('*')
+   .gte('closed_at',r.ini.toISOString()).lt('closed_at',r.fin.toISOString())
+   .order('closed_at',{ascending:false});
+ if(error){document.getElementById('vtList').innerHTML='<div class="order-empty">❌ Error al cargar</div>';return}
+
+ const v=data||[];
+ const tot=v.reduce((s,x)=>s+parseFloat(x.total),0);
+ document.getElementById('vtTotal').textContent=tot.toFixed(2)+'€';
+ document.getElementById('vtCount').textContent=v.length+' venta(s)';
+
+ document.getElementById('vtList').innerHTML=v.length?v.map(x=>{
+  const f=new Date(x.closed_at);
+  const uds=(x.items||[]).reduce((s,i)=>s+i.quantity,0);
+  return `<div class="vt-row">
+    <div class="vt-info">
+      <div class="vt-mesa">🏠 ${x.table_name} · <span class="vt-eur">${parseFloat(x.total).toFixed(2)}€</span></div>
+      <div class="vt-meta">${f.toLocaleDateString('es-ES')} ${f.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})} · ${uds} artículo(s)</div>
+    </div>
+    <div class="vt-acts">
+      <button class="vt-btn vt-move" onclick="moverVenta(${x.id})">📅 MOVER</button>
+      <button class="vt-btn vt-del" onclick="borrarVenta(${x.id},'${x.table_name}',${x.total})">✕ BORRAR</button>
+    </div>
+   </div>`;
+ }).join(''):'<div class="order-empty">Sin ventas en este periodo</div>';
+}
+
+// Cambia la venta de día
+async function moverVenta(id){
+ const cuando=await pedirFecha('📅 Mover venta a otro día','Elige el día correcto');
+ if(!cuando)return;
+ const{error}=await sb.from('sales_history').update({closed_at:cuando.toISOString()}).eq('id',id);
+ if(error){toast('❌ Error al mover','error');console.error(error);return}
+ toast('✓ Venta movida al '+cuando.toLocaleDateString('es-ES'));
+ loadVentas();
+}
+
+async function borrarVenta(id,mesa,total){
+ if(!confirm('¿BORRAR esta venta?\n\n'+mesa+' · '+parseFloat(total).toFixed(2)+'€\n\nEsta acción no se puede deshacer.'))return;
+ const{error}=await sb.from('sales_history').delete().eq('id',id);
+ if(error){toast('❌ Error al borrar','error');return}
+ toast('✓ Venta borrada');
+ loadVentas();
+}
 
 // ===== CIERRE DEL DÍA =====
 // Cobra automáticamente todas las mesas con consumo EXCEPTO las de BARRA,
